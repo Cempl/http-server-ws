@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Chat</title>
+<link rel="stylesheet" href="chat.css">
+
+</head>
+
+<div class="wrapper-size">
+    
+    <div class="wrapper-top-menu">
+        <div class="top_menu">
+        <ul class="ul_top_menu">
+            <li><a class="li_top_menu" href="wiki.html">WIKI</a></li>
+            <li><a class="li_top_menu" href="index.html">HOME</a></li>
+            <li><a class="li_top_menu" href="code.html">CODE</a></li>
+            <li><a class="li_top_menu" href="contact.html">CONTACT</a></li> 
+        </ul>
+    </div>
+    </div>
+    <div class="left">
+        <div class="inc-mes-size">
+        <form id="inc_message">
+            <legend class="first-legend">Тестовая версия чата</legend>
+            <textarea class="input-message"  wrap="hard" readonly="" placeholder="Beta" id="input-message"></textarea>
+        </form>
+        <form id="message_test">
+                <textarea class="form-write-massage" placeholder="Write message..." cols="70" wrap="hard" autofocus="" required="" maxlength="400" name="message" id="this_message"></textarea>
+                <input type="submit" form="message_test" class="send-message" id="key_send_message">
+        </form>
+        </div>
+    </div>
+    <div class="right">
+        
+    </div>
+</div>
+<script type="text/javascript" src="websocket.js"></script>
+<body>
+</body>
+</html>
