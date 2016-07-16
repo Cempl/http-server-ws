@@ -50,9 +50,6 @@
     <ClInclude Include="Interrupt.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="str_switch_case.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="Var_for_threads.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>

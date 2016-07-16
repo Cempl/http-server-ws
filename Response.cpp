@@ -24,6 +24,22 @@ string ResponseRequest::Path_folder()
 
 
 /*******************************************************************************/
+void ResponseRequest::Send_response(SOCKET client_socket, string &tmp_res, int &t_result)
+{
+	t_result = send(client_socket, tmp_res.c_str(), static_cast<int>(tmp_res.size()), 0);
+
+	if (t_result == SOCKET_ERROR)
+	{
+		cout << "Error in send(): " << WSAGetLastError() << endl;
+
+		system("pause");
+
+		exit(15);
+	}
+}
+
+
+/*******************************************************************************/
 void ResponseRequest::Response_js(SOCKET client_socket, string &file_name)
 {
 	int result = 0;
@@ -54,70 +70,8 @@ void ResponseRequest::Response_js(SOCKET client_socket, string &file_name)
 
 	fin.close();
 
-	result = send(client_socket, response.c_str(), static_cast<int>(response.size()), 0);
-
-	if (result == SOCKET_ERROR)
-	{
-		cout << "Error in send(): " << WSAGetLastError() << endl;
-		system("pause");
-		exit(15);
-	}
+	Send_response(client_socket, response, result);
 }
-
-
-///*******************************************************************************/
-//void Response_video(SOCKET client_socket, string &file_name)
-//{
-//	TCHAR szPath[MAX_PATH];
-//	int result = 0;
-//	size_t sz = strlen(szPath);
-//	string response = { 0 };
-//	string path_to_file; // Полный путь к файлу
-//	string folder = "\\video\\"; // Папка с файлами рядом с .exe
-//
-//	GetModuleFileNameA(NULL, szPath, MAX_PATH);
-//
-//	for (size_t i = sz - 1;; i--)
-//	{
-//		if (szPath[i] == '\\')
-//		{
-//			szPath[i] = '\0';
-//			break;
-//		}
-//	}
-//
-//	path_to_file = szPath + folder + file_name;
-//
-//	ifstream fin(path_to_file, ios::binary);
-//
-//	if (!fin.is_open())
-//	{
-//		cout << "Error open file" << endl;
-//	}
-//	else
-//	{
-//		response += "HTTP/1.1 200 OK\n";
-//		response += "Server: VaV/V2\n";
-//		response += "Content-Type: video/x-msvideo;\r\n\r\n";
-//
-//		//извлекает элементы символов из буфера потока ввода, к которому он получает доступ
-//		//через хранимый им объект, относящийся к типу указателя
-//		string response_body((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>());
-//
-//		response += response_body;
-//	}
-//
-//	fin.close();
-//
-//	result = send(client_socket, response.c_str(), static_cast<int>(response.size()), 0);
-//
-//	if (result == SOCKET_ERROR)
-//	{
-//		cout << "Error in send(): " << WSAGetLastError() << endl;
-//		system("pause");
-//		exit(15);
-//	}
-//}
 
 
 /*******************************************************************************/
@@ -151,14 +105,7 @@ void ResponseRequest::Response_image(SOCKET client_socket, string &file_name)
 
 	fin.close();
 
-	result = send(client_socket, response.c_str(), static_cast<int>(response.size()), 0);
-
-	if (result == SOCKET_ERROR)
-	{
-		cout << "Error in send(): " << WSAGetLastError() << endl;
-		system("pause");
-		exit(15);
-	}
+	Send_response(client_socket, response, result);
 }
 
 
@@ -197,14 +144,7 @@ void ResponseRequest::Response_css(SOCKET client_socket, string &file_name)
 
 	fin.close();
 
-	result = send(client_socket, response.c_str(), static_cast<int>(response.size()), 0);
-
-	if (result == SOCKET_ERROR)
-	{
-		cout << "Error in send(): " << WSAGetLastError() << endl;
-		system("pause");
-		exit(16);
-	}
+	Send_response(client_socket, response, result);
 }
 
 
@@ -245,14 +185,7 @@ void ResponseRequest::Response_default_html(SOCKET client_socket)
 
 	fin.close();
 
-	result = send(client_socket, response.c_str(), static_cast<int>(response.size()), 0);
-
-	if (result == SOCKET_ERROR)
-	{
-		cout << "Error in send(): " << WSAGetLastError() << endl;
-		system("pause");
-		exit(17);
-	}
+	Send_response(client_socket, response, result);
 }
 
 
@@ -293,12 +226,5 @@ void ResponseRequest::Response_html(SOCKET client_socket, string &file_name)
 
 	fin.close();
 
-	result = send(client_socket, response.c_str(), static_cast<int>(response.size()), 0);
-
-	if (result == SOCKET_ERROR)
-	{
-		cout << "Error in send(): " << WSAGetLastError() << endl;
-		system("pause");
-		exit(17);
-	}
+	Send_response(client_socket, response, result);
 }

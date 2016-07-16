@@ -25,6 +25,7 @@ class ResponseRequest
 		void Response_css(SOCKET client_socket, string &file_name);
 		void Response_default_html(SOCKET client_socket);
 		void Response_html(SOCKET client_socket, string &file_name);
+		void Send_response(SOCKET client_socket, string &tmp_res, int &t_result);
 		string Path_folder();
 
 
