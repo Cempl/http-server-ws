@@ -22,10 +22,7 @@ void Server::initialization_wsa()
 
 	if (result != 0)
 	{
-		cout << "Error WSAStartup: " << result << endl; // проверка инициализации
-		system("pause");
-
-		exit(1);
+		throw exception("Error WSAStartup: " + result);
 	}
 }
 
@@ -37,12 +34,9 @@ void Server::create_socket()
 
 		if (server_socket == INVALID_SOCKET)
 		{
-			cout << "Error at socket(): " << WSAGetLastError() << endl;
-			system("pause");
-
 			WSACleanup();
+			throw exception("Error at socket(): " + WSAGetLastError());
 
-			exit(2);
 		}
 }
 
@@ -58,13 +52,9 @@ void Server::bundle_socket_adresse()
 
 	if (bind(server_socket, (LPSOCKADDR)&storage_addresses, sizeof(storage_addresses)) != 0)
 	{
-		cout << "Bind failed with error: " << WSAGetLastError();
-		system("pause");
-
 		closesocket(server_socket);
 		WSACleanup();
-
-		exit(3);
+		throw exception("Bind failed with error: " + WSAGetLastError());
 	}
 }
 
@@ -74,12 +64,8 @@ void Server::listening_connection()
 {
 	if (listen(server_socket, SOMAXCONN) == SOCKET_ERROR)
 	{
-		cout << "Listen failed with error: " << WSAGetLastError();
-		system("pause");
-
 		closesocket(server_socket);
 		WSACleanup();
-
-		exit(4);
+		throw exception("Bind failed with error: " + WSAGetLastError());
 	}
 }

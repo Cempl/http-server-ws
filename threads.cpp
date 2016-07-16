@@ -13,13 +13,9 @@ void Server::Processing_a_connection_request()
 	{
 		if (client_socket == INVALID_SOCKET)
 		{
-			cout << "Accept failed with error: " << WSAGetLastError();
-			system("pause");
-
 			closesocket(server_socket);
 			WSACleanup();
-
-			exit(5);
+			throw exception("Accept failed with error: " + WSAGetLastError());
 		}
 
 		thread thr(&ResponseRequest::Request, &RR, client_socket);
