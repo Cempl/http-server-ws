@@ -8,13 +8,13 @@
 
 #Features
 
-  • only for Windows x64
-  • HTTP persistent connection
-  • implemented protocol support WebSocket (RFC 6455)
-  • independent and parallel processing of all requests
+  • only for Windows x64    
+  • HTTP persistent connection    
+  • implemented protocol support WebSocket (RFC 6455)    
+  • independent and parallel processing of all requests    
 
 #Compile and run
 
-  • compile in Microsoft Visual Studio 2015
+  • compile in Microsoft Visual Studio 2015    
   • direct your favorite browser to for instance http://localhost:27015/
 
