@@ -5,7 +5,7 @@
 
 /*******************************************************************************/
 string base64_encode(unsigned char const*, unsigned int len);
-void generate(string& key);
+
 
 /*******************************************************************************/
 const string guid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
