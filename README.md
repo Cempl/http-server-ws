@@ -1,7 +1,6 @@
 # http-server-ws
-http + websocket + thread + c++
 
-Fast, multithreaded HTTP server implemented using C++11/14
+    Fast, multithreaded HTTP server implemented using C++11/14
 
 #Dependencies
 
@@ -16,5 +15,5 @@ Fast, multithreaded HTTP server implemented using C++11/14
 
 #Compile and run
 
-Compile with Microsoft Visual Studio 2015 and later
-Direct your favorite browser to for instance http://localhost:27015/
+    Compile with Microsoft Visual Studio 2015 and later
+    Direct your favorite browser to for instance http://localhost:27015/
