@@ -15,5 +15,5 @@
 
 #Compile and run
 
-    Compile in Microsoft Visual Studio 2015 and later
+    Compile in Microsoft Visual Studio 2015
     Direct your favorite browser to for instance http://localhost:27015/
