@@ -3,9 +3,9 @@
     Fast, multithreaded HTTP server implemented using C++11/14
 
 #Dependencies
-
-    OpenSSL C++ libraries (for WebSocket)
-
+    <ul>
+    <li>OpenSSL C++ libraries (for WebSocket)</li>
+    </ul>
 #Features
 
     only for Windows x64
