@@ -4,7 +4,7 @@
 
 #Dependencies
 
-	• openSSL C++ libraries (for WebSocket)
+	• openSSL C++ libraries (for WebSocket) 
 
 #Features
 
