@@ -9,8 +9,11 @@
 #Features
 
 • only for Windows x64
+
 • HTTP persistent connection
+
 • implemented protocol support WebSocket (RFC 6455)
+
 • independent and parallel processing of all requests
 
 #Compile and run
