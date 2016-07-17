@@ -42,10 +42,10 @@ void ResponseRequest::Send_response(SOCKET client_socket, string &tmp_res, int &
 /*******************************************************************************/
 void ResponseRequest::Response_js(SOCKET client_socket, string &file_name)
 {
-	int result = 0;
-	string response = { 0 };
-	string path_to_file; // Полный путь к файлу
-	string folder = "\\js\\"; // Папка с файлами рядом с .exe
+	int result = int();
+	string response = string();
+	string path_to_file = string();
+	string folder = "\\js\\";
 
 	path_to_file = Path_folder() + folder + file_name;
 
@@ -61,8 +61,7 @@ void ResponseRequest::Response_js(SOCKET client_socket, string &file_name)
 		response += "Server: VaV/V2\n";
 		response += "Content-Type: application/javascript;\r\n\r\n";
 
-		//извлекает элементы символов из буфера потока ввода, к которому он получает доступ
-		//через хранимый им объект, относящийся к типу указателя
+		// Retrieves the character elements from the input stream buffer, to which it accesses
 		string response_body((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>());
 
 		response += response_body;
@@ -77,10 +76,10 @@ void ResponseRequest::Response_js(SOCKET client_socket, string &file_name)
 /*******************************************************************************/
 void ResponseRequest::Response_image(SOCKET client_socket, string &file_name)
 {
-	int result = 0;
-	string response = { 0 };
-	string path_to_file; // Полный путь к файлу
-	string folder = "\\image\\"; // Папка с файлами рядом с .exe
+	int result = int();
+	string response = string();
+	string path_to_file = string();
+	string folder = "\\image\\";
 
 	path_to_file = Path_folder() + folder + file_name;
 
@@ -96,8 +95,7 @@ void ResponseRequest::Response_image(SOCKET client_socket, string &file_name)
 		response += "Server: VaV/V2\n";
 		response += "Content-Type: image/png;\r\n\r\n";
 
-		//извлекает элементы символов из буфера потока ввода, к которому он получает доступ
-		//через хранимый им объект, относящийся к типу указателя
+		// Retrieves the character elements from the input stream buffer, to which it accesses
 		string response_body((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>());
 
 		response += response_body;
@@ -112,10 +110,10 @@ void ResponseRequest::Response_image(SOCKET client_socket, string &file_name)
 /*******************************************************************************/
 void ResponseRequest::Response_css(SOCKET client_socket, string &file_name)
 {
-	int result = 0;
-	string response = { 0 };
-	string path_to_file; // Полный путь к файлу
-	string folder = "\\css\\"; // Папка с файлами рядом с .exe
+	int result = int();
+	string response = string();
+	string path_to_file = string();
+	string folder = "\\css\\";
 
 	path_to_file = Path_folder() + folder + file_name;
 
@@ -127,19 +125,14 @@ void ResponseRequest::Response_css(SOCKET client_socket, string &file_name)
 	}
 	else
 	{
-		string temp;
-
 		response += "HTTP/1.1 200 OK\n";
 		response += "Server: VaV/V2\n";
 		response += "Content-Type: text/css;\r\n\r\n";
 
-		while (getline(fin, temp))
-		{
-			response += temp;
-			response += "\n";
+		// Retrieves the character elements from the input stream buffer, to which it accesses
+		string response_body((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>());
 
-			fin.sync();
-		}
+		response += response_body;
 	}
 
 	fin.close();
@@ -151,10 +144,10 @@ void ResponseRequest::Response_css(SOCKET client_socket, string &file_name)
 /*******************************************************************************/
 void ResponseRequest::Response_default_html(SOCKET client_socket)
 {
-	int result = 0;
-	string response = { 0 };
-	string path_to_file; // Полный путь к файлу
-	string folder = "\\html\\index.html"; // Папка с файлами рядом с .exe
+	int result = int();
+	string response = string();
+	string path_to_file = string();
+	string folder = "\\html\\index.html";
 
 	path_to_file = Path_folder() + folder;
 
@@ -166,21 +159,16 @@ void ResponseRequest::Response_default_html(SOCKET client_socket)
 		}
 		else
 		{
-			string temp;
-
 			response += "HTTP/1.1 202 OK\n";
 			response += "Server: VaV/V2\n";
 			response += "Content-Type: text/html;\n";
 			response += "Connection: keep-alive\n";
 			response += "X-Powered-By: c++\r\n\r\n";
 
-			while (getline(fin, temp))
-			{
-				response += temp;
-				response += "\n";
+			// Retrieves the character elements from the input stream buffer, to which it accesses
+			string response_body((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>());
 
-				fin.sync();
-			}
+			response += response_body;
 		}
 
 	fin.close();
@@ -192,10 +180,10 @@ void ResponseRequest::Response_default_html(SOCKET client_socket)
 /*******************************************************************************/
 void ResponseRequest::Response_html(SOCKET client_socket, string &file_name)
 {
-	int result = 0;
-	string response = { 0 };
-	string path_to_file; // Полный путь к файлу
-	string folder = "\\html\\"; // Папка с файлами рядом с .exe
+	int result = int();
+	string response = string();
+	string path_to_file = string();
+	string folder = "\\html\\";
 
 	path_to_file = Path_folder() + folder + file_name;
 
@@ -207,21 +195,16 @@ void ResponseRequest::Response_html(SOCKET client_socket, string &file_name)
 	}
 	else
 	{
-		string temp;
-
 		response += "HTTP/1.1 202 OK\n";
 		response += "Server: VaV/V2\n";
 		response += "Content-Type: text/html;\n";
 		response += "Connection: keep-alive\n";
 		response += "X-Powered-By: c++\r\n\r\n";
 
-		while (getline(fin, temp))
-		{
-			response += temp;
-			response += "\n";
+		// Retrieves the character elements from the input stream buffer, to which it accesses
+		string response_body((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>()); 
 
-			fin.sync();
-		}
+		response += response_body;
 	}
 
 	fin.close();
