@@ -62,13 +62,15 @@ class interruptible_thread
 			promise<interrupt_flag*> prom;
 			internal_thread = thread([func,&prom]
 									 {
-									  prom.set_value(&this_thread_interrupt_flag);
-									  try
-									  {
-										func();
-									  }
-									  catch(string str)
-									  {cout << str;}
+										prom.set_value(&this_thread_interrupt_flag);
+										try
+										{
+											func();
+										}
+										catch(string str)
+										{
+											cout << str;
+										}
 									 });
 
 			flag = prom.get_future().get();
@@ -80,13 +82,15 @@ class interruptible_thread
 			promise<interrupt_flag*> prom;
 			internal_thread = thread([func,&arg,&prom]
 									 {
-									  prom.set_value(&this_thread_interrupt_flag);
-									  try
-									  {
-										func(arg);
-									  }
-									  catch(string str)
-									  {cout << str;}
+										prom.set_value(&this_thread_interrupt_flag);
+										try
+										{
+											func(arg);
+										}
+										catch(string str)
+										{
+											cout << str;
+										}
 									 });
 
 			flag = prom.get_future().get();
@@ -98,13 +102,15 @@ class interruptible_thread
 			promise<interrupt_flag*> prom;
 			internal_thread = thread([func, &class_type, &arg, &prom]
 									 {
-									  prom.set_value(&this_thread_interrupt_flag);
-									  try
-									  {
-										class_type->send_data(arg);
-									  }
-									  catch(string str)
-									  {cout << str;}
+										prom.set_value(&this_thread_interrupt_flag);
+										try
+										{
+											class_type->send_data(arg);
+										}
+										catch(string str)
+										{
+											cout << str;
+										}
 									 });
 
 			flag = prom.get_future().get();

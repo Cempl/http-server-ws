@@ -12,6 +12,7 @@
 #include <sstream>
 #include <cstdio>
 #include <fstream>
+#include <memory>
 #include <vector>
 #include <winsock2.h>
 #include <winsock.h>
@@ -28,6 +29,9 @@
 
 
 using namespace std;
+
+
+extern const uint16_t gLengthMessage;
 
 
 /*******************************************************************************/

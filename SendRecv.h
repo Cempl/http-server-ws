@@ -2,14 +2,15 @@
 
 
 /*******************************************************************************/
-#include "Server.h"
 #include "Generate_key.h"
-#include "Var_for_threads.h"
 #include "Interrupt.h"
+#include "MyCover.h"
+#include "Server.h"
+#include "Var_for_threads.h"
 
 
 /*******************************************************************************/
-class SendRecv
+class SendRecv : protected Cover
 {
 	public://////////////////////////////////////////////////////////////////////
 
@@ -18,8 +19,6 @@ class SendRecv
 				~SendRecv() {};
 
 		void	websocket_handshake(SOCKET client_socket, string key);
-		int		my_send(SOCKET& client_socket, string& message);
-		int		my_recv(SOCKET& client_socket, string& message);
 		void	send_data(SOCKET& client_socket);
 
 

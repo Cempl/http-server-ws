@@ -1,16 +1,11 @@
 /*******************************************************************************/
-#include "SendRecv.h"
+#include "Server.h"
+#include "Generate_key.h"
+#include "Var_for_threads.h"
 
 
 /*******************************************************************************/
-vector<string> my_gList;
-mutex glist_mutex;
-condition_variable gdata_cond;
-
-
-
-/*******************************************************************************/
-void SendRecv::websocket_handshake(SOCKET client_socket, string key)
+void Response_websocket_handshake(SOCKET client_socket, string key)
 {
 	string response;
 
@@ -19,12 +14,12 @@ void SendRecv::websocket_handshake(SOCKET client_socket, string key)
 	response += "HTTP/1.1 101 Switching Protocols\r\n";
 	response += "Upgrade: websocket\r\n";
 	response += "Connection: Upgrade\r\n";
-	response += ("Sec-WebSocket-Accept: " + key + "\r\n");
+	response += "Sec-WebSocket-Accept: " + key + "\r\n";
 	response += "Sec-WebSocket-Version: 13\r\n\r\n";
 
 	int result = 0;
 
-	result = my_send(client_socket, response);
+	result = send(client_socket, response.c_str(), response.size(), 0);
 
 	if (result == SOCKET_ERROR)
 	{
@@ -33,16 +28,20 @@ void SendRecv::websocket_handshake(SOCKET client_socket, string key)
 		exit(15);
 	}
 
-	Thread_recv(client_socket);
+	thread thr(Thread_recv, client_socket);
+	thr.detach();
+
 }
 
 
 /*******************************************************************************/
-void SendRecv::generate(string& key)
+void generate(string& key)
 {
 	unsigned char hash[SHA_DIGEST_LENGTH];
 
 	key += guid;
+
+	int hesh_size = key.size();
 
 	SHA1((const unsigned char*)key.c_str(), strlen((const char*)key.c_str()), hash);
 
@@ -52,41 +51,36 @@ void SendRecv::generate(string& key)
 	{
 		key = key.erase(20, key.length());
 
-		key = base64_encode(reinterpret_cast<const unsigned char*>(key.c_str()), static_cast<unsigned int>(key.length()));
+		key = base64_encode(reinterpret_cast<const unsigned char*>(key.c_str()), key.length());
 	}
 	else
 	{
-		key = base64_encode(reinterpret_cast<const unsigned char*>(key.c_str()), static_cast<unsigned int>(key.length()));
+		key = base64_encode(reinterpret_cast<const unsigned char*>(key.c_str()), key.length());
 	}
 }
 
 
 /*******************************************************************************/
-int SendRecv::websocket_get_content(string& data, int data_length)
+int websocket_get_content(string& data, int data_length)
 {
 	u_char* mask = new u_char [4]; // длина маски 4 байта
-	auto i = 0;
-	auto j = 0;
-	auto length_code = 0;
+	u_int i = 0;
+	u_int j = 0;
+	u_int length_code = 0;
 	u_char check_value;
-	string temp_str = string();
-	auto index_first_mask = 0;
-	auto index_first_data_byte = 0;
-	auto index_first_trash = 0;
+	string temp_str;
+	int index_first_mask = 0;
+	int index_first_data_byte = 0;
+	int index_first_trash = 0;
 
 	if((u_char)data[0] == 136)
 	{
-		delete[] mask;
-
 		return 1; // close connection
 	}
 
 	if ((u_char)data[0] == 130)
 	{
-		delete[] mask;
-
 		return 2; // binary data
-
 	}
 
 	length_code = (u_char) data[1] & 127;
@@ -138,16 +132,17 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 
 	data.swap(temp_str);
 
-	delete[] mask;
+	delete mask;
 
 	return 0; // // text data
 }
 
 
 /*******************************************************************************/
-void SendRecv::websocket_set_content(string& data, int64_t data_length, int data_type)
+void websocket_set_content(string& data, int64_t data_length, int data_type)
 {
 	string message;
+	int data_start_index = 0;
 
 	if (data_type == 2)
 	{
@@ -160,9 +155,8 @@ void SendRecv::websocket_set_content(string& data, int64_t data_length, int data
 
 	if(data_length <= 125)
 	{
-		message.push_back(static_cast<char>(data_length));
-
-		//data_start_index 2
+		message.push_back(data_length);
+		data_start_index = 2;
 	}
 	else
 		if(data_length > 125 && data_length <= 65535)
@@ -171,7 +165,7 @@ void SendRecv::websocket_set_content(string& data, int64_t data_length, int data
 			for(int i = 8; i >= 0; i = i-8)
 				message.push_back(( data_length >> i ) & 255);
 			
-			//data_start_index 4
+			data_start_index = 4;
 		}
 		else
 		{
@@ -179,7 +173,7 @@ void SendRecv::websocket_set_content(string& data, int64_t data_length, int data
 			for(int i = 56; i >= 0; i = i-8)
 				message.push_back(( data_length >> i ) & 255);
 
-			//data_start_index 10
+			data_start_index = 10;
 		}
 
 	for(int i = 0; i < data_length; i++) 
@@ -188,73 +182,4 @@ void SendRecv::websocket_set_content(string& data, int64_t data_length, int data
 	}
 
 	data.swap(message);
-}
-
-
-/*******************************************************************************/
-void SendRecv::send_data(SOCKET& client_socket)
-{		
-	int index = 0;
-
-	while(true)
-	{
-		unique_lock<mutex> u_mutex(glist_mutex);
-
-			interruptible_wait(gdata_cond, u_mutex, [&index]{return (index < my_gList.size());});
-			my_send(client_socket, my_gList[index]);
-			++index;
-
-		u_mutex.unlock();
-	}
-
-}
-
-
-/*******************************************************************************/
-int SendRecv::recv_data(string& data)
-{
-	auto result = websocket_get_content(data, static_cast<int>(data.size())); // Раскодировали
-
-	if(result == 1)
-	{
-		return 1;
-	}
-
-	websocket_set_content(data, data.size(), result); // Перекодировали сообщение
-
-	lock_guard<mutex> guard(glist_mutex); 
-
-	my_gList.push_back(data); // Записали сообщение в очередь
-	gdata_cond.notify_all(); // Будим потоки для отправки сообщения
-	
-	return 0;
-}
-
-
-/*******************************************************************************/
-int SendRecv::Thread_recv(SOCKET client_socket)
-{
-	interruptible_thread thr(&SendRecv::send_data, this, client_socket);
-
-	string message;
-
-	while (true)
-	{
-		my_recv(client_socket, message); // Принимаем данные от клиента
-
-		int result = recv_data(message);
-
-		if(result == 1)
-		{		
-			thr.interrupt();
-			thr.join();
-			message.clear();
-
-			return 0; // Normal exit
-		}
-
-		message.clear();	
-	}  
-
-	return 1; // Not normal exit
 }

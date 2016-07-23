@@ -7,7 +7,14 @@ void main()
 {
 	Server first_server;
 
-	first_server.start_server();
+	try
+	{
+		first_server.start_server();
+	}
+	catch(...)
+	{
+		cout << "Yeah!";
+	}
 
 	system("pause");
 }

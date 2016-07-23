@@ -22,6 +22,7 @@
     <ProjectGuid>{DAD74785-782F-468C-9C82-B199023ED262}</ProjectGuid>
     <RootNamespace>Server_Vitek</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>http-server-ws</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -83,9 +84,6 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -119,6 +117,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MyCover.cpp" />
     <ClCompile Include="Request.cpp" />
     <ClCompile Include="Interrupt.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -130,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Interrupt.h" />
+    <ClInclude Include="MyCover.h" />
     <ClInclude Include="ResponseRequest.h" />
     <ClInclude Include="SendRecv.h" />
     <ClInclude Include="Var_for_threads.h" />
