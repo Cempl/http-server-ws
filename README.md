@@ -11,7 +11,8 @@
 	• only for Windows x64    
 	• HTTP (1.1) persistent connection    
 	• implemented protocol support WebSocket (RFC 6455)    
-	• independent and parallel processing of all requests    
+	• independent and parallel processing of all requests				
+	• integrated data base SQlite
 
 #Compile and run
 
