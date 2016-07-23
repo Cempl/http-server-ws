@@ -84,6 +84,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -117,6 +118,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ControlsDatabase.cpp" />
     <ClCompile Include="MyCover.cpp" />
     <ClCompile Include="Request.cpp" />
     <ClCompile Include="Interrupt.cpp" />
@@ -125,9 +127,11 @@
     <ClCompile Include="SendRecv.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Base64.cpp" />
+    <ClCompile Include="sqlite3.c" />
     <ClCompile Include="threads.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ControlsDatabase.h" />
     <ClInclude Include="Interrupt.h" />
     <ClInclude Include="MyCover.h" />
     <ClInclude Include="ResponseRequest.h" />

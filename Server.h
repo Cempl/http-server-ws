@@ -10,9 +10,11 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sqlite3.h>
 #include <cstdio>
 #include <fstream>
-#include <memory>
 #include <vector>
 #include <winsock2.h>
 #include <winsock.h>
@@ -22,6 +24,7 @@
 #include <openssl\buffer.h>
 #include <Windows.h>
 #include <stdexcept>
+#include <map>
 /*#include <vld.h>*/ // Visual Leak Detector 
 
 
@@ -31,30 +34,27 @@
 using namespace std;
 
 
-extern const uint16_t gLengthMessage;
-
-
 /*******************************************************************************/
 class Server
 {
 	public://////////////////////////////////////////////////////////////////////
 
-		void start_server();
+		void	start_server();
 		
 
 	protected:///////////////////////////////////////////////////////////////////
 
-		WSADATA wsaData;// Информация о сокетах
-		SOCKET server_socket;
-		SOCKET client_socket;
+		WSADATA		wsaData;// Информация о сокетах
+		SOCKET		server_socket;
+		SOCKET		client_socket;
 		sockaddr_in storage_addresses;// Для хранения адреса
 
 
 	protected:///////////////////////////////////////////////////////////////////
 
-		void initialization_wsa();
-		void create_socket();
-		void bundle_socket_adresse();
-		void listening_connection();
-		void Processing_a_connection_request();
+		void	initialization_wsa();
+		void	create_socket();
+		void	bundle_socket_adresse();
+		void	listening_connection();
+		void	Processing_a_connection_request();
 };

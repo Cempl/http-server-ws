@@ -114,13 +114,16 @@ int ResponseRequest::Request(SOCKET client_socket)
 
 	if (entire_query.at(0) == "POST")
 	{
-		string temp_login;
+		string temp_login = string();
+		string temp_pass = string ();
+		string tmp_token = string();
 
-		ifstream fout("login.txt");
+		temp_login = entire_query[entire_query.size() - 3].erase(0, 1);
+		temp_pass = entire_query[entire_query.size() - 1].erase(0, 1);
 
-		fout >> temp_login;
+		tmp_token = CD.find_data_auth(temp_login);
 
-		if (temp_login == entire_query[entire_query.size() - 1])
+		if (tmp_token == temp_pass)
 		{
 			file_name = "chat.html";
 			Response_html(client_socket, file_name);
@@ -132,8 +135,6 @@ int ResponseRequest::Request(SOCKET client_socket)
 			Response_html(client_socket, file_name);
 			closesocket(client_socket);
 		}
-
-		fout.close();
 	}
 
 	return 0;
