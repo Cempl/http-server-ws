@@ -15,6 +15,6 @@ class Cover
 
 	protected:
 
-		int		my_send(SOCKET& client_socket, string& message);
-		int		my_recv(SOCKET& client_socket, string& message);
+		void		my_send(SOCKET& client_socket, string& message);
+		void		my_recv(SOCKET& client_socket, string& message);
 };

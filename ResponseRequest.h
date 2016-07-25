@@ -5,7 +5,6 @@
 #include "MyCover.h"
 #include "SendRecv.h"
 #include "Server.h"
-#include "ControlsDatabase.h"
 
 
 /*******************************************************************************/

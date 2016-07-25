@@ -71,8 +71,7 @@ void interruption_point()
 {
 	if(this_thread_interrupt_flag.is_set())
 	{
-		string str = "connection is closed";
-		throw str;
+		throw exception("Interrupt");
 	}
 }
 

@@ -1,5 +1,6 @@
 /*******************************************************************************/
 #include "SendRecv.h"
+#include "LogFile.h"
 
 
 /*******************************************************************************/
@@ -22,15 +23,14 @@ void SendRecv::websocket_handshake(SOCKET client_socket, string key)
 	response += ("Sec-WebSocket-Accept: " + key + "\r\n");
 	response += "Sec-WebSocket-Version: 13\r\n\r\n";
 
-	int result = 0;
-
-	result = my_send(client_socket, response);
-
-	if (result == SOCKET_ERROR)
+	try
 	{
-		cout << "Error in send(): " << WSAGetLastError() << endl;
-		system("pause");
-		exit(15);
+		my_send(client_socket, response);
+	}
+	catch(exception& e)
+	{
+		LogFile log;
+		log.write(e.what());
 	}
 
 	Thread_recv(client_socket);
@@ -121,7 +121,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 			}
 			else
 			{
-				// Exception
+				throw exception("Error in websocket content: ");
 			}
 
 	index_first_data_byte = index_first_mask + 4;
@@ -198,13 +198,24 @@ void SendRecv::send_data(SOCKET& client_socket)
 
 	while(true)
 	{
-		unique_lock<mutex> u_mutex(glist_mutex);
+		
+			unique_lock<mutex> u_mutex(glist_mutex);
 
-			interruptible_wait(gdata_cond, u_mutex, [&index]{return (index < my_gList.size());});
-			my_send(client_socket, my_gList[index]);
-			++index;
+			try
+			{
+					interruptible_wait(gdata_cond, u_mutex, [&index]{return (index < my_gList.size());});
+					my_send(client_socket, my_gList[index]);
+					++index;
 
-		u_mutex.unlock();
+				u_mutex.unlock();
+			}
+			catch(exception& e)
+			{
+				u_mutex.unlock();
+
+				LogFile log;
+				log.write(e.what());
+			}
 	}
 
 }
@@ -240,20 +251,30 @@ int SendRecv::Thread_recv(SOCKET client_socket)
 
 	while (true)
 	{
-		my_recv(client_socket, message); // Принимаем данные от клиента
+		try
+		{
+			my_recv(client_socket, message); // Принимаем данные от клиента
 
-		int result = recv_data(message);
+			int result = recv_data(message);
 
-		if(result == 1)
-		{		
-			thr.interrupt();
-			thr.join();
+			if(result == 1)
+			{		
+				thr.interrupt();
+				thr.join();
+				message.clear();
+
+				return 0; // Normal exit
+			}
+
+			message.clear();
+		}
+		catch(exception& e)
+		{
 			message.clear();
 
-			return 0; // Normal exit
+			LogFile log;
+			log.write(e.what());
 		}
-
-		message.clear();	
 	}  
 
 	return 1; // Not normal exit

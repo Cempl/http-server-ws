@@ -1,5 +1,6 @@
 /*******************************************************************************/
 #include "ResponseRequest.h"
+#include "LogFile.h"
 
 
 /*******************************************************************************/
@@ -30,11 +31,7 @@ void ResponseRequest::Send_response(SOCKET client_socket, string &tmp_res, int &
 
 	if (t_result == SOCKET_ERROR)
 	{
-		cout << "Error in send(): " << WSAGetLastError() << endl;
-
-		system("pause");
-
-		exit(15);
+		throw exception("Error in send(): " + WSAGetLastError());
 	}
 }
 
@@ -53,7 +50,7 @@ void ResponseRequest::Response_js(SOCKET client_socket, string &file_name)
 
 	if (!fin.is_open())
 	{
-		cout << "Error open file" << endl;
+		throw exception( ("Missing " + path_to_file).c_str() );
 	}
 	else
 	{
@@ -87,7 +84,7 @@ void ResponseRequest::Response_image(SOCKET client_socket, string &file_name)
 
 	if (!fin.is_open())
 	{
-		cout << "Error open file" << endl;
+		throw exception( ("Missing " + path_to_file).c_str() );
 	}
 	else
 	{
@@ -121,7 +118,7 @@ void ResponseRequest::Response_css(SOCKET client_socket, string &file_name)
 
 	if (!fin.is_open())
 	{
-		cout << "Error open file" << endl;
+		throw exception( ("Missing " + path_to_file).c_str() );
 	}
 	else
 	{
@@ -155,7 +152,7 @@ void ResponseRequest::Response_default_html(SOCKET client_socket)
 
 		if (!fin.is_open())
 		{
-			cout << "Error open file" << endl;
+			throw exception( ("Missing " + path_to_file).c_str() );
 		}
 		else
 		{
@@ -191,7 +188,7 @@ void ResponseRequest::Response_html(SOCKET client_socket, string &file_name)
 
 	if (!fin.is_open())
 	{
-		cout << "Error open file" << endl;
+		throw exception( ("Missing " + path_to_file).c_str() );
 	}
 	else
 	{

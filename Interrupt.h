@@ -67,9 +67,9 @@ class interruptible_thread
 										{
 											func();
 										}
-										catch(string str)
+										catch(exception& e)
 										{
-											cout << str;
+											
 										}
 									 });
 
@@ -87,9 +87,9 @@ class interruptible_thread
 										{
 											func(arg);
 										}
-										catch(string str)
+										catch(exception& e)
 										{
-											cout << str;
+											
 										}
 									 });
 
@@ -105,11 +105,11 @@ class interruptible_thread
 										prom.set_value(&this_thread_interrupt_flag);
 										try
 										{
-											class_type->send_data(arg);
+											class_type->send_data(arg); // Временное решение
 										}
-										catch(string str)
+										catch(exception& e)
 										{
-											cout << str;
+											
 										}
 									 });
 

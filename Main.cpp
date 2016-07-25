@@ -1,5 +1,6 @@
 /*******************************************************************************/
 #include "Server.h"
+#include "LogFile.h"
 
 
 /*******************************************************************************/
@@ -11,9 +12,10 @@ void main()
 	{
 		first_server.start_server();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "Yeah!";
+		LogFile log;
+		log.write(e.what());
 	}
 
 	system("pause");

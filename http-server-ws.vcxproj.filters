@@ -42,10 +42,7 @@
     <ClCompile Include="MyCover.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="ControlsDatabase.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
-    <ClCompile Include="sqlite3.c">
+    <ClCompile Include="LogFile.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,7 +68,7 @@
     <ClInclude Include="MyCover.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="ControlsDatabase.h">
+    <ClInclude Include="LogFile.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
