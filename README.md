@@ -12,7 +12,8 @@
 	• HTTP (1.1) persistent connection    
 	• implemented protocol support WebSocket (RFC 6455)    
 	• independent and parallel processing of all requests				
-	• integrated data base SQlite
+	• integrated data base SQlite				
+	• server logs
 
 #Compile and run
 
