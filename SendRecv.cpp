@@ -245,7 +245,7 @@ int SendRecv::recv_data(string& data)
 /*******************************************************************************/
 int SendRecv::Thread_recv(SOCKET client_socket)
 {
-	interruptible_thread thr(&SendRecv::send_data, this, client_socket);
+	interruptible_thread thr(this, &SendRecv::send_data,  client_socket);
 
 	string message;
 
