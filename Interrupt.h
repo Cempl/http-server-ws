@@ -96,16 +96,16 @@ class interruptible_thread
 			flag = prom.get_future().get();
 		}
 
-		template<class FunctionType,  class _This, class _Argument>
-		interruptible_thread(FunctionType func, _This* class_type, _Argument& arg)
+		template<class FunctionType,  class ClassType, class _Argument>
+		interruptible_thread(ClassType* class_ptr, FunctionType func, _Argument& arg)
 		{
 			promise<interrupt_flag*> prom;
-			internal_thread = thread([func, &class_type, &arg, &prom]
+			internal_thread = thread([func, &class_ptr, &arg, &prom]
 									 {
 										prom.set_value(&this_thread_interrupt_flag);
 										try
 										{
-											class_type->send_data(arg); // Временное решение
+											(class_ptr->*func)(arg); 
 										}
 										catch(exception& e)
 										{
