@@ -1,6 +1,7 @@
 /*******************************************************************************/
 #include "ResponseRequest.h"
 #include "LogFile.h"
+#include "ControlsDatabase.h"
 
 
 /*******************************************************************************/
@@ -110,13 +111,15 @@ int ResponseRequest::Request(SOCKET client_socket)
 
 		if (entire_query.at(0) == "POST")
 		{
-			string temp_login;
+			ControlsDatabase CD;
 
-			ifstream fout("login.txt");
+			string temp_login = string();
+			string temp_pass = string();
 
-			fout >> temp_login;
+			temp_login = entire_query[entire_query.size() - 3].erase(0, 1);
+			temp_pass = entire_query[entire_query.size() - 1].erase(0, 1);
 
-			if (temp_login == entire_query[entire_query.size() - 1])
+			if (temp_pass == CD.find_data_auth(temp_login))
 			{
 				file_name = "chat.html";
 				Response_html(client_socket, file_name);
@@ -128,8 +131,6 @@ int ResponseRequest::Request(SOCKET client_socket)
 				Response_html(client_socket, file_name);
 				closesocket(client_socket);
 			}
-
-			fout.close();
 		}
 	}
 	catch(exception& e)

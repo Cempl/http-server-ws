@@ -86,7 +86,7 @@ string ControlsDatabase::find_data_auth(string login)
 	
 	if (it_find != CD.map_db.end())
 	{
-		tmp_key_user = it_find -> second;
+		tmp_key_user = it_find -> second; // returns pass
 	}
 
 	close_connection_db();

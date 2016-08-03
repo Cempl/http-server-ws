@@ -9,10 +9,12 @@
 #include <exception>
 #include <iostream>
 #include <string>
+#include <sqlite3.h>
 #include <sstream>
 #include <cstdio>
 #include <fstream>
 #include <memory>
+#include <map>
 #include <vector>
 #include <winsock2.h>
 #include <winsock.h>
@@ -26,6 +28,9 @@
 
 
 #pragma comment(lib, "WS2_32.lib")
+
+
+#pragma warning(disable : 4996)
 
 
 using namespace std;

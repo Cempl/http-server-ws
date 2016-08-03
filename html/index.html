@@ -4,32 +4,57 @@
 <meta charset="utf-8">
 <title>Home</title>
 <link href="home.css" rel="stylesheet" type="text/css">
-<script src="home.js" type="text/javascript"></script>
+<link href="authorization.css" rel="stylesheet" type="text/css">
 </head>	
 <body>
 	<div class="font-wrapper">
 <div class="wrapper">
 	<div class="top_menu">
         <ul class="ul_top_menu">
-            <li><a class="li_top_menu" href="wiki.html">WIKI</a></li>
-            <li><a class="li_top_menu" href="authorization.html">CHAT</a></li>
-            <li><a class="li_top_menu" href="code.html">CODE</a></li>
+            <li><a class="li_top_menu" href="#login_form" id="login_pop">CHAT</a></li>
+            <li><a class="li_top_menu" href="https://github.com/Cempl/http-server-ws" target="_blank">CODE</a></li>
             <li><a class="li_top_menu" href="contact.html">CONTACT</a></li> 
+            <li><a class="li_top_menu" href="faq.html">FAQ</a></li>
         </ul>
     </div>
-    <div class="current_date"><script type="text/javascript">todays_date();</script></div>
 </div>
+
     <div class="centr">
 		<div class="circle-position">
-		<div class="circle"></div>
-		<div class="circle"></div>
-        <div class="circle"></div>
+		<div class="circle-left">
+            <h3 class="text-col-left">Easy</h3>
+            <img src="easy.png" class="img-easy">
+              <hr class="hr">
+            </div>
+		<div class="circle-cen">
+            <h3 class="text-col-cen">Fast</h3>
+            <img src="fast.png" class="img-fast">
+              <hr class="hr2">
+            </div>
+        <div class="circle-right">
+            <h3 class="text-col-right">Free</h3>
+            <img src="free.gif" class="img-free">
+              <hr class="hr3">
+            </div>
 		</div>
     </div>
     <div class="footer-size">
-		<hr class="hr">
-        <div class="footer-text">Copyright 2015 Beta Project</div>
+        <div class="footer-text">Copyright 2016 Beta Project</div>
     </div>
 </div>
+
+ <a href="#x" class="overlay" id="login_form"></a>
+        <div class="popup">
+            
+             <form class="form-login" method="post" enctype="text/plain" id="t_data">
+                <span class="autho">Authorization</span>
+                <input type="email" class="login" required="" autofocus="" placeholder="Login" name=" ">
+                <input type="password" maxlength="100" required class="password" placeholder="Password" name=" ">
+                <input type="submit" class="to-send" value="SIGN IN" id="send_data" form="t_data">
+            </form>
+
+            <a class="close" href="#close"></a>
+        </div>
+        
 </body>
 </html>
