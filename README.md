@@ -5,7 +5,7 @@
 #Dependencies
 
 	• openSSL C++ libraries (for WebSocket) 
-	• VSDK (Valentina DB, Valentina Server - http://www.valentina-db.com/en/)
+	• VSDK (Valentina DB, Valentina Server - valentina-db.com/en/)
 
 #Features
 
