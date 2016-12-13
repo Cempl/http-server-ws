@@ -1,0 +1,401 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml:stylesheet type="text/xsl" href="../xsl/visualization2.xsl"?>
+
+<DATA>
+    <!--
+ATTENTION!
+Following standard
+
+        1. 	Each SQLSTATE is five-symbols string (digits or latin letters in upper case)
+        2. 	First two symbols define class of state, the rest 3 define subclass.
+            000	subclass means unspecified one.
+        3. 	Class which is first symbol in (0,1,2,3,4 and A, B, C, D, E, F, G, H)
+            or HZ (special case) is reserved by standard.
+        4.	We can define sub-class-extensions for "standard" classes.
+            In this case subclass must begin from (5,6,7,8,9, I, J, K, L, M, N,
+            O, P, Q, R, S, T, U, V, W, X, Y, or Z).
+        5.	Our classes must begin from (5,6,7,8,9, I, J, K, L, M, N,
+            O, P, Q, R, S, T, U, V, W, X, Y, or Z).
+            In this case subclass may begin from any alowable symbol.
+    -->
+        <GROUP name="Parser SQL">
+            <SQLCLASS name="71" description="SQL parser error" exception_name="xSQLParserError">
+                <SQLSTATE name="71000">
+                    <DESCRIPTION>ERR_SQL_PARSER_ERROR</DESCRIPTION>
+                    <MESSAGE>%S</MESSAGE>
+                </SQLSTATE>
+            </SQLCLASS>
+        </GROUP>
+    
+        <GROUP name="Dynamic SQL">
+            <SQLCLASS name="07" description="Dynamic SQL error" exception_name="xDynamicSQLError">
+                <SQLSTATE name="07000">
+                    <DESCRIPTION>ERR_DYNAMIC_SQL_ERROR</DESCRIPTION>
+                    <MESSAGE>Ошибка Dynamic-SQL.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="07001">
+                    <DESCRIPTION>ERR_CLAUSE_DOESNOT_MATCH_DYNAMIC_PARAM_SPECIFICATION</DESCRIPTION>
+                    <MESSAGE>Использованное выражение не совпадает со спецификацией параметров.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="07002">
+                    <DESCRIPTION>ERR_CLAUSE_DOESNOT_MATCH_TARGET_SPECIFICATION</DESCRIPTION>
+                    <COMMENTS>
+                        Number of columns does not match number of host variables.
+                    </COMMENTS>
+                    <MESSAGE>Использованное выражение не совпадает с целевой спецификацией.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="07004">
+                    <DESCRIPTION>ERR_CLAUSE_REQUIRED_FOR_DYNAMIC_PARAMETERS</DESCRIPTION>
+                    <MESSAGE>Использованное выражение требует динамических параметров.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="07007">
+                    <DESCRIPTION>ERR_CLAUSE_REQUIRED_FOR_RESULT_FIELDS</DESCRIPTION>
+                    <MESSAGE>Использованное выражение требует результирующих полей.</MESSAGE>
+                </SQLSTATE>
+            </SQLCLASS>
+            <SQLCLASS name="37" description="Syntax error or access rule violation in dynamic SQL statement" exception_name="xDynSyntaxOrAccessSQLError">
+                <SQLSTATE name="37000">
+                    <DESCRIPTION>ERR_SYNTAX_ERROR_OR_ACCESS_RULE_VIOLATION_DYNAMIC_SQL</DESCRIPTION>
+                    <MESSAGE>Синтаксическая ошибка или ошибка доступа.</MESSAGE>
+                </SQLSTATE>
+            </SQLCLASS>
+        </GROUP>
+        <GROUP name="Common SQL">
+            <SQLCLASS name="21" description="Cardinality Violation" exception_name="xCardinalitySQLError">
+                <SQLSTATE name="21000">
+                    <DESCRIPTION>ERR_CARDINALITY_VIOLATION</DESCRIPTION>
+                    <COMMENTS>
+                        Singleton select returns more than one row,
+                        or subquery preceded by = returns more than one value.
+                    </COMMENTS>
+                    <MESSAGE>Подзапрос вернул более одного значения. Это не допускается для подзапросов которые используются в операциях =, !=, &lt;, &lt;= , &gt;, &gt;=, или когда результат подзапроса используется как выражение.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="21501">
+                    <DESCRIPTION>ERR_TOO_FEW_VALUES</DESCRIPTION>
+                    <COMMENTS>
+                        insert into t1 (f1,f2) values (1)
+                    </COMMENTS>
+                    <MESSAGE>Слишком мало значений.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="21502">
+                    <DESCRIPTION>ERR_TOO_MUCH_VALUES</DESCRIPTION>
+                    <COMMENTS>
+                        insert into t1 (f1,f2) values (1,2,3)
+                    </COMMENTS>
+                    <MESSAGE>Слишком много значений.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="21503">
+                    <DESCRIPTION>ERR_FIELD_COUNT</DESCRIPTION>
+                    <COMMENTS>
+                        select .... from ... where f1 in select( f1, f2, .... )
+                    </COMMENTS>
+                    <MESSAGE>Только одно выражение может быть определено в списке, за исключением подзапроса с конструкцией EXISTS.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="21504">
+                    <DESCRIPTION>ERR_TOO_FEW_JOIN_CONDITIONS</DESCRIPTION>
+                    <COMMENTS>
+                        select * from t1, t2, t3 where t1.f1 = t2.f1
+                    </COMMENTS>
+                    <MESSAGE>Слишком мало условий объединения.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="21505">
+                    <DESCRIPTION>ERR_DUPLICATED_JOIN_CONDITION</DESCRIPTION>
+                    <COMMENTS>
+                        select * from t1, t2 where t1.f1 = t2.f1 and t1.f1 = t2.f1
+                    </COMMENTS>
+                    <MESSAGE>Присутствует дублирующее условие соединения.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="21506">
+                    <DESCRIPTION>ERR_SUBQUERY_RETURN_NO_CURSOR</DESCRIPTION>
+                    <COMMENTS>
+                        CREATE PROCEDURE sp1() BEGIN END;
+						SELECT * FROM ( CALL sp1()).
+                    </COMMENTS>
+                    <MESSAGE>Подзапрос не сформировал курсор.</MESSAGE>
+                </SQLSTATE>
+
+            </SQLCLASS>
+
+            <SQLCLASS name="42" description="Syntax Error or Access Rule Violation" exception_name="xSyntaxOrAccessSQLError">
+                <SQLSTATE name="42000">
+                    <DESCRIPTION>ERR_SYNTAX_ERROR_OR_ACCESS_RULE_VIOLATION</DESCRIPTION>
+                    <MESSAGE>Синтаксическая ошибка или ошибка доступа.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="42501">
+                    <DESCRIPTION>ERR_SYNTAX_ERROR</DESCRIPTION>
+                    <MESSAGE>Строка %S. Некорректный синтаксис в районе &quot;%S&quot;. </MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="42502">
+                    <DESCRIPTION>ERR_AMBIGUOUS_COLUMN</DESCRIPTION>
+                    <COMMENTS>
+                        select f1, f1 from t1, t2 where ...
+                    </COMMENTS>
+                    <MESSAGE>Неоднозначное имя колонки &quot;%S&quot;</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="42504">
+                    <DESCRIPTION>ERR_DUPLICATE_ALIAS</DESCRIPTION>
+                    <COMMENTS>select * from t1 alias, t2 alias</COMMENTS>
+                    <MESSAGE>Таблицы &quot;%S&quot; имеют один и тот же алиас.</MESSAGE>
+                </SQLSTATE>
+
+                <SQLSTATE name="42506">
+                    <DESCRIPTION>ERR_UNDEFINED_FUNCTION</DESCRIPTION>
+                    <COMMENTS>select ttttt(f1) from t</COMMENTS>
+                    <MESSAGE>Функция &quot;%S&quot; не определена.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="42507">
+                    <DESCRIPTION>ERR_RESERVED_NAME</DESCRIPTION>
+                    <COMMENTS>create table count ....</COMMENTS>
+                    <MESSAGE>Недопустимое использование ключевого слова.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="42508">
+                    <DESCRIPTION>ERR_MIX_AGREGATIVE_AND_NORMAL</DESCRIPTION>
+                    <COMMENTS></COMMENTS>
+                    <MESSAGE>В конструкции SELECT вы можете использовать только поля перечисленные в GROUP BY и агрегативные функции.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="42509">
+                    <DESCRIPTION>ERR_AGGR_FUNC_WITH_AGGR_PARAM</DESCRIPTION>
+                    <COMMENTS></COMMENTS>
+                    <MESSAGE>Агрегативная функция не может принимать другую агрегативную функцию в качестве аргумента.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="42510">
+                    <DESCRIPTION>ERR_AGGR_FUNC_IN_WHERE_OR_HAVING</DESCRIPTION>
+                    <COMMENTS></COMMENTS>
+                    <MESSAGE>Агрегативная функция не может не может быть использована в конструкциях WHERE или HAVING.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="42511">
+                    <DESCRIPTION>ERR_DATETIME_NOT_ALLOWED_IN_SUM_FUNC</DESCRIPTION>
+                    <COMMENTS></COMMENTS>
+                    <MESSAGE>Агрегативные функции SUM или AVERAGE не могут принимать DATE, TIME, DATETIME типы в качестве аргумента.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="42512">
+                    <DESCRIPTION>ERR_AGGR_FUNC_IMPROPER_USAGE</DESCRIPTION>
+                    <COMMENTS></COMMENTS>
+                    <MESSAGE>Агрегативная функция не может быть использована.</MESSAGE>
+                </SQLSTATE>
+            </SQLCLASS>
+            <SQLCLASS name="55" description="SQL Semantic error" exception_name="xVSQL_Semantic">
+                <SQLSTATE name="55000">
+                    <DESCRIPTION>ERR_SQL_SEMANTIC_ERROR</DESCRIPTION>
+                    <MESSAGE>Семантическая ошибка.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="55501">
+                    <DESCRIPTION>ERR_OBJECTPTR_BAD_SPECIFICATION</DESCRIPTION>
+                    <MESSAGE>Неправильная спецификация для ObjectPtr &quot;%S&quot;.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="55502">
+                    <DESCRIPTION>ERR_COMMAND_NOT_ALLOWED</DESCRIPTION>
+                    <MESSAGE>&quot;%S&quot; не разрешено в данном контексте.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="55503">
+                    <DESCRIPTION>ERR_INVALID_OBJECT</DESCRIPTION>
+                    <MESSAGE>Объект &quot;%S&quot; содержит недопустимые инструкции &quot;%S&quot;.</MESSAGE>
+                </SQLSTATE>								
+            </SQLCLASS>
+
+            <SQLCLASS name="56" description="Cursor Exceptions" exception_name="xCursorError">
+                <SQLSTATE name="56000">
+                    <DESCRIPTION>ERR_CURSOR_EXCEPTION</DESCRIPTION>
+                    <MESSAGE>Ошибка курсора.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="56500">
+                    <DESCRIPTION>ERR_CURSOR_READONLY</DESCRIPTION>
+                    <MESSAGE>Курсор &quot;%S&quot; только для чтения.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="56501">
+                    <DESCRIPTION>ERR_CURSOR_ALREADY_OPENED</DESCRIPTION>
+                    <MESSAGE>Курсор &quot;%S&quot; уже открыт.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="56502">
+                    <DESCRIPTION>ERR_CURSOR_ALREADY_CLOSED</DESCRIPTION>
+                    <MESSAGE>Курсор &quot;%S&quot; уже закрыт.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="56503">
+                    <DESCRIPTION>ERR_CURSOR_WRONG_POSITION</DESCRIPTION>
+                    <MESSAGE>Курсор &quot;%S&quot; ошибка при выполнении &quot;%S&quot;.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="56504">
+                    <DESCRIPTION>ERR_CURSOR_RW_CLIENT_CURSOR</DESCRIPTION>
+                    <MESSAGE>Клиентский курсор не может быть RW.</MESSAGE>
+                </SQLSTATE>
+            </SQLCLASS>
+
+        </GROUP>
+        <GROUP name="Data errors">
+            <SQLCLASS name="22" description="Data Exception" exception_name="xDataSQLError">
+                <SQLSTATE name="22000">
+                    <DESCRIPTION>ERR_DATA_EXCEPTION</DESCRIPTION>
+                    <MESSAGE>Ошибка данных.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22001">
+                    <DESCRIPTION>ERR_STRING_DATA_RIGHT_TRUNCATION</DESCRIPTION>
+                    <COMMENTS>
+                        String data truncated (on right) on insert or update.
+                    </COMMENTS>
+                    <MESSAGE>Ошибка - строковые данные обрезаны справа.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22003">
+                    <DESCRIPTION>ERR_NUMERIC_VALUE_OUT_OF_RANGE</DESCRIPTION>
+                    <COMMENTS>
+                        Arithmetic overflow error.
+                    </COMMENTS>
+                    <MESSAGE>Арифметическое переполнение.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22004">
+                    <DESCRIPTION>ERR_NULL_VALUE_NOT_ALLOWED</DESCRIPTION>
+                    <MESSAGE>NULL значение не разрешено здесь использовать.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22005">
+                    <DESCRIPTION>ERR_ERROR_IN_ASSIGNMENT</DESCRIPTION>
+                    <COMMENTS>
+                        Data type conversion error.
+                    </COMMENTS>
+                    <MESSAGE>Ошибка при присваивании.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22007">
+                    <DESCRIPTION>ERR_INVALID_DATETIME_FORMAT</DESCRIPTION>
+                    <MESSAGE>Некорректный datetime формат.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22008">
+                    <DESCRIPTION>ERR_DATETIME_FIELD_OVERFLOW</DESCRIPTION>
+                    <COMMENTS>
+                        Data type conversion error.
+                    </COMMENTS>
+                    <MESSAGE>Переполнение Datetime поля.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22011">
+                    <DESCRIPTION>ERR_SUBSTRING_ERROR</DESCRIPTION>
+                    <MESSAGE>Substring ошибка.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22012">
+                    <DESCRIPTION>ERR_DIVISION_BY_ZERO</DESCRIPTION>
+                    <COMMENTS>
+                        Divide by zero error.
+                    </COMMENTS>
+                    <MESSAGE>Деление на ноль.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22019">
+                    <DESCRIPTION>ERR_INVALID_ESCAPE_CHARACTER</DESCRIPTION>
+                    <COMMENTS>
+                        Occures when escape-sequence more than one symbol.
+                    </COMMENTS>
+                    <MESSAGE>Обнаружен некорректный escape-символ. Использовано меньше байт чем необходимо для формирования корректного символа.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22023">
+                    <DESCRIPTION>ERR_INVALID_PARAMETER_VALUE</DESCRIPTION>
+                    <MESSAGE>Некорректное значение параметра.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22025">
+                    <DESCRIPTION>ERR_INVALID_ESCAPE_SEQUENCE</DESCRIPTION>
+                    <COMMENTS>
+                        Invalid escape sequence, for example, escape char not followed by %, _, or escape char.
+                    </COMMENTS>
+                    <MESSAGE>Некорректная строка шаблона. Символ перед escape-символом должен быть знаком процента, подчеркивания, квадратной скобки или escape-символом.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22027">
+                    <DESCRIPTION>ERR_TRIM_ERROR</DESCRIPTION>
+                    <MESSAGE>Ошибка при обрезке.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="22501">
+                    <DESCRIPTION>ERR_CONVERT_NOT_ALLOWED</DESCRIPTION>
+                    <MESSAGE>Конвертация не разрешена.</MESSAGE>
+                </SQLSTATE>
+
+            </SQLCLASS>
+        </GROUP>
+
+        <GROUP name="Backup errors">
+            <SQLCLASS name="66" description="Backup Exceptions" exception_name="xBackupError">
+				<SQLSTATE name="66000">
+                    <DESCRIPTION>ERR_BACKUP_EXCEPTION</DESCRIPTION>
+                    <MESSAGE>Backup ошибка.</MESSAGE>
+				</SQLSTATE>
+                <SQLSTATE name="66501">
+                    <DESCRIPTION>ERR_INVALID_PATH</DESCRIPTION>
+                    <MESSAGE>Путь &quot;%S&quot; некорректен.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="66502">
+                    <DESCRIPTION>ERR_RAM_DATABASE</DESCRIPTION>
+                    <MESSAGE>БД &quot;%S&quot; is RAM-based.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="66503">
+                    <DESCRIPTION>ERR_DATABASE_FAIL</DESCRIPTION>
+                    <MESSAGE>БД &quot;%S&quot; ошибки при диагностике.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="66504">
+                    <DESCRIPTION>ERR_FILECOPY_FAIL</DESCRIPTION>
+                    <MESSAGE>Файл &quot;%S&quot; ошибка копирования &quot;%S&quot;.</MESSAGE>
+                </SQLSTATE>
+			</SQLCLASS>
+        </GROUP>
+
+        <GROUP name="Server errors">
+            <SQLCLASS name="67" description="Schedule Exceptions" exception_name="xScheduleError">
+                <SQLSTATE name="67000">
+                    <DESCRIPTION>ERR_SCHEDULE_EXCEPTION</DESCRIPTION>
+                    <MESSAGE>Ошибка расписания.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="67500">
+                    <DESCRIPTION>ERR_ENDSTAMP_LESS_STARTSTAMP</DESCRIPTION>
+                    <MESSAGE>Событие &quot;%S&quot; время завершения меньше времени старта.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="67501">
+                    <DESCRIPTION>ERR_DATABASE_NOT_REGISTERED</DESCRIPTION>
+                    <MESSAGE>Событие &quot;%S&quot;. БД &quot;%S&quot; не зарегистрирована на сервере.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="67502">
+                    <DESCRIPTION>ERR_EMPTY_EVENT_NAME</DESCRIPTION>
+                    <MESSAGE>Пустое имя события.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="67503">
+                    <DESCRIPTION>ERR_EMPTY_EVENT_ACTION</DESCRIPTION>
+                    <MESSAGE>Событие &quot;%S&quot;. Действие не определено.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="67504">
+                    <DESCRIPTION>ERR_INTERVAL_ERROR</DESCRIPTION>
+                    <MESSAGE>Событие &quot;%S&quot;. Ошибка определения интервала.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="67505">
+                    <DESCRIPTION>ERR_EVENT_NOT_FOUND</DESCRIPTION>
+                    <MESSAGE>Событие &quot;%S&quot; не найдено.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="67506">
+                    <DESCRIPTION>ERR_EVENT_NAME_NOT_UNIQUE</DESCRIPTION>
+                    <MESSAGE>Событие &quot;%S&quot; - не уникальное имя.</MESSAGE>
+                </SQLSTATE>                             
+            </SQLCLASS>
+        </GROUP>
+
+        <GROUP name="Sqlite errors">
+            <SQLCLASS name="68" description="Sqlite Exceptions" exception_name="xSqliteError">
+                <SQLSTATE name="68000">
+                    <DESCRIPTION>ERR_SQLITE_EXCEPTION</DESCRIPTION>
+                    <MESSAGE>Sqlite ошибка.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="68500">
+                    <DESCRIPTION>ERR_SQLITE_DATABASE</DESCRIPTION>
+                    <MESSAGE>Sqlite db &quot;%S&quot;: Ошибка : &quot;%S&quot;.</MESSAGE>
+                </SQLSTATE>
+                <SQLSTATE name="68501">
+                    <DESCRIPTION>ERR_SQLITE_UNEXPECTED_SQLEXECUTE</DESCRIPTION>
+                    <MESSAGE>Sqlite db &quot;%S&quot;: Ошибка - вызов SqlExecute вместо SqlSelect.</MESSAGE>
+                </SQLSTATE>      
+                <SQLSTATE name="68502">
+                    <DESCRIPTION>ERR_SQLITE_ENGINE</DESCRIPTION>
+                    <MESSAGE>Sqlite ошибка : &quot;%S&quot;.</MESSAGE>
+                </SQLSTATE>                                                          
+            </SQLCLASS>
+        </GROUP>
+
+<!-- 	Actually it is only for reservation range 50000-50FFF.
+		We should never throw this exception or define some sqlstate in that range.
+-->
+		<GROUP name="User-defined errors">
+            <SQLCLASS name="50" description="User-defined errors" exception_name="xUserError">
+				<SQLSTATE name="50000">
+                    <DESCRIPTION>ERR_USER_EXCEPTION</DESCRIPTION>
+                    <MESSAGE>Пользовательская ошибка.</MESSAGE>
+				</SQLSTATE>
+			</SQLCLASS>
+        </GROUP>        
+</DATA>
