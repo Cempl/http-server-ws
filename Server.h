@@ -29,10 +29,13 @@
 #include <openssl\buffer.h>
 #include <openssl\rc4.h>
 
-//
+// Win .h
 #include <Windows.h>
 #include <stdexcept>
-/*#include <vld.h>*/ // Visual Leak Detector 
+/*#include <vld.h>*/ // Visual Leak Detector
+
+// My exception
+#include "OtherExceptions.h"
 
 
 /*******************************************************************************/
@@ -41,7 +44,6 @@
 
 /*******************************************************************************/
 using namespace std;
-
 
 /*******************************************************************************/
 extern const uint16_t gLengthMessage;

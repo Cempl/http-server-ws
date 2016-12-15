@@ -27,7 +27,7 @@ void ResponseRequest::Send_response(SOCKET client_socket, string &tmp_res, int &
 
 	if (t_result == SOCKET_ERROR)
 	{
-		throw exception("Error in send(): " + WSAGetLastError());
+		throw OtherExceptions("Error in send(): " + WSAGetLastError());
 	}
 }
 
@@ -46,7 +46,7 @@ void ResponseRequest::Response_js(SOCKET client_socket, string &file_name)
 
 	if (!fin.is_open())
 	{
-		throw exception( ("Missing " + path_to_file).c_str() );
+		throw OtherExceptions( ("Missing " + path_to_file).c_str() );
 	}
 	else
 	{
@@ -80,7 +80,7 @@ void ResponseRequest::Response_image(SOCKET client_socket, string &file_name)
 
 	if (!fin.is_open())
 	{
-		throw exception( ("Missing " + path_to_file).c_str() );
+		throw OtherExceptions( ("Missing " + path_to_file).c_str() );
 	}
 	else
 	{
@@ -114,7 +114,7 @@ void ResponseRequest::Response_css(SOCKET client_socket, string &file_name)
 
 	if (!fin.is_open())
 	{
-		throw exception( ("Missing " + path_to_file).c_str() );
+		throw OtherExceptions( ("Missing " + path_to_file).c_str() );
 	}
 	else
 	{
@@ -148,7 +148,7 @@ void ResponseRequest::Response_default_html(SOCKET client_socket)
 
 		if (!fin.is_open())
 		{
-			throw exception( ("Missing " + path_to_file).c_str() );
+			throw OtherExceptions( ("Missing " + path_to_file).c_str() );
 		}
 		else
 		{
@@ -184,7 +184,7 @@ void ResponseRequest::Response_html(SOCKET client_socket, string &file_name)
 
 	if (!fin.is_open())
 	{
-		throw exception( ("Missing " + path_to_file).c_str() );
+		throw OtherExceptions( ("Missing " + path_to_file).c_str() );
 	}
 	else
 	{

@@ -148,6 +148,7 @@
     <ClInclude Include="Interrupt.h" />
     <ClInclude Include="LogFile.h" />
     <ClInclude Include="MyCover.h" />
+    <ClInclude Include="OtherExceptions.h" />
     <ClInclude Include="ResponseRequest.h" />
     <ClInclude Include="SendRecv.h" />
     <ClInclude Include="Var_for_threads.h" />

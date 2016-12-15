@@ -206,10 +206,10 @@ int ResponseRequest::Request(SOCKET client_socket)
 			closesocket(client_socket);
 		}
 	}
-	catch(exception& e)
+	catch(OtherExceptions& exp)
 	{
 		LogFile log;
-		log.write(e.what());
+		log.write(exp.what());
 	}
 
 	return 0;
