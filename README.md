@@ -5,6 +5,7 @@
 #Dependencies
 
 	• openSSL C++ libraries (for WebSocket) 
+	• VSDK (Valentina DB, Valentina Server - valentina-db.com/en/)
 
 #Features
 
@@ -12,11 +13,13 @@
 	• HTTP (1.1) persistent connection    
 	• implemented protocol support WebSocket (RFC 6455)    
 	• independent and parallel processing of all requests				
-	• integrated data base SQlite				
+	• integrated data base ValentinaDB				
 	• server logs
+	• data encryption
 
 #Compile and run
 
-	• compile in Microsoft Visual Studio 2015    
+	• compile in Microsoft Visual Studio 2015
+	• installation with the default settings Valentina Server
 	• direct your favorite browser to for instance http://localhost:27015/
 
