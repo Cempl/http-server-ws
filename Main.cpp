@@ -17,7 +17,7 @@ void main()
 
 		first_server.start_server();
 	}
-	catch(OtherExceptions& e)
+	catch(exception& e)
 	{
 		LogFile log;
 		log.write(e.what());

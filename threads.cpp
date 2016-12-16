@@ -16,7 +16,7 @@ void Server::Processing_a_connection_request()
 			closesocket(server_socket);
 			WSACleanup();
 
-			throw OtherExceptions("Accept failed with error: " + WSAGetLastError());
+			throw exception("Accept failed with error: " + WSAGetLastError());
 		}
 
 		thread thr(&ResponseRequest::Request, &RR, client_socket);

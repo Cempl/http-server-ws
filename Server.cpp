@@ -22,7 +22,7 @@ void Server::initialization_wsa()
 
 	if (result != 0)
 	{
-		throw OtherExceptions("Error WSAStartup: " + result);
+		throw exception("Error WSAStartup: " + result);
 	}
 }
 
@@ -36,7 +36,7 @@ void Server::create_socket()
 		{
 			WSACleanup();
 
-			throw OtherExceptions("Error at socket(): " + WSAGetLastError());
+			throw exception("Error at socket(): " + WSAGetLastError());
 		}
 }
 
@@ -54,7 +54,7 @@ void Server::bundle_socket_adresse()
 	{
 		closesocket(server_socket);
 		WSACleanup();
-		throw OtherExceptions("Bind failed with error: " + WSAGetLastError());
+		throw exception("Bind failed with error: " + WSAGetLastError());
 	}
 }
 
@@ -66,6 +66,6 @@ void Server::listening_connection()
 	{
 		closesocket(server_socket);
 		WSACleanup();
-		throw OtherExceptions("Bind failed with error: " + WSAGetLastError());
+		throw exception("Bind failed with error: " + WSAGetLastError());
 	}
 }

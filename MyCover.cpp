@@ -13,7 +13,7 @@ void Cover::my_send(SOCKET& client_socket, string& message)
 
 	if(result == SOCKET_ERROR)
 	{
-		throw OtherExceptions("Error in send(): " + WSAGetLastError());
+		throw exception("Error in send(): " + WSAGetLastError());
 	}
 }
 
@@ -26,7 +26,7 @@ void Cover::my_recv(SOCKET& client_socket, string& message)
 
 	if(result == SOCKET_ERROR)
 	{
-		throw OtherExceptions("Error in recv(): " + WSAGetLastError());
+		throw exception("Error in recv(): " + WSAGetLastError());
 	}
 	message = buffer;
 }

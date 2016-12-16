@@ -12,10 +12,6 @@
 
 
 /*******************************************************************************/
-typedef exception interrException;
-
-
-/*******************************************************************************/
 using namespace std;
 
 
@@ -71,7 +67,7 @@ class interruptible_thread
 										{
 											func();
 										}
-										catch(interrException& e)
+										catch(interruptException& e)
 										{
 											
 										}
@@ -91,7 +87,7 @@ class interruptible_thread
 										{
 											func(arg);
 										}
-										catch(interrException& e)
+										catch(interruptException& e)
 										{
 											
 										}
@@ -111,7 +107,7 @@ class interruptible_thread
 										{
 											(class_ptr->*func)(arg); 
 										}
-										catch(interrException& e)
+										catch(interruptException& e)
 										{
 											
 										}

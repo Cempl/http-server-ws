@@ -10,28 +10,15 @@ using namespace std;
 
 
 /*******************************************************************************/
-class OtherExceptions
+class interruptException
 {
 	public://////////////////////////////////////////////////////////////////////
 
-		OtherExceptions(string ExpMsg)
-		{
-			exceptionText = ExpMsg;
-
-			what();
-		}
-
-		~OtherExceptions()
+		interruptException()
 		{
 		}
 
-
-	public://////////////////////////////////////////////////////////////////////
-
-		string what() { return exceptionText; }
-
-
-	protected:///////////////////////////////////////////////////////////////////
-
-		string exceptionText = string();
+		~interruptException()
+		{
+		}
 };

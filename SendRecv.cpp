@@ -27,7 +27,7 @@ void SendRecv::websocket_handshake(SOCKET client_socket, string key)
 	{
 		my_send(client_socket, response);
 	}
-	catch(OtherExceptions e)
+	catch(exception e)
 	{
 		LogFile log;
 		log.write(e.what());
@@ -127,7 +127,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 			{
 				delete[] mask;
 
-				throw OtherExceptions("Error in websocket content");
+				throw exception("Error in websocket content");
 			}
 
 	index_first_data_byte = index_first_mask + 4;
@@ -215,7 +215,7 @@ void SendRecv::send_data(SOCKET& client_socket)
 
 				u_mutex.unlock();
 			}
-			catch(OtherExceptions& e)
+			catch(exception& e)
 			{
 				u_mutex.unlock();
 
@@ -274,7 +274,7 @@ int SendRecv::Thread_recv(SOCKET client_socket)
 
 			message.clear();
 		}
-		catch(OtherExceptions& e)
+		catch(exception& e)
 		{
 			message.clear();
 
