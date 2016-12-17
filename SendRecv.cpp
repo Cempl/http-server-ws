@@ -8,6 +8,8 @@ vector<string> my_gList;
 mutex glist_mutex;
 condition_variable gdata_cond;
 
+bool queueClear = false;
+
 
 
 /*******************************************************************************/
@@ -27,7 +29,7 @@ void SendRecv::websocket_handshake(SOCKET client_socket, string key)
 	{
 		my_send(client_socket, response);
 	}
-	catch(exception e)
+	catch(exception& e)
 	{
 		LogFile log;
 		log.write(e.what());
@@ -201,27 +203,40 @@ void SendRecv::websocket_set_content(string& data, int64_t data_length, int data
 void SendRecv::send_data(SOCKET& client_socket)
 {		
 	int index = 0;
+	bool need_clear = false;
 
 	while(true)
-	{
-		
-			unique_lock<mutex> u_mutex(glist_mutex);
+	{		
+		unique_lock<mutex> u_mutex(glist_mutex);
 
-			try
+		try
+		{
+			if( queueClear && need_clear )
 			{
-					interruptible_wait(gdata_cond, u_mutex, [&index]{return (index < my_gList.size());});
-					my_send(client_socket, my_gList[index]);
-					++index;
-
-				u_mutex.unlock();
+				index = 0;
+				need_clear = false;
 			}
-			catch(exception& e)
+
+			interruptible_wait(gdata_cond, u_mutex, [&index]{return (index < my_gList.size());});
+			my_send(client_socket, my_gList[index]);
+			++index;
+
+			if( index == 100 ) // Max length of the queue
 			{
-				u_mutex.unlock();
-
-				LogFile log;
-				log.write(e.what());
+				my_gList.erase(my_gList.begin(), my_gList.begin() + 5);
+				queueClear = true;
+				need_clear = true;
 			}
+
+			u_mutex.unlock();
+		}
+		catch(exception& e)
+		{
+			u_mutex.unlock();
+
+			LogFile log;
+			log.write(e.what());
+		}
 	}
 
 }

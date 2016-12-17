@@ -69,7 +69,7 @@ class interruptible_thread
 										}
 										catch(interruptException& e)
 										{
-											
+											// We need only catch exception, and nothing else
 										}
 									 });
 
@@ -89,7 +89,7 @@ class interruptible_thread
 										}
 										catch(interruptException& e)
 										{
-											
+											// We need only catch exception, and nothing else
 										}
 									 });
 
@@ -109,7 +109,7 @@ class interruptible_thread
 										}
 										catch(interruptException& e)
 										{
-											
+											// We need only catch exception, and nothing else
 										}
 									 });
 
