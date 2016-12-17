@@ -206,6 +206,7 @@ void SendRecv::websocket_set_content(string& data, int64_t data_length, int data
 void SendRecv::send_data(SOCKET& client_socket)
 {		
 	int index = 0;
+	int max_length = 100;
 	bool need_clear = false;
 
 	while(true)
@@ -225,9 +226,9 @@ void SendRecv::send_data(SOCKET& client_socket)
 			++index;
 
 			// Max length of the queue
-			if( index == 100 )
+			if( index == max_length )
 			{
-				my_gList.erase(my_gList.begin(), my_gList.begin() + 5);
+				my_gList.erase(my_gList.begin(), my_gList.begin() + max_length);
 				queueClear = true;
 				need_clear = true;
 			}
