@@ -11,7 +11,6 @@ condition_variable gdata_cond;
 bool queueClear = false;
 
 
-
 /*******************************************************************************/
 void SendRecv::websocket_handshake(SOCKET client_socket, string key)
 {
@@ -84,14 +83,16 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 	{
 		delete[] mask;
 
-		return 1; // close connection
+		// close connection
+		return 1;
 	}
 
 	if ((u_char)data[0] == 130)
 	{
 		delete[] mask;
 
-		return 2; // binary data
+		// binary data
+		return 2;
 	}
 
 	length_code = (u_char) data[1] & 127;
@@ -148,7 +149,8 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 
 	delete[] mask;
 
-	return 0; // text data
+	// text data
+	return 0;
 }
 
 
@@ -159,7 +161,8 @@ void SendRecv::websocket_set_content(string& data, int64_t data_length, int data
 
 	if (data_type == 2)
 	{
-		message.push_back(130); // binary data
+		// binary data
+		message.push_back(130);
 	}
 	else
 	{
@@ -221,7 +224,8 @@ void SendRecv::send_data(SOCKET& client_socket)
 			my_send(client_socket, my_gList[index]);
 			++index;
 
-			if( index == 100 ) // Max length of the queue
+			// Max length of the queue
+			if( index == 100 )
 			{
 				my_gList.erase(my_gList.begin(), my_gList.begin() + 5);
 				queueClear = true;
@@ -238,26 +242,30 @@ void SendRecv::send_data(SOCKET& client_socket)
 			log.write(e.what());
 		}
 	}
-
 }
 
 
 /*******************************************************************************/
 int SendRecv::recv_data(string& data)
 {
-	auto result = websocket_get_content(data, static_cast<int>(data.size())); // Раскодировали
+	// Decode data
+	auto result = websocket_get_content(data, static_cast<int>(data.size()));
 
 	if(result == 1)
 	{
 		return 1;
 	}
 
-	websocket_set_content(data, data.size(), result); // Перекодировали сообщение
+	// recoded data
+	websocket_set_content(data, data.size(), result);
 
 	lock_guard<mutex> guard(glist_mutex); 
 
-	my_gList.push_back(data); // Записали сообщение в очередь
-	gdata_cond.notify_all(); // Будим потоки для отправки сообщения
+	// Added data in queue
+	my_gList.push_back(data);
+
+	// Wake up streams to send a data
+	gdata_cond.notify_all();
 	
 	return 0;
 }
@@ -274,7 +282,8 @@ int SendRecv::Thread_recv(SOCKET client_socket)
 	{
 		try
 		{
-			my_recv(client_socket, message); // Принимаем данные от клиента
+			// Accept data from client
+			my_recv(client_socket, message);
 
 			int result = recv_data(message);
 
@@ -284,7 +293,8 @@ int SendRecv::Thread_recv(SOCKET client_socket)
 				thr.join();
 				message.clear();
 
-				return 0; // Normal exit
+				// Normal exit
+				return 0;
 			}
 
 			message.clear();
@@ -298,5 +308,6 @@ int SendRecv::Thread_recv(SOCKET client_socket)
 		}
 	}  
 
-	return 1; // Not normal exit
+	// Not normal exit
+	return 1;
 }
