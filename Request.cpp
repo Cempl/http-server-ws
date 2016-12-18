@@ -25,7 +25,7 @@ int ResponseRequest::Request(SOCKET client_socket)
 	{
 		my_recv(client_socket, buf);
 
-		cout << buf;
+		cout << buf << "\n";
 
 		Cleaning_refuse_in_buffer(buf, entire_query);
 
@@ -133,6 +133,17 @@ int ResponseRequest::Request(SOCKET client_socket)
 		// If query POST
 		if (entire_query.at(0) == "POST")
 		{
+			// It may JS not have time to perform calculations and sends an POST empty query (size empty query 518)
+			if (buf.size() == 518)
+			{
+				file_name = "index.html";
+
+				Response_html(client_socket, file_name);
+				closesocket(client_socket);
+
+				return 0;
+			}
+
 			if (file_name != "index.html" || file_name == "")
 			{
 				string inLogin = string();
