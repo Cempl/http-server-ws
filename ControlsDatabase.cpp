@@ -136,7 +136,7 @@ bool ControlsDatabase::AddNewUser(String inName, String inEmail, String inPass)
 			+ inEmail + "', '" 
 			+ inPass + "');");
 	}
-	catch (...)
+	catch (exception& e)
 	{
 		return false;
 	}

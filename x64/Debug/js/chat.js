@@ -6,13 +6,27 @@ document.getElementById('name_in_chat').innerHTML = "Your name in chat: " + user
 // send masg from form
 document.forms.message_test.onsubmit = function ()
 {
-  var outgoingMessage = this.message.value;
+        var outgoingMessage = this.message.value;
 
-  beta_socket.send(outgoingMessage);
-  
-  document.forms.message_test.reset();
-  
-  return false;
+        // check empty form or all space and not send form if there is
+        var flag = 0;
+
+        for (var i = 0; i < outgoingMessage.length; i++)
+        { 
+            if (outgoingMessage.charAt(i)!=' ')flag=1;
+        }
+        if (flag == 0) 
+        {
+            return false;
+        }
+        else
+        {
+            beta_socket.send(outgoingMessage);
+            
+            document.forms.message_test.reset();
+            
+            return false;
+        }
 };
 
 beta_socket.onopen = function()

@@ -23,17 +23,6 @@ string ResponseRequest::Path_folder()
 /*******************************************************************************/
 string ResponseRequest::Read_symbolic_content(ifstream& inFin)
 {
-	/*string response_body = string();
-	
-	char symbol = char();
-
-	while (!inFin.eof())
-	{
-		symbol = inFin.get();
-
-		response_body += symbol;
-	}*/ // only css
-
 	string response_body((istreambuf_iterator<char>(inFin)), istreambuf_iterator<char>());
 
 	return response_body;

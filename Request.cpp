@@ -8,16 +8,18 @@
 /*******************************************************************************/
 int ResponseRequest::Request(SOCKET client_socket)
 {
+			bool				flag = bool();
+
 			string				buf(12288, 0);	
 			string				file_name = { 0 };
 			string				extension_file = { 0 };
 			string				not_supported_method = "method_is_not_supported.html";
 
 			vector<string>		entire_query;
-	const	vector<string>		additional_type_list = { "css" };
-	const	vector<string>		image_type_list = { "jpg", "tiff", "png", "jpeg", "gif", "ico" };
-	const	vector<string>		web_type_list = { "html" };
-	const	vector<string>		js_type_list = { "js" };
+	const	vector<string>		additional_type_list = { ".css" };
+	const	vector<string>		image_type_list = { ".jpg", ".tiff", ".png", ".jpeg", ".gif", ".ico" };
+	const	vector<string>		web_type_list = { ".html" };
+	const	vector<string>		js_type_list = { ".js" };
 	
 	try
 	{
@@ -27,10 +29,14 @@ int ResponseRequest::Request(SOCKET client_socket)
 
 		Cleaning_refuse_in_buffer(buf, entire_query);
 
+		// Parse page name
+		Parse_name_page(entire_query.at(1), file_name, extension_file, flag);
+
 		// If query GET
 		if (entire_query.at(0) == "GET")
 		{
-			size_t value_search = entire_query.at(1).find('.'); // Позиция точки в строке
+			// Point position in string
+			size_t value_search = entire_query.at(1).find('.');
 
 			if (value_search == -1)
 			{
@@ -39,6 +45,7 @@ int ResponseRequest::Request(SOCKET client_socket)
 				if ((key_find - entire_query.begin()) != entire_query.size())
 				{
 					SR.websocket_handshake(client_socket, entire_query.at((key_find - entire_query.begin()) + 1));
+
 					closesocket(client_socket);
 
 					return 0;
@@ -50,16 +57,9 @@ int ResponseRequest::Request(SOCKET client_socket)
 				return 0;
 			}
 
-			// Write the file name with a dot at the end of
-			file_name.append(entire_query.at(1), 1, value_search);
-			file_name.erase(0, 1);
-
-			extension_file.append(entire_query.at(1), value_search + 1, -1);
-			extension_file.erase(0, 1);
-
 			file_name += extension_file;
 
-			if (file_name == "chat.html")
+			if (file_name == "chat.html" || file_name == "")
 			{
 				file_name = "index.html";
 
@@ -96,7 +96,10 @@ int ResponseRequest::Request(SOCKET client_socket)
 					}
 				}
 
-			for (size_t count = 0; count < web_type_list_size; ++count)
+			// If the request is not an existing file .html that give home
+			try
+			{
+				for (size_t count = 0; count < web_type_list_size; ++count)
 				{
 					if (extension_file == web_type_list.at(count))
 					{
@@ -106,6 +109,14 @@ int ResponseRequest::Request(SOCKET client_socket)
 						return 0;
 					}
 				}
+			}
+			catch (exception& e)
+			{
+				Response_default_html(client_socket);
+				closesocket(client_socket);
+
+				return 0;
+			}
 
 			for (size_t count = 0; count < js_type_list_size; ++count)
 				{
@@ -122,66 +133,31 @@ int ResponseRequest::Request(SOCKET client_socket)
 		// If query POST
 		if (entire_query.at(0) == "POST")
 		{
-			string inLogin = string();
-			string inName = string();
-			string inPass = string();
-
-			static int secret_key = int();
-
-			// Search in body data from DH
-			Search_DH_gen_and_mod(entire_query, secret_key, client_socket);
-
-			// Search auth data in the body of request
-			Search_auth_data(entire_query, inLogin, inPass, secret_key);
-			
-			if ( inLogin.size() != 0 && inPass.size() != 0)
+			if (file_name != "index.html" || file_name == "")
 			{
-				// Copy STD string in FBL string
-				String inLogin(inLogin.c_str());
-				String inPass(inPass.c_str());
+				string inLogin = string();
+				string inName = string();
+				string inPass = string();
 
-				// Check the authorization data in DB
-				bool authData = CD.FindAuthData(inLogin, inPass);
+				static int secret_key = int();
 
-				if (authData)
-				{
-					file_name = "chat.html";
-					Response_html(client_socket, file_name);
-					closesocket(client_socket);
-				}
-				else
-				{
-					file_name = "index.html";
-					Response_html(client_socket, file_name);
-					closesocket(client_socket);
-				}
+				// Search in body data from DH
+				Search_DH_gen_and_mod(entire_query, secret_key, client_socket);
+
+				// Search auth data in the body of request
+				Search_auth_data(entire_query, inLogin, inPass, secret_key, client_socket, file_name);
+
+				// Search reg data in the body of request
+				Search_reg_data(entire_query, inName, inLogin, inPass, secret_key, client_socket, file_name);
 			}
-			
-			// Search reg data in the body of request
-			Search_reg_data(entire_query, inName, inLogin, inPass, secret_key);
-
-			if (inName.size() != 0 && inLogin.size() != 0 && inPass.size() != 0)
+			else
 			{
-				// Copy STD string in FBL string
-				String inName(inName.c_str());
-				String inLogin(inLogin.c_str());
-				String inPass(inPass.c_str());
+				file_name = "index.html";
 
-				// Add registration data in DB
-				bool regData = CD.AddNewUser(inName, inLogin, inPass);
+				Response_html(client_socket, file_name);
+				closesocket(client_socket);
 
-				if (regData)
-				{
-					file_name = "chat.html";
-					Response_html(client_socket, file_name);
-					closesocket(client_socket);
-				}
-				else
-				{
-					file_name = "index.html";
-					Response_html(client_socket, file_name);
-					closesocket(client_socket);
-				}
+				return 0;
 			}
 		}
 
@@ -251,7 +227,7 @@ void ResponseRequest::Cleaning_refuse_in_buffer(const string& InBuf, vector<stri
 
 
 /*******************************************************************************/
-void ResponseRequest::Search_auth_data(vector<string>& entire_query, string& inLogin, string& inPass, int& secret_key )
+void ResponseRequest::Search_auth_data(vector<string>& entire_query, string& inLogin, string& inPass, int& secret_key, SOCKET& client_socket, string& file_name)
 {
 	size_t entire_query_size = entire_query.size();
 	size_t index_auth_login = size_t();
@@ -315,11 +291,34 @@ void ResponseRequest::Search_auth_data(vector<string>& entire_query, string& inL
 			inPass = Enc.vectorCharToString(decrypt);
 		}
 	}
+
+	if (inLogin.size() != 0 && inPass.size() != 0)
+	{
+		// Copy STD string in FBL string
+		String inLogin(inLogin.c_str());
+		String inPass(inPass.c_str());
+
+		// Check the authorization data in DB
+		bool authData = CD.FindAuthData(inLogin, inPass);
+
+		if (authData)
+		{
+			file_name = "chat.html";
+			Response_html(client_socket, file_name);
+			closesocket(client_socket);
+		}
+		else
+		{
+			file_name = "index.html";
+			Response_html(client_socket, file_name);
+			closesocket(client_socket);
+		}
+	}
 }
 
 
 /*******************************************************************************/
-void ResponseRequest::Search_reg_data(vector<string>& entire_query,string& inName, string& inLogin, string& inPass, int& secret_key)
+void ResponseRequest::Search_reg_data(vector<string>& entire_query,string& inName, string& inLogin, string& inPass, int& secret_key, SOCKET& client_socket, string& file_name)
 {
 	size_t entire_query_size = entire_query.size();
 	size_t index = size_t();
@@ -408,6 +407,30 @@ void ResponseRequest::Search_reg_data(vector<string>& entire_query,string& inNam
 			inPass = Enc.vectorCharToString(decrypt);
 		}
 	}
+
+	if (inName.size() != 0 && inLogin.size() != 0 && inPass.size() != 0)
+	{
+		// Copy STD string in FBL string
+		String inName(inName.c_str());
+		String inLogin(inLogin.c_str());
+		String inPass(inPass.c_str());
+
+		// Add registration data in DB
+		bool regData = CD.AddNewUser(inName, inLogin, inPass);
+
+		if (regData)
+		{
+			file_name = "chat.html";
+			Response_html(client_socket, file_name);
+			closesocket(client_socket);
+		}
+		else
+		{
+			file_name = "index.html";
+			Response_html(client_socket, file_name);
+			closesocket(client_socket);
+		}
+	}
 }
 
 
@@ -465,6 +488,7 @@ void ResponseRequest::Search_DH_gen_and_mod(vector<string>& entire_query, int& s
 }
 
 
+/*******************************************************************************/
 void ResponseRequest::Send_DH_res_mod(SOCKET& client_socket, int& out_mod_res)
 {
 	int result = int();
@@ -487,4 +511,58 @@ void ResponseRequest::Send_DH_res_mod(SOCKET& client_socket, int& out_mod_res)
 	Send_response(client_socket, response, result);
 
 	closesocket(client_socket);
+}
+
+
+/*******************************************************************************/
+void ResponseRequest::Parse_name_page(string& inNamePage, string& outNamePage, string& outExtensionFile, bool& flag)
+{
+	size_t fileNameLen = inNamePage.size();
+
+	string temp = inNamePage;
+
+	bool Slash = false;
+
+	flag = true;
+
+	int countPoint = 1;
+
+	int positionPoint = int();
+
+	char token = char();
+
+	for (int i = 0; i < fileNameLen; ++i)
+	{
+		token = temp[i];
+
+		switch (token)
+		{
+			case '/':
+			{
+				Slash = true;
+			}
+
+			case '.':
+			{
+				positionPoint = i;
+				++countPoint;
+			}
+
+			default:
+			{
+				
+			}
+		}
+	}
+
+	outNamePage = temp.erase(positionPoint, (fileNameLen - positionPoint));
+
+	temp = inNamePage;
+
+	outExtensionFile = temp.erase(0, positionPoint);
+
+	if (Slash)
+	{
+		outNamePage.erase(0, 1);
+	}
 }

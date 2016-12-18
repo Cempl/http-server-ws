@@ -1,3 +1,9 @@
+// preloader start
+function go_preloader()
+{
+    document.getElementById("close-popup").style.visibility = "hidden";
+}
+
 // Calculate rounder keys
 function arrayKeys(inKey, amountRounds)
 {
@@ -353,6 +359,9 @@ function encryptAuthData()
             //
             encryptPass = encryptFeistelNetwork(leftBlock, rightBlock, arrayRounderKeys, amoundRounds);
 
+            // start preloader
+            go_preloader();
+
             // data overwrite
             $('#user_name').val(encryptLogin);
             $('#user_pass').val(encryptPass);
@@ -469,6 +478,9 @@ function encryptRegData()
 
             // Encrypt pass
             encryptPass = encryptFeistelNetwork(leftBlock, rightBlock, arrayRounderKeys, amoundRounds);
+
+            // start preloader
+            go_preloader();
 
             // data overwrite
             $('#reg_user_name').val(encryptName);
