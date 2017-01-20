@@ -1,3 +1,5 @@
+#ifndef _Generate_key_H
+	#define _Generate_key_H
 #pragma once
 
 
@@ -23,3 +25,5 @@ static inline bool is_base64(unsigned char c)
 {
 	return (isalnum(c) || (c == '+') || (c == '/'));
 }
+
+#endif // _Generate_key_H

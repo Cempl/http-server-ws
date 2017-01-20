@@ -1,3 +1,5 @@
+#ifndef _Interrupt_H
+	#define _Interrupt_H
 #pragma once
 
 
@@ -148,3 +150,5 @@ void interruptible_wait(condition_variable& cv, unique_lock<mutex>& lk, Predicat
 
 	interruption_point();
 }
+
+#endif // _Interrupt_H

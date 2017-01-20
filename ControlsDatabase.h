@@ -1,3 +1,5 @@
+#ifndef _ControlsDatabase_H
+	#define _ControlsDatabase_H
 #pragma once
 
 
@@ -41,3 +43,5 @@ class ControlsDatabase
 };
 
 extern ControlsDatabase CD;
+
+#endif // _ControlsDatabase_H

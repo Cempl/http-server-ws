@@ -1,3 +1,5 @@
+#ifndef _Encryption_H
+	#define _Encryption_H
 #pragma once
 
 
@@ -60,3 +62,5 @@ class Encryption
 };
 
 extern Encryption Enc;
+
+#endif // _ControlsDatabase_H

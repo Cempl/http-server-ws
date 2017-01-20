@@ -1,3 +1,5 @@
+#ifndef _LogFile_H
+	#define _LogFile_H
 #pragma once
 
 
@@ -39,3 +41,5 @@ class LogFile
 		tm*		struct_local_time;	
 		string path = string();
 };
+
+#endif // _LogFile_H

@@ -1,3 +1,5 @@
+#ifndef _WSLexer_H
+	#define _WSLexer_H
 #pragma once
 
 #include "Server.h"
@@ -64,3 +66,5 @@ class WSLexer
 
 		int					mLine 			= 1; 		// the current line in command.
 };
+
+#endif // _WSLexer_H

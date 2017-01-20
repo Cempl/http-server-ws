@@ -1,3 +1,5 @@
+#ifndef _OtherException_H
+	#define _OtherException_H
 #pragma once
 
 
@@ -22,3 +24,5 @@ class interruptException
 		{
 		}
 };
+
+#endif // _OtherException_H

@@ -1,3 +1,5 @@
+#ifndef _Server_H
+	#define _Server_H
 #pragma once
 
 
@@ -73,3 +75,5 @@ class Server
 		void listening_connection();
 		void Processing_a_connection_request();
 };
+
+#endif // _Server_H

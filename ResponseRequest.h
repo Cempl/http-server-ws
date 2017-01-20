@@ -1,3 +1,5 @@
+#ifndef _ResponseRequest_H
+	#define _ResponseRequest_H
 #pragma once
 
 
@@ -45,3 +47,5 @@ class ResponseRequest : protected Cover
 
 		SendRecv SR;
 };
+
+#endif // _ResponseRequest_H
