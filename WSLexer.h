@@ -47,11 +47,7 @@ class WSLexer
 							~WSLexer();
 
 							// This method resets Lexer to a new string
-		void				Put_HttpRequest(string inHttpRequest);
-
-							// This method read http request and create Tokens
-							// For GET tokens you must use method GetNextToken
-		void				GetAllTokens();
+		void				Put_HttpRequest(const char* inHttpStr, const char* inHttpStrEnd);
 
 							// This method GET next token
 							// For GET first token you must use this method
