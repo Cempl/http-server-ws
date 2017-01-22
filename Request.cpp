@@ -3,6 +3,7 @@
 #include "LogFile.h"
 #include "ControlsDatabase.h"
 #include "Encryption.h"
+#include "WSLexer.h"
 
 
 /*******************************************************************************/

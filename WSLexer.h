@@ -10,8 +10,10 @@ enum wsTokenTypes
 	wsDefaultType = 0,
 
 	wsSpaceType,
-	wsSymbolType,
-	wsDoublesSymbol
+	wsSymbolType, // : ; . , / \ 
+	wsNewLineSymbolType, // \n \r
+	wsBracketsSymbolType, // ()
+	wsQuotesSymbolType // ""
 };
 
 
@@ -22,22 +24,25 @@ class WSLexer
 
 	struct Token
 	{
-		wsTokenTypes		mType			= wsDefaultType; // Type of the Token
+		wsTokenTypes		mType				= wsDefaultType; // Type of the Token
 
-		int					mLen			= 0; // Length in chars of this token
-		int					mPosition		= 0; // position of token (in chars) from the beginning of string.
+		int					mLen				= 0; // Length in chars of this token
+		int					mPosition			= 0; // position of token (in chars) from the beginning of string.
 
-		const char*			ps				= nullptr; // start
-		const char*			pe				= nullptr; // after the end char
+		int					mLine				= 1; // Number of current line
+
+		const char*			ps					= nullptr; // start
+		const char*			pe					= nullptr; // after the end char
 
 		void				Clear()
 							{
-								mType		= wsDefaultType;
-								mLen		= 0;
-								mPosition	= 0;
+								mType			= wsDefaultType;
 
-								ps			= nullptr;
-								pe			= nullptr;
+								mLen			= 0;
+								mPosition		= 0;
+
+								ps				= nullptr;
+								pe				= nullptr;
 							}
 	};
 
@@ -55,12 +60,16 @@ class WSLexer
 
 	protected://///////////////////////////////////////////////////////////////
 
-		const char*			mpHttpStr		= nullptr;
-		const char*			mpHttpStrEnd	= nullptr;
+		const char*			mpHttpStr			= nullptr;
+		const char*			mpHttpStrEnd		= nullptr;
 
-		const char*			mpCurrChar		= nullptr;
+		const char*			mpCurrChar			= nullptr;
 
-		int					mLine 			= 1; 		// the current line in command.
+		int					mLine 				= 1; 		// the current line in command.
+
+		// Flags
+		bool				flagBracketsOpen	= false;
+		bool				flagQuotesOpen		= false;
 };
 
 #endif // _WSLexer_H
