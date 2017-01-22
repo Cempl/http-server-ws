@@ -56,6 +56,7 @@ class WSLexer
 
 							// This method GET next token
 							// For GET first token you must use this method
+							// This function can throw exceptions
 		void				GetNextToken( Token* outToken);
 
 	protected://///////////////////////////////////////////////////////////////

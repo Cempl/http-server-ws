@@ -35,7 +35,7 @@ void WSLexer::GetNextToken(Token* outToken)
 	{
 		if(flagBracketsOpen || flagQuotesOpen)
 		{
-			// this must be exception
+			throw exception("Error WSLexer: Don't closed brackets or quotes");
 		}
 		return; // end of string
 	}
