@@ -27,7 +27,7 @@ void WSLexer::Put_HttpRequest(const char* inHttpStr, const char* inHttpStrEnd)
 
 
 /*******************************************************************************/
-void WSLexer::GetNextToken(Token* outToken)
+bool WSLexer::GetNextToken(Token* outToken)
 {
 	outToken->Clear();
 
@@ -37,7 +37,7 @@ void WSLexer::GetNextToken(Token* outToken)
 		{
 			throw exception("Error WSLexer: Don't closed brackets or quotes");
 		}
-		return; // end of string
+		return false; // end of string
 	}
 
 	bool flagLongWord = false;
@@ -150,4 +150,6 @@ void WSLexer::GetNextToken(Token* outToken)
 
 	outToken->mLen = (outToken->pe - outToken->ps) + 1;
 	outToken->mPosition = (outToken->pe - mpHttpStr) + 1;
+
+	return true;
 }
