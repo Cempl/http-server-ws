@@ -22,29 +22,29 @@ class WSLexer
 {
 	public:////////////////////////////////////////////////////////////////////
 
-	struct Token
-	{
-		wsTokenTypes		mType				= wsDefaultType; // Type of the Token
+		struct Token
+		{
+			wsTokenTypes		mType				= wsDefaultType; // Type of the Token
 
-		__int64				mLen				= 0; // Length in chars of this token
-		__int64				mPosition			= 0; // position of token (in chars) from the beginning of string.
+			__int64				mLen				= 0; // Length in chars of this token
+			__int64				mPosition			= 0; // position of token (in chars) from the beginning of string.
 
-		int					mLine				= 1; // Number of current line
+			int					mLine				= 1; // Number of current line
 
-		const char*			ps					= nullptr; // start
-		const char*			pe					= nullptr; // after the end char
+			const char*			ps					= nullptr; // start
+			const char*			pe					= nullptr; // after the end char
 
-		void				Clear()
-							{
-								mType			= wsDefaultType;
+			void				Clear()
+								{
+									mType			= wsDefaultType;
 
-								mLen			= 0;
-								mPosition		= 0;
+									mLen			= 0;
+									mPosition		= 0;
 
-								ps				= nullptr;
-								pe				= nullptr;
-							}
-	};
+									ps				= nullptr;
+									pe				= nullptr;
+								}
+		};
 
 	public:////////////////////////////////////////////////////////////////////
 
@@ -57,7 +57,11 @@ class WSLexer
 							// This method GET next token
 							// For GET first token you must use this method
 							// This function can throw exceptions
-		bool				GetNextToken( Token* outToken);
+		bool				GetNextToken();
+
+	public:////////////////////////////////////////////////////////////////////
+
+		Token*				token;
 
 	protected://///////////////////////////////////////////////////////////////
 
