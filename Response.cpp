@@ -152,7 +152,7 @@ void ResponseRequest::Response_default_html(SOCKET client_socket)
 		}
 		else
 		{
-			response += "HTTP/1.1 202 OK\n";
+			response += "HTTP/1.1 200 OK\n";
 			response += "Server: VaV/V2\n";
 			response += "Content-Type: text/html;\n";
 			response += "Connection: keep-alive\n";
@@ -185,7 +185,7 @@ void ResponseRequest::Response_html(SOCKET client_socket, string &file_name)
 	}
 	else
 	{
-		response += "HTTP/1.1 202 OK\n";
+		response += "HTTP/1.1 200 OK\n";
 		response += "Server: VaV/V2\n";
 		response += "Content-Type: text/html;\n";
 		response += "Connection: keep-alive\n";
