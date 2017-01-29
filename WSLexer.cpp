@@ -66,9 +66,11 @@ bool WSLexer::GetNextToken(Token* outToken)
 			case 42: // "*"
 			case 43: // "+"
 			case 46: // "."
+			case 47: // "/"
 			case 58: // ":"
 			case 59: // ";"
 			case 61: // "="
+			case 92: // "\"
 			{
 				if( !flagLongWord)
 				{
