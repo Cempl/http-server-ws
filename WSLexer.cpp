@@ -4,8 +4,6 @@
 
 /*******************************************************************************/
 WSLexer::WSLexer()
-:
-	token(new Token)
 {
 }
 
@@ -29,9 +27,9 @@ void WSLexer::Put_HttpRequest(const char* inHttpStr, const char* inHttpStrEnd)
 
 
 /*******************************************************************************/
-bool WSLexer::GetNextToken()
+bool WSLexer::GetNextToken(Token* outToken)
 {
-	token->Clear();
+	outToken->Clear();
 
 	if( mpCurrChar == mpHttpStrEnd )
 	{
@@ -44,7 +42,7 @@ bool WSLexer::GetNextToken()
 
 	bool flagLongWord = false;
 
-	token->ps = mpCurrChar;
+	outToken->ps = mpCurrChar;
 
 	do
 	{
@@ -56,8 +54,8 @@ bool WSLexer::GetNextToken()
 				{
 					mpCurrChar = mpCurrChar + 1; // I only work with UTF-8 char, it has a length of 1.
 
-					token->mType = wsSpaceType;
-					token->pe = mpCurrChar;
+					outToken->mType = wsSpaceType;
+					outToken->pe = mpCurrChar;
 				}
 				else
 				{
@@ -78,8 +76,8 @@ bool WSLexer::GetNextToken()
 				{
 					mpCurrChar = mpCurrChar + 1;
 
-					token->mType = wsSymbolType;
-					token->pe = mpCurrChar;
+					outToken->mType = wsSymbolType;
+					outToken->pe = mpCurrChar;
 				}
 				else
 				{
@@ -93,8 +91,8 @@ bool WSLexer::GetNextToken()
 				{
 					mpCurrChar = mpCurrChar + 1;
 
-					token->mType = wsQuotesSymbolType;
-					token->pe = mpCurrChar;
+					outToken->mType = wsQuotesSymbolType;
+					outToken->pe = mpCurrChar;
 
 					flagQuotesOpen = flagQuotesOpen ? false : true;
 				}
@@ -111,8 +109,8 @@ bool WSLexer::GetNextToken()
 				{
 					mpCurrChar = mpCurrChar + 1;
 
-					token->mType = wsBracketsSymbolType;
-					token->pe = mpCurrChar;
+					outToken->mType = wsBracketsSymbolType;
+					outToken->pe = mpCurrChar;
 
 					flagBracketsOpen = flagBracketsOpen ? false : true;
 				}
@@ -129,13 +127,13 @@ bool WSLexer::GetNextToken()
 				{
 					mpCurrChar = mpCurrChar + 1;
 
-					token->mType = wsNewLineSymbolType;
-					token->pe = mpCurrChar;
+					outToken->mType = wsNewLineSymbolType;
+					outToken->pe = mpCurrChar;
 					
 					// if the next symbol is not \n or \r, increase Token::mLen by 1
 					if( !(*(mpCurrChar) == 10 || *(mpCurrChar) == 13) )
 					{
-						token->mLine += 1;
+						outToken->mLine += 1;
 					}
 				}
 				else
@@ -149,8 +147,8 @@ bool WSLexer::GetNextToken()
 			{
 				mpCurrChar = mpCurrChar + 1;
 
-				token->mType = wsDefaultType;
-				token->pe = mpCurrChar;
+				outToken->mType = wsDefaultType;
+				outToken->pe = mpCurrChar;
 
 				flagLongWord = true;
 			}break;
@@ -158,8 +156,8 @@ bool WSLexer::GetNextToken()
 	}
 	while(flagLongWord);
 
-	token->mLen = (token->pe - token->ps) + 1;
-	token->mPosition = (token->pe - mpHttpStr) + 1;
+	outToken->mLen = (outToken->pe - outToken->ps);
+	outToken->mPosition = (outToken->pe - mpHttpStr);
 
 	return true;
 }
