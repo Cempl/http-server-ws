@@ -13,7 +13,7 @@ enum wsTokenTypes
 	wsSymbolType, // : ; . , / \ 
 	wsNewLineSymbolType, // \n \r
 	wsBracketsSymbolType, // ()
-	wsQuotesSymbolType, // ""
+	wsQuotesSymbolType // ""
 };
 
 
@@ -33,6 +33,17 @@ class WSLexer
 
 		const char*			ps					= nullptr; // start
 		const char*			pe					= nullptr; // after the end char
+
+							Token()
+							{
+								Clear();
+
+								mLine = 1;
+							}
+
+							~Token()
+							{
+							}
 
 		void				Clear()
 							{
