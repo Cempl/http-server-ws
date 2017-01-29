@@ -31,7 +31,7 @@ bool WSLexer::GetNextToken(Token* outToken)
 {
 	outToken->Clear();
 
-	if( mpCurrChar == mpHttpStrEnd)
+	if( mpCurrChar == mpHttpStrEnd )
 	{
 		if(flagBracketsOpen || flagQuotesOpen)
 		{
@@ -52,9 +52,10 @@ bool WSLexer::GetNextToken(Token* outToken)
 			{
 				if( !flagLongWord)
 				{
+					mpCurrChar = mpCurrChar + 1; // I only work with UTF-8 char, it has a length of 1.
+
 					outToken->mType = wsSpaceType;
 					outToken->pe = mpCurrChar;
-					mpCurrChar = mpCurrChar + 1; // I only work with UTF-8 char, it has a length of 1.
 				}
 				else
 				{
@@ -71,9 +72,10 @@ bool WSLexer::GetNextToken(Token* outToken)
 			{
 				if( !flagLongWord)
 				{
+					mpCurrChar = mpCurrChar + 1;
+
 					outToken->mType = wsSymbolType;
 					outToken->pe = mpCurrChar;
-					mpCurrChar = mpCurrChar + 1;
 				}
 				else
 				{
@@ -85,9 +87,10 @@ bool WSLexer::GetNextToken(Token* outToken)
 			{
 				if( !flagLongWord )
 				{
+					mpCurrChar = mpCurrChar + 1;
+
 					outToken->mType = wsQuotesSymbolType;
 					outToken->pe = mpCurrChar;
-					mpCurrChar = mpCurrChar + 1;
 
 					flagQuotesOpen = flagQuotesOpen ? false : true;
 				}
@@ -102,9 +105,10 @@ bool WSLexer::GetNextToken(Token* outToken)
 			{
 				if( !flagLongWord )
 				{
+					mpCurrChar = mpCurrChar + 1;
+
 					outToken->mType = wsBracketsSymbolType;
 					outToken->pe = mpCurrChar;
-					mpCurrChar = mpCurrChar + 1;
 
 					flagBracketsOpen = flagBracketsOpen ? false : true;
 				}
@@ -119,9 +123,10 @@ bool WSLexer::GetNextToken(Token* outToken)
 			{
 				if( !flagLongWord )
 				{
+					mpCurrChar = mpCurrChar + 1;
+
 					outToken->mType = wsNewLineSymbolType;
 					outToken->pe = mpCurrChar;
-					mpCurrChar = mpCurrChar + 1;
 					
 					// if the next symbol is not \n or \r, increase Token::mLen by 1
 					if( !(*(mpCurrChar) == 10 || *(mpCurrChar) == 13) )
@@ -138,9 +143,10 @@ bool WSLexer::GetNextToken(Token* outToken)
 			// All other symbol
 			default:
 			{
+				mpCurrChar = mpCurrChar + 1;
+
 				outToken->mType = wsDefaultType;
 				outToken->pe = mpCurrChar;
-				mpCurrChar = mpCurrChar + 1;
 
 				flagLongWord = true;
 			}break;
