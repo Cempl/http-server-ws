@@ -26,8 +26,8 @@ class WSLexer
 	{
 		wsTokenTypes		mType				= wsDefaultType; // Type of the Token
 
-		int					mLen				= 0; // Length in chars of this token
-		int					mPosition			= 0; // position of token (in chars) from the beginning of string.
+		__int64				mLen				= 0; // Length in chars of this token
+		__int64				mPosition			= 0; // position of token (in chars) from the beginning of string.
 
 		int					mLine				= 1; // Number of current line
 

@@ -11,7 +11,7 @@ int ResponseRequest::Request(SOCKET client_socket)
 {
 			bool				flag = bool();
 
-			string				buf(12288, 0);	
+			string				buf;	
 			string				file_name = { 0 };
 			string				extension_file = { 0 };
 			string				not_supported_method = "method_is_not_supported.html";
