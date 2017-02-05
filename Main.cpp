@@ -1,6 +1,7 @@
 /*******************************************************************************/
 #include "Server.h"
 #include "LogFile.h"
+#include "ControlsDatabase.h"
 
 
 /*******************************************************************************/
@@ -10,6 +11,10 @@ void main()
 
 	try
 	{
+		CD.InitValentina();
+
+		CD.OpenDB();
+
 		first_server.start_server();
 	}
 	catch(exception& e)
@@ -19,4 +24,6 @@ void main()
 	}
 
 	system("pause");
+
+	CD.ShutdownValentina();
 }

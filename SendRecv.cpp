@@ -8,6 +8,7 @@ vector<string> my_gList;
 mutex glist_mutex;
 condition_variable gdata_cond;
 
+bool queueClear = false;
 
 
 /*******************************************************************************/
@@ -43,7 +44,7 @@ void SendRecv::generate(string& key)
 	unsigned char hash[SHA_DIGEST_LENGTH];
 
 	key += guid;
-
+	
 	SHA1((const unsigned char*)key.c_str(), strlen((const char*)key.c_str()), hash);
 
 	key = (const char*)hash;
@@ -64,12 +65,16 @@ void SendRecv::generate(string& key)
 /*******************************************************************************/
 int SendRecv::websocket_get_content(string& data, int data_length)
 {
-	u_char* mask = new u_char [4]; // длина маски 4 байта
+	// Mask length 4 bytes
+	u_char* mask = new u_char [4];
+
 	auto i = 0;
 	auto j = 0;
 	auto length_code = 0;
+
 	u_char check_value;
 	string temp_str = string();
+
 	auto index_first_mask = 0;
 	auto index_first_data_byte = 0;
 	auto index_first_trash = 0;
@@ -78,18 +83,20 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 	{
 		delete[] mask;
 
-		return 1; // close connection
+		// close connection
+		return 1;
 	}
 
 	if ((u_char)data[0] == 130)
 	{
 		delete[] mask;
 
-		return 2; // binary data
-
+		// binary data
+		return 2;
 	}
 
 	length_code = (u_char) data[1] & 127;
+
 	if(length_code <= 125)
 	{
 		index_first_mask = 2;
@@ -121,7 +128,9 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 			}
 			else
 			{
-				throw exception("Error in websocket content: ");
+				delete[] mask;
+
+				throw exception("Error in websocket content");
 			}
 
 	index_first_data_byte = index_first_mask + 4;
@@ -140,7 +149,8 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 
 	delete[] mask;
 
-	return 0; // // text data
+	// text data
+	return 0;
 }
 
 
@@ -151,7 +161,8 @@ void SendRecv::websocket_set_content(string& data, int64_t data_length, int data
 
 	if (data_type == 2)
 	{
-		message.push_back(130); // binary data
+		// binary data
+		message.push_back(130);
 	}
 	else
 	{
@@ -195,48 +206,67 @@ void SendRecv::websocket_set_content(string& data, int64_t data_length, int data
 void SendRecv::send_data(SOCKET& client_socket)
 {		
 	int index = 0;
+	int max_length = 100;
+	bool need_clear = false;
 
 	while(true)
-	{
-		
-			unique_lock<mutex> u_mutex(glist_mutex);
+	{		
+		unique_lock<mutex> u_mutex(glist_mutex);
 
-			try
+		try
+		{
+			if( queueClear && need_clear )
 			{
-					interruptible_wait(gdata_cond, u_mutex, [&index]{return (index < my_gList.size());});
-					my_send(client_socket, my_gList[index]);
-					++index;
-
-				u_mutex.unlock();
+				index = 0;
+				need_clear = false;
 			}
-			catch(exception& e)
+
+			interruptible_wait(gdata_cond, u_mutex, [&index]{return (index < my_gList.size());});
+			my_send(client_socket, my_gList[index]);
+			++index;
+
+			// Max length of the queue
+			if( index == max_length )
 			{
-				u_mutex.unlock();
-
-				LogFile log;
-				log.write(e.what());
+				my_gList.erase(my_gList.begin(), my_gList.begin() + max_length);
+				queueClear = true;
+				need_clear = true;
 			}
+
+			u_mutex.unlock();
+		}
+		catch(exception& e)
+		{
+			u_mutex.unlock();
+
+			LogFile log;
+			log.write(e.what());
+		}
 	}
-
 }
 
 
 /*******************************************************************************/
 int SendRecv::recv_data(string& data)
 {
-	auto result = websocket_get_content(data, static_cast<int>(data.size())); // Раскодировали
+	// Decode data
+	auto result = websocket_get_content(data, static_cast<int>(data.size()));
 
 	if(result == 1)
 	{
 		return 1;
 	}
 
-	websocket_set_content(data, data.size(), result); // Перекодировали сообщение
+	// recoded data
+	websocket_set_content(data, data.size(), result);
 
 	lock_guard<mutex> guard(glist_mutex); 
 
-	my_gList.push_back(data); // Записали сообщение в очередь
-	gdata_cond.notify_all(); // Будим потоки для отправки сообщения
+	// Added data in queue
+	my_gList.push_back(data);
+
+	// Wake up streams to send a data
+	gdata_cond.notify_all();
 	
 	return 0;
 }
@@ -253,7 +283,8 @@ int SendRecv::Thread_recv(SOCKET client_socket)
 	{
 		try
 		{
-			my_recv(client_socket, message); // Принимаем данные от клиента
+			// Accept data from client
+			my_recv(client_socket, message);
 
 			int result = recv_data(message);
 
@@ -263,7 +294,8 @@ int SendRecv::Thread_recv(SOCKET client_socket)
 				thr.join();
 				message.clear();
 
-				return 0; // Normal exit
+				// Normal exit
+				return 0;
 			}
 
 			message.clear();
@@ -277,5 +309,6 @@ int SendRecv::Thread_recv(SOCKET client_socket)
 		}
 	}  
 
-	return 1; // Not normal exit
+	// Not normal exit
+	return 1;
 }

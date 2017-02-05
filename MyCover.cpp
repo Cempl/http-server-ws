@@ -1,7 +1,9 @@
+/*******************************************************************************/
 #include "MyCover.h"
 
 
-const uint16_t gLengthMessage = 1024;
+/*******************************************************************************/
+const uint16_t gLengthMessage = 12288;
 
 
 /*******************************************************************************/
@@ -26,5 +28,5 @@ void Cover::my_recv(SOCKET& client_socket, string& message)
 	{
 		throw exception("Error in recv(): " + WSAGetLastError());
 	}
-	message = buffer;
+	message = string(buffer);
 }

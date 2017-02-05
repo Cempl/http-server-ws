@@ -6,21 +6,26 @@
 /*******************************************************************************/
 string ResponseRequest::Path_folder()
 {
-	TCHAR szPath[MAX_PATH];
-	size_t sz = strlen(szPath);
+	char szPath[MAX_PATH] = {};
 
 	GetModuleFileNameA(NULL, szPath, MAX_PATH);
 
-	for (size_t i = sz - 1;; i--)
-	{
-		if (szPath[i] == '\\')
-		{
-			szPath[i] = '\0';
-			break;
-		}
-	}
+	// Pointer to the last occurrence of "\"
+	char *lstChr = strrchr(szPath, '\\');
+
+	// replaced by zero (truncate)
+	*lstChr = '\0';
 
 	return szPath;
+}
+
+
+/*******************************************************************************/
+string ResponseRequest::Read_symbolic_content(ifstream& inFin)
+{
+	string response_body((istreambuf_iterator<char>(inFin)), istreambuf_iterator<char>());
+
+	return response_body;
 }
 
 
@@ -46,7 +51,7 @@ void ResponseRequest::Response_js(SOCKET client_socket, string &file_name)
 
 	path_to_file = Path_folder() + folder + file_name;
 
-	ifstream fin(path_to_file);
+	ifstream fin(path_to_file, ios::binary);
 
 	if (!fin.is_open())
 	{
@@ -58,10 +63,7 @@ void ResponseRequest::Response_js(SOCKET client_socket, string &file_name)
 		response += "Server: VaV/V2\n";
 		response += "Content-Type: application/javascript;\r\n\r\n";
 
-		// Retrieves the character elements from the input stream buffer, to which it accesses
-		string response_body((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>());
-
-		response += response_body;
+		response += Read_symbolic_content(fin);
 	}
 
 	fin.close();
@@ -92,10 +94,7 @@ void ResponseRequest::Response_image(SOCKET client_socket, string &file_name)
 		response += "Server: VaV/V2\n";
 		response += "Content-Type: image/png;\r\n\r\n";
 
-		// Retrieves the character elements from the input stream buffer, to which it accesses
-		string response_body((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>());
-
-		response += response_body;
+		response += Read_symbolic_content(fin);
 	}
 
 	fin.close();
@@ -114,7 +113,7 @@ void ResponseRequest::Response_css(SOCKET client_socket, string &file_name)
 
 	path_to_file = Path_folder() + folder + file_name;
 
-	ifstream fin(path_to_file);
+	ifstream fin(path_to_file, ios::binary);
 
 	if (!fin.is_open())
 	{
@@ -126,10 +125,7 @@ void ResponseRequest::Response_css(SOCKET client_socket, string &file_name)
 		response += "Server: VaV/V2\n";
 		response += "Content-Type: text/css;\r\n\r\n";
 
-		// Retrieves the character elements from the input stream buffer, to which it accesses
-		string response_body((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>());
-
-		response += response_body;
+		response += Read_symbolic_content(fin);
 	}
 
 	fin.close();
@@ -148,7 +144,7 @@ void ResponseRequest::Response_default_html(SOCKET client_socket)
 
 	path_to_file = Path_folder() + folder;
 
-	ifstream fin(path_to_file);
+	ifstream fin(path_to_file, ios::binary);
 
 		if (!fin.is_open())
 		{
@@ -156,16 +152,13 @@ void ResponseRequest::Response_default_html(SOCKET client_socket)
 		}
 		else
 		{
-			response += "HTTP/1.1 202 OK\n";
+			response += "HTTP/1.1 200 OK\n";
 			response += "Server: VaV/V2\n";
 			response += "Content-Type: text/html;\n";
 			response += "Connection: keep-alive\n";
 			response += "X-Powered-By: c++\r\n\r\n";
 
-			// Retrieves the character elements from the input stream buffer, to which it accesses
-			string response_body((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>());
-
-			response += response_body;
+			response += Read_symbolic_content(fin);
 		}
 
 	fin.close();
@@ -184,7 +177,7 @@ void ResponseRequest::Response_html(SOCKET client_socket, string &file_name)
 
 	path_to_file = Path_folder() + folder + file_name;
 
-	ifstream fin(path_to_file);
+	ifstream fin(path_to_file, ios::binary);
 
 	if (!fin.is_open())
 	{
@@ -192,16 +185,13 @@ void ResponseRequest::Response_html(SOCKET client_socket, string &file_name)
 	}
 	else
 	{
-		response += "HTTP/1.1 202 OK\n";
+		response += "HTTP/1.1 200 OK\n";
 		response += "Server: VaV/V2\n";
 		response += "Content-Type: text/html;\n";
 		response += "Connection: keep-alive\n";
 		response += "X-Powered-By: c++\r\n\r\n";
 
-		// Retrieves the character elements from the input stream buffer, to which it accesses
-		string response_body((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>()); 
-
-		response += response_body;
+		response += Read_symbolic_content(fin);
 	}
 
 	fin.close();

@@ -1,3 +1,5 @@
+#ifndef _SendRecv_H
+	#define _SendRecv_H
 #pragma once
 
 
@@ -30,3 +32,5 @@ class SendRecv : protected Cover
 		int		recv_data(string& data);
 		int		Thread_recv(SOCKET client_socket);
 };
+
+#endif // _SendRecv_H

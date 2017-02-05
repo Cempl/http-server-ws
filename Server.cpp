@@ -35,8 +35,8 @@ void Server::create_socket()
 		if (server_socket == INVALID_SOCKET)
 		{
 			WSACleanup();
-			throw exception("Error at socket(): " + WSAGetLastError());
 
+			throw exception("Error at socket(): " + WSAGetLastError());
 		}
 }
 

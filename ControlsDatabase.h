@@ -1,31 +1,47 @@
+#ifndef _ControlsDatabase_H
+	#define _ControlsDatabase_H
 #pragma once
 
 
+/*******************************************************************************/
+// WEB Server
 #include "Server.h"
+
+// VDB SDK
+#include <VSDK\VSDK2.h>
+
+
+/*******************************************************************************/
+FBL_Using_Namespace
+VSQL_Using_Namespace
+Std_Using_Namespace
+VCLIENT_Using_Namespace
 
 
 class ControlsDatabase
 {
 	public://////////////////////////////////////////////////////////////////////
 
-		bool open_connection_db();
-		bool close_connection_db();
-		bool add_data_auth(string login, string pass);
-		bool creating_tables();
-		string find_data_auth(string login);
-		string delete_data_auth(string login);
+		void InitValentina(int inCacheSize = 8 * 1024 * 1024);
+		void ShutdownValentina(void);
+		void OpenDB();
+		void Flag_online();
 
-
-	protected:///////////////////////////////////////////////////////////////////
-
-		static int callback(void *data, int argc, char **argv, char **azColName);
+		bool FindAuthData(String inEmail, String inPass);
+		bool AddNewUser(String inName, String inEmail, String inPass);
 
 	protected:///////////////////////////////////////////////////////////////////
 
-		map<string, string> map_db;
-		sqlite3		*db = 0; // хэндл объекта соединение к БД
-		char		*err = 0;
-		const int	column = 1;
+		I_SqlDatabase_Ptr pSqlVDB;
+
+		bool gClient = true;
+		bool gSSLEnable = false;
+		bool gNotificationsEnable = false;
+
+		I_Connection_Ptr gConn = NULL;
+		I_Connection_Ptr gSqliteConn = NULL;
 };
 
-		extern ControlsDatabase CD;
+extern ControlsDatabase CD;
+
+#endif // _ControlsDatabase_H

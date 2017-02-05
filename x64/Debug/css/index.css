@@ -1,0 +1,247 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background: ghostwhite;
+	background-size: 100%;
+}
+
+.font-wrapper {
+    width: auto;
+    opacity: 0.9;
+}
+
+.wrapper {
+    margin: 0;
+    width: auto;
+    height: 25vh;
+    border-bottom: 1px solid #1E90FF;
+    margin-bottom: 40px;
+}
+
+a.li_top_menu {
+    text-decoration: none;
+    position:relative;
+	color: #1E90FF;
+	padding:0px 15px 0px 5px;
+	font-size:32px;
+    font-family: Century Gothic;
+    transition: 1.6s;
+}
+
+a.li_top_menu:hover {
+    color: orangered;
+    transition: 1.6s;
+}
+
+li {
+    list-style-type:none; 
+	display:inline;
+}
+
+.ul_top_menu {
+    position: absolute;
+    top: 10%;
+    left: 62%;
+}
+
+.centr {
+    width: 94%;
+    height: 45vh;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+.footer-size {
+    width: auto;
+    height: 150px;
+    border-top: 1px solid #1E90FF;
+}
+
+.footer-text {
+    padding-top: 70px;
+    width: auto;
+    text-align: center;
+    font-family: Century Gothic;
+    font-size: 18px;
+    color: #1E90FF;
+    transition: 1.6s;
+}
+
+.footer-text:hover {
+    color: orangered;
+    transition: 1.6s;
+}
+
+.hr {
+    border: none;
+    background: #1E90FF;
+    width: 250px;
+    height: 2px;
+    float: left;
+    margin-left: 20%;
+    margin-top: 15vh;
+
+}
+
+.hr2 {
+    border: none;
+    background: #1E90FF;
+    width: 250px;
+    height: 2px;
+    float: left;
+    margin-left: 20%;
+    margin-top: 23.5vh;
+
+}
+
+.hr3 {
+    border: none;
+    background: #1E90FF;
+    width: 250px;
+    height: 2px;
+    float: left;
+    margin-left: 20%;
+    margin-top: 22.5vh;
+
+}
+
+.hr4 {
+    border: none;
+    background: #1E90FF;
+    width: 100%;
+    height: 2px;
+    margin-top: 0%;
+}
+
+.circle-position {
+    width: 90%;
+    height: auto;
+    padding-left: 60px;
+    padding-right: 60px;
+    padding-top: 10px;
+    padding-bottom: 60px;
+}
+
+.circle-left {
+    width: 30%; /* Ширина колонок */
+    height: 300px;
+    padding: 5px; /* Поля вокруг текста */
+    margin-left: 2%; /* Отступ слева */
+    margin-top: 1%; /* Отступ сверху */
+    float: left; /* Состыковка колонок по горизонтали */
+}
+
+.circle-right {
+    width: 30%; /* Ширина колонок */
+    height: 300px;
+    padding: 5px; /* Поля вокруг текста */
+    margin-left: 2%; /* Отступ слева */
+    margin-top: 1%; /* Отступ сверху */
+    float: left; /* Состыковка колонок по горизонтали */
+}
+
+.circle-cen {
+    width: 30%; /* Ширина колонок */
+    height: 300px;
+    padding: 5px; /* Поля вокруг текста */
+    margin-left: 2%; /* Отступ слева */
+    margin-top: 1%; /* Отступ сверху */
+    float: left; /* Состыковка колонок по горизонтали */
+}
+
+.circle:hover {
+    border: 2px solid #1E90FF;
+    transition: 1.6s;
+}
+
+.current_date {
+    width: 250px;
+    height: 40px;
+    font-size: 32px;
+    font-family: Century Gothic;
+    color: #1E90FF;
+    padding-left: 5%;
+    padding-top: 7.5vh;
+    transition: 1.6s;
+}
+
+.current_date:hover {
+    color: orangered;
+    transition: 1.6s;
+}
+
+.text-col-left {
+    text-decoration: none;
+    text-align: left;
+    font-size: 26px;
+    font-family: Century Gothic;
+    color: #1E90FF;
+    margin-bottom: 22px;
+}
+
+.text-col-cen {
+    text-align: left;
+    font-size: 26px;
+    font-family: Century Gothic;
+    color: #1E90FF;
+    margin-bottom: 22px;
+}
+
+.text-col-right {
+    text-align: left;
+    font-size: 26px;
+    font-family: Century Gothic;
+    color: #1E90FF;
+    margin-bottom: 22px;
+}
+
+.img-easy {
+    width: 200px;
+    height: 200px;
+    display: block;
+    margin-top: 14%;
+    margin-left: 20%;
+}
+
+.img-free {
+    width: 200px;
+    height: 150px;
+    display: block;
+    margin-top: 14%;
+    margin-left: 20%;
+}
+
+.img-fast {
+    width: 220px;
+    height: 130px;
+    display: block;
+    margin-top: 18%;
+    margin-left: 20%;
+}
+
+.text-config {
+    font-size: 18px;
+    font-family: Century Gothic;
+    color:black;
+}
+
+/* disabled JS */
+.d-js{
+    width:100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.75);
+    overflow:hidden;
+    position:fixed;
+    top:0px;
+}
+.d-js .d-js-content{
+    margin:50px auto 0px auto;
+    width:300px;
+    height: 40px;
+    padding:10px;
+    background-color: #c5c5c5;
+    box-shadow: 0px 0px 10px #000;
+}

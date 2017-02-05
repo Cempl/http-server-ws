@@ -1,0 +1,1641 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml:stylesheet type="text/xsl" href="../xsl/visualization2.xsl"?>
+<DATA>
+	<!--
+ATTENTION!
+Following standard
+
+        1. 	Each SQLSTATE is five-symbols string (digits or latin letters in upper case)
+        2. 	First two symbols define class of state, the rest 3 define subclass.
+            000	subclass means unspecified one.
+        3. 	Class which is first symbol in (0,1,2,3,4 and A, B, C, D, E, F, G, H)
+            or HZ (special case) is reserved by standard.
+        4.	We can define sub-class-extensions for "standard" classes.
+            In this case subclass must begin from (5,6,7,8,9, I, J, K, L, M, N,
+            O, P, Q, R, S, T, U, V, W, X, Y, or Z).
+        5.	Our classes must begin from (5,6,7,8,9, I, J, K, L, M, N,
+            O, P, Q, R, S, T, U, V, W, X, Y, or Z).
+            In this case subclass may begin from any alowable symbol.
+    -->
+	<GROUP name="Warnings">
+		<SQLCLASS name="00" description="Successful Completion" exception_name="xSuccess">
+			<SQLSTATE name="00000">
+				<DESCRIPTION>ERR_OK</DESCRIPTION>
+				<MESSAGE>Succesful completion.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		<SQLCLASS name="01" description="Warning" exception_name="xWarning">
+			<SQLSTATE name="01000">
+				<DESCRIPTION>ERR_WARNING</DESCRIPTION>
+				<MESSAGE>Warning.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="01001">
+				<DESCRIPTION>ERR_WARNING_CURSOR_OPERATION_CONFLICT</DESCRIPTION>
+				<COMMENTS>Cursor update or delete failure due to optimistic concurrency check failure. It's posible to retry operation.</COMMENTS>
+				<MESSAGE>Cursor operation conflict.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="01002">
+				<DESCRIPTION>ERR_WARNING_DISCONNECT</DESCRIPTION>
+				<MESSAGE>Disconnect error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="01003">
+				<DESCRIPTION>ERR_WARNING_NULL_VALUE_ELIMINATED_IN_SET_FUNCTION</DESCRIPTION>
+				<COMMENTS>
+                    Agregative function receive NULL for processing.
+                </COMMENTS>
+				<MESSAGE>Null value eliminated in set function.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="01004">
+				<DESCRIPTION>ERR_WARNING_STRING_DATA_RIGHT_TRUNCATION</DESCRIPTION>
+				<COMMENTS>
+                    Select or fetch into host variable that is too short.
+                </COMMENTS>
+				<MESSAGE>String data - right truncation.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="01501">
+				<DESCRIPTION>ERR_WARNING_NULL_COMPARE</DESCRIPTION>
+				<MESSAGE>It is not correct to use compare to NULL. You must use IS (NOT) NULL instead.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Others">
+		<SQLCLASS name="0A" description="Feature Not Supported" exception_name="xFeatureError">
+			<SQLSTATE name="0A000">
+				<DESCRIPTION>ERR_FEATURE_NOT_SUPPORTED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; is not supported.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="0A501">
+				<DESCRIPTION>ERR_FEATURE_NOT_SUPPORTED_EXPORT_FORMAT</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - export format is not supported.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="0A502">
+				<DESCRIPTION>ERR_FEATURE_NOT_SUPPORTED_DUMP_FORMAT</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - dump format is not supported.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="0A503">
+				<DESCRIPTION>ERR_FEATURE_NOT_SUPPORTED_EMPTY_CONNECTION</DESCRIPTION>
+				<MESSAGE>The empty connection usage is not supported. You have to create connection before.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="0A504">
+				<DESCRIPTION>ERR_FEATURE_NOT_SUPPORTED_ADV</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; is not supported. Use &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+		<SQLCLASS name="2C" description="Invalid character set" exception_name="xInvalidCharSetError">
+			<SQLSTATE name="2C000">
+				<DESCRIPTION>ERR_INVALID_CHARACTER_SET</DESCRIPTION>
+				<MESSAGE>Invalid character set.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		<SQLCLASS name="53" description="Insufficient Resources" exception_name="xInsufficientError">
+			<SQLSTATE name="53000">
+				<DESCRIPTION>ERR_INSUFFICIENT_RESOURCES</DESCRIPTION>
+				<MESSAGE>Insufficient resources.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="53501">
+				<DESCRIPTION>ERR_INSUFFICIENT_DISKSPACE</DESCRIPTION>
+				<MESSAGE>Disk full.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="53502">
+				<DESCRIPTION>ERR_INSUFFICIENT_MEMORY</DESCRIPTION>
+				<MESSAGE>Out of memory.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="53503">
+				<DESCRIPTION>ERR_INSUFFICIENT_CACHE</DESCRIPTION>
+				<MESSAGE>Cache is too small.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		<SQLCLASS name="57" description="Interrupt process" exception_name="xInterruptError">
+			<SQLSTATE name="57000">
+				<DESCRIPTION>ERR_INTERRUPT_OPERATION</DESCRIPTION>
+				<MESSAGE>Operation has been interrupted.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="57501">
+				<DESCRIPTION>ERR_INTERRUPT_QUERY</DESCRIPTION>
+				<COMMENTS>
+                    User's choise to interrup query.
+                </COMMENTS>
+				<MESSAGE>Qerry has been canceled due to your request.</MESSAGE>
+			</SQLSTATE>
+            <SQLSTATE name="57502">
+	            <DESCRIPTION>ERR_DUPLICATE_COLUMN</DESCRIPTION>
+                <COMMENTS>update Table1 set fld_varchar = 'a',	fld_varchar = 'b'</COMMENTS>
+                <MESSAGE>Column name &quot;%S&quot; appears more than once in the result column list. </MESSAGE>
+            </SQLSTATE>
+		</SQLCLASS>
+		<SQLCLASS name="58" description="Shutdown system" exception_name="xShutdownError">
+			<SQLSTATE name="58000">
+				<DESCRIPTION>ERR_SHUTDOWN</DESCRIPTION>
+				<MESSAGE>System is shutting down.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="58502">
+				<DESCRIPTION>ERR_SHUTDOWN_ADMIN</DESCRIPTION>
+				<COMMENTS>
+                    Interrupt all user's "process", and preventing shutdown by admin request.
+                </COMMENTS>
+				<MESSAGE>System is shutting down due to admin request.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="58503">
+				<DESCRIPTION>ERR_SHUTDOWN_CRASH</DESCRIPTION>
+				<MESSAGE>System is shutting down - crash was detected.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="58504">
+				<DESCRIPTION>ERR_SHUTDOWN_CANNOT_CONNECT_NOW</DESCRIPTION>
+				<MESSAGE>Unable to connect. Try later please.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		
+		<SQLCLASS name="54" description="OS system Errors" exception_name="xExternalError">
+			<SQLSTATE name="54000">
+				<DESCRIPTION>ERR_EXTERNAL</DESCRIPTION>
+				<MESSAGE>OS error.</MESSAGE>
+			</SQLSTATE>		
+			<SQLSTATE name="54501">
+				<DESCRIPTION>ERR_EXTERNAL_INVALID_PARAMETER</DESCRIPTION>
+				<MESSAGE>Invalid parameter value was specified in &quot;%S&quot; position.</MESSAGE>
+			</SQLSTATE>		
+			<SQLSTATE name="54502">
+				<DESCRIPTION>ERR_EXTERNAL_STD</DESCRIPTION>
+				<MESSAGE>External std-error: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>					
+		</SQLCLASS>
+		
+		<SQLCLASS name="59" description="OS File system Errors" exception_name="xOSFileError">
+			<SQLSTATE name="59000">
+				<DESCRIPTION>ERR_OS_FILE</DESCRIPTION>
+				<MESSAGE>File &quot;%S&quot; can't be operated.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59501">
+				<DESCRIPTION>ERR_OS_FILE_BUSY</DESCRIPTION>
+				<MESSAGE>File &quot;%S&quot; cannot be opened because it is used by another application.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59502">
+				<DESCRIPTION>ERR_OS_FILE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>File &quot;%S&quot; does not exist.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59503">
+				<DESCRIPTION>ERR_OS_FILE_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>File &quot;%S&quot; already exists.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59504">
+				<DESCRIPTION>ERR_OS_FILE_OPEN</DESCRIPTION>
+				<MESSAGE>File &quot;%S&quot; is already open.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59505">
+				<DESCRIPTION>ERR_OS_FILE_NOT_OPEN</DESCRIPTION>
+				<MESSAGE>File &quot;%S&quot; is not open.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59506">
+				<DESCRIPTION>ERR_OS_FILE_EOF</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - EOF reached.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59507">
+				<DESCRIPTION>ERR_OS_FILE_BOF</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - BOF reached.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59508">
+				<DESCRIPTION>ERR_OS_FILE_READ_ONLY</DESCRIPTION>
+				<MESSAGE>File &quot;%S&quot; - is read only.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59509">
+				<DESCRIPTION>ERR_OS_FILE_NOT_VALENTINA_DATABASE</DESCRIPTION>
+				<MESSAGE>File &quot;%S&quot; is not Valentina2 database.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59510">
+				<DESCRIPTION>ERR_CREATE_FOLDER</DESCRIPTION>
+				<MESSAGE>Folder &quot;%S&quot; could not be created, error &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59511">
+				<DESCRIPTION>ERR_OS_FOLDER_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Folder &quot;%S&quot; does not exist.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		<SQLCLASS name="60" description="Stream errors" exception_name="xStreamError">
+			<SQLSTATE name="60000">
+				<DESCRIPTION>ERR_STREAM_ERROR</DESCRIPTION>
+				<MESSAGE>External error ocured.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="60508">
+				<DESCRIPTION>ERR_STREAM_EOF</DESCRIPTION>
+				<MESSAGE>Stream EOF reached.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="60509">
+				<DESCRIPTION>ERR_STREAM_BOF</DESCRIPTION>
+				<MESSAGE>Stream BOF reached.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="6050A">
+				<DESCRIPTION>ERR_STREAM_READ_ERROR</DESCRIPTION>
+				<MESSAGE>Stream read error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="6050B">
+				<DESCRIPTION>ERR_STREAM_WRITE_ERROR</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - write error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="6050C">
+				<DESCRIPTION>ERR_STREAM_WOULD_BLOCK</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - would be blocked.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="6050D">
+				<DESCRIPTION>ERR_STREAM_PARTIAL_DATA</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - not all data is available.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		
+		<SQLCLASS name="61" description="Encryption errors" exception_name="xEncryptionError">
+			<SQLSTATE name="61000">
+				<DESCRIPTION>ERR_ENCRYPTION_ERROR</DESCRIPTION>
+				<MESSAGE>Encryption error occurred.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="61501">
+				<DESCRIPTION>ERR_ENCRYPTION_NOT_ENCRYPTED</DESCRIPTION>
+				<MESSAGE>Object is not encrypted.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="61502">
+				<DESCRIPTION>ERR_ENCRYPTION_WRONG_ENCRYPTION_KEY</DESCRIPTION>
+				<MESSAGE>Specified encryption key is wrong.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="61503">
+				<DESCRIPTION>ERR_ENCRYPTION_KEY_OVERRIDING_NOT_ALLOWED</DESCRIPTION>
+				<MESSAGE>Encryption key overriding not allowed for child or parent objects.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="61504">
+				<DESCRIPTION>ERR_ENCRYPTION_NOT_ROOT_OBJECT</DESCRIPTION>
+				<MESSAGE>Object is not an encryption root.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="61505">
+				<DESCRIPTION>ERR_ENCRYPTION_NOT_EXCLUSIVE_ACCESS</DESCRIPTION>
+				<MESSAGE>Object can not be encrypted or decrypted at the moment.</MESSAGE>
+			</SQLSTATE>
+
+		</SQLCLASS>
+
+		<SQLCLASS name="62" description="Values errors" exception_name="xValueError">
+			<SQLSTATE name="62000">
+				<DESCRIPTION>ERR_VALUE_INVALID</DESCRIPTION>
+				<MESSAGE>Value is invalid.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62501">
+				<DESCRIPTION>ERR_DATE_VALUE_NOT_MATCH_FORMAT</DESCRIPTION>
+				<MESSAGE>Date value &quot;%S&quot; is invalid. Illegal symbol at &quot;%S&quot; position.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62502">
+				<DESCRIPTION>ERR_DATE_VALUE_HAVE_WRONG_NUMBERS</DESCRIPTION>
+				<MESSAGE>Date value &quot;%S&quot; is invalid. Boundary check error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62503">
+				<DESCRIPTION>ERR_TIME_VALUE_NOT_MATCH_FORMAT</DESCRIPTION>
+				<MESSAGE>Time value &quot;%S&quot; is invalid. Illegal symbol at &quot;%S&quot; position.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62504">
+				<DESCRIPTION>ERR_TIME_VALUE_HAVE_WRONG_NUMBERS</DESCRIPTION>
+				<MESSAGE>Time value &quot;%S&quot; is invalid. Boundary check error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62505">
+				<DESCRIPTION>ERR_DATETIME_VALUE_NOT_MATCH_FORMAT</DESCRIPTION>
+				<MESSAGE>Date-time value &quot;%S&quot; is invalid. Illegal symbol at &quot;%S&quot; position.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62506">
+				<DESCRIPTION>ERR_DATETIME_VALUE_HAVE_WRONG_NUMBERS</DESCRIPTION>
+				<MESSAGE>Date-time value &quot;%S&quot; is invalid. Boundary check error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62507">
+				<DESCRIPTION>ERR_SQLSTATE_VALUE_INVALID</DESCRIPTION>
+				<MESSAGE>Sql-state value &quot;%S&quot; is invalid. It must be valid 5-digits hex number.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62508">
+				<DESCRIPTION>ERR_VALUE_BUFFER_OVERFLOW</DESCRIPTION>
+				<MESSAGE>Buffer is not enough to fit the value &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62509">
+				<DESCRIPTION>ERR_ENUM_VALUE_INVALID</DESCRIPTION>
+				<MESSAGE>Value &quot;%S&quot; is invalid for type &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+		</SQLCLASS>
+
+		<SQLCLASS name="63" description="SSL errors" exception_name="xSSLError">
+			<SQLSTATE name="63000">
+				<DESCRIPTION>ERR_SSL_ERROR</DESCRIPTION>
+				<MESSAGE>SSL error: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="63501">
+				<DESCRIPTION>ERR_SSL_CERTIFICATE_VALIDATION</DESCRIPTION>
+				<MESSAGE>SSL certificate error: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+
+		<SQLCLASS name="64" description="Bonjour errors" exception_name="xBonjourError">
+			<SQLSTATE name="64000">
+				<DESCRIPTION>ERR_BONJOUR_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64501">
+				<DESCRIPTION>ERR_BONJOUR_SERVICE_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour service error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64502">
+				<DESCRIPTION>ERR_BONJOUR_SOCKET_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour socket error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64503">
+				<DESCRIPTION>ERR_BONJOUR_SOCKET_TIMEOUT_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour socket timeout.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64504">
+				<DESCRIPTION>ERR_BONJOUR_THREAD_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour thread error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64505">
+				<DESCRIPTION>ERR_BONJOUR_NAME_IN_USE_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour name in use, please choose another one.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64506">
+				<DESCRIPTION>ERR_BONJOUR_REGISTRATION_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour registration error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64507">
+				<DESCRIPTION>ERR_BONJOUR_SERIAL_NUMBER_ERROR</DESCRIPTION>
+				<MESSAGE>Wrong serial number.</MESSAGE>
+			</SQLSTATE>
+
+		</SQLCLASS>
+		
+		<SQLCLASS name="65" description="Picture errors" exception_name="xPictureError">
+			<SQLSTATE name="65000">
+				<DESCRIPTION>ERR_PICTURE_ERROR</DESCRIPTION>
+				<MESSAGE>Picture error.</MESSAGE>
+            </SQLSTATE>
+			<SQLSTATE name="65501">
+				<DESCRIPTION>ERR_PICTURE_UNKNOWN_TYPE</DESCRIPTION>
+				<MESSAGE>Unsupported picture format.</MESSAGE>
+            </SQLSTATE>
+			<SQLSTATE name="65502">
+				<DESCRIPTION>ERR_PICTURE_UNKNOWN_ERROR</DESCRIPTION>
+				<MESSAGE>Unknown picture error.</MESSAGE>
+            </SQLSTATE>
+        </SQLCLASS>
+
+		<SQLCLASS name="F0" description="Configuration File Error" exception_name="xConfigError">
+			<SQLSTATE name="F0000">
+				<DESCRIPTION>ERR_CONFIG_FILE_ERROR</DESCRIPTION>
+				<MESSAGE>Error in configuration file.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		
+		<SQLCLASS name="99" description="Internal Error" exception_name="xInternalError">
+			<SQLSTATE name="99000">
+				<DESCRIPTION>ERR_INTERNAL_ERROR</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Internal error &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99501">
+				<DESCRIPTION>ERR_INTERNAL_DATA_CORRUPTED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Table &quot;%S&quot; is corrupted.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99503">
+				<DESCRIPTION>ERR_INTERNAL_VARCHAR_CORRUPTED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Varchar data &quot;%S&quot; is corrupted.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99507">
+				<DESCRIPTION>ERR_INTERNAL_EMBFILE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Embedded file &quot;%S&quot; not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99508">
+				<DESCRIPTION>ERR_INTERNAL_VARCHAR_PAGE_CORRUPTED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Varchar page &quot;%S&quot; is corrupted.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99509">
+				<DESCRIPTION>ERR_INTERNAL_OPEN_NEW_VERSION</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Cant open new version.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9950A">
+				<DESCRIPTION>ERR_INTERNAL_READING_DOMAIN</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Error during domain reading.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9950B">
+				<DESCRIPTION>ERR_INTERNAL_BASE_OBJECT_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Base object not found.</MESSAGE>
+			</SQLSTATE>
+			<!--
+			<SQLSTATE name="9950E">
+				<DESCRIPTION>ERR_INTERNAL_ENCRYPTION_KEY</DESCRIPTION>
+				<MESSAGE>Wrong encryption key.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99511">
+				<DESCRIPTION>ERR_INTERNAL_INDEX_BYTE_RECLIST_CORRUPTED</DESCRIPTION>
+				<MESSAGE>ByteIndex has corrupted record list on the &quot;%S&quot; page. Index must be rebuilt.</MESSAGE>
+			</SQLSTATE>
+			
+			<SQLSTATE name="99512">
+				<DESCRIPTION>ERR_INTERNAL_ARRAY_INDEX_OUT_OF_RANGE</DESCRIPTION>
+				<MESSAGE>Array index is out of range.</MESSAGE>
+			</SQLSTATE>
+			-->
+			<SQLSTATE name="99513">
+				<DESCRIPTION>ERR_INTERNAL_INVALID_PARAMETER</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Invalid parameter value was specified in function &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99514">
+				<DESCRIPTION>ERR_INTERNAL_FUNC_MUST_NOT_BE_CALLED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Function &quot;%S&quot; must not to be called.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99515">
+				<DESCRIPTION>ERR_INTERNAL_FUNC</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Error in function &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99516">
+				<DESCRIPTION>ERR_INTERNAL_EMBFILE_IS_OPENED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Embedded file &quot;%S&quot; is opened already.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="99517">
+				<DESCRIPTION>ERR_INTERNAL_EMBFILE_IS_NOT_OPENED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Embedded file &quot;%S&quot; is not opened.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="99518">
+				<DESCRIPTION>ERR_INTERNAL_EMBFILE_EOF</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Embedded file &quot;%S&quot; - EOF reached.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="99519">
+				<DESCRIPTION>ERR_INTERNAL_DUPLICATED_RECID_FOUND</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Duplicated RECID found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99520">
+				<DESCRIPTION>ERR_INTERNAL_DEMO_TIMEOUT</DESCRIPTION>
+				<MESSAGE>Demo-version time limit reached</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9952A">
+				<DESCRIPTION>ERR_INTERNAL_SEGMENTMAP_CORRUPTED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; SegmentMap is corrupted - &quot;%S&quot;</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9952B">
+				<DESCRIPTION>ERR_INTERNAL_WRONG_SEGMENT</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Owner name &quot;%S&quot;: Segment &quot;%S&quot; is wrong. The last segment is &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9952C">
+				<DESCRIPTION>ERR_INTERNAL_FIELD_WRONG_LENGTH</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Field &quot;%S&quot;, record &quot;%S&quot;. Wrong data length - &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9952D">
+				<DESCRIPTION>ERR_JOURNALED_PAGE_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Journal page not unique. Page type: &quot;%S&quot;, Volume: &quot;%S&quot;, File: &quot;%S&quot;, FileOffset: &quot;%S&quot;, JournalOffset: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9952E">
+				<DESCRIPTION>ERR_INTERNAL_PAGEFILE_CORRUPTED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Page file is corrupted - &quot;%S&quot;</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+
+		<SQLCLASS name="97" description="Volume errors" exception_name="xVolumeError">
+			<SQLSTATE name="97000">
+				<DESCRIPTION>ERR_VOLUME_ERROR</DESCRIPTION>
+				<MESSAGE>Volume error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="97500">
+				<DESCRIPTION>ERR_WRONG_SEGMENT</DESCRIPTION>
+				<MESSAGE>Volume Segment &quot;%S&quot; is wrong. Volume is corrupted.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="97501">
+				<DESCRIPTION>ERR_SEGMENT_LIMIT</DESCRIPTION>
+				<MESSAGE>Volume &quot;%S&quot; - segment limit reached. Clone the database with larger segment size.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+				
+		<SQLCLASS name="98" description="Aspects errors" exception_name="xAspectError">
+			<SQLSTATE name="98000">
+				<DESCRIPTION>ERR_ASPECT_ERROR</DESCRIPTION>
+				<MESSAGE>Aspect error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="98501">
+				<DESCRIPTION>ERR_ASPECT_BAD_ID</DESCRIPTION>
+				<MESSAGE>Aspect bad ID error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="98502">
+				<DESCRIPTION>ERR_ASPECT_ALREADY_EXIST</DESCRIPTION>
+				<MESSAGE>Aspect is already exist.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Transactions">
+		<SQLCLASS name="25" description="Invalid Transaction State" exception_name="xTransactionStateError">
+			<SQLSTATE name="25000">
+				<DESCRIPTION>ERR_TRANSACTION_STATE</DESCRIPTION>
+				<MESSAGE>Invalid Transaction State.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="25001">
+				<DESCRIPTION>ERR_TRANSACTION_STATE_ACTIVE</DESCRIPTION>
+				<MESSAGE>Another transaction is active.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="25501">
+				<DESCRIPTION>ERR_TRANSACTION_STATE_READ_ONLY</DESCRIPTION>
+				<MESSAGE>It's not allowed to write during READ_ONLY transaction.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="25502">
+				<DESCRIPTION>ERR_TRANSACTION_STATE_SCHEMA_AND_DATA_STATEMENT_MIXING</DESCRIPTION>
+				<MESSAGE>It's not allowed to mix data-definitions and data-manipulations.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="25503">
+				<DESCRIPTION>ERR_TRANSACTION_STATE_NOT_ACTIVE_FOR_CANCEL</DESCRIPTION>
+				<MESSAGE>The ROLLBACK TRANSACTION request has no corresponding BEGIN TRANSACTION.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="25504">
+				<DESCRIPTION>ERR_TRANSACTION_STATE_NOT_ACTIVE_FOR_COMMIT</DESCRIPTION>
+				<MESSAGE>The COMMIT TRANSACTION request has no corresponding BEGIN TRANSACTION.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="25505">
+				<DESCRIPTION>ERR_TRANSACTION_STATE_NO_CURRENT_TRANSACTION</DESCRIPTION>
+				<MESSAGE>No active transaction.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+		<SQLCLASS name="40" description="Transaction Rollback" exception_name="xRollbackError">
+			<SQLSTATE name="40000">
+				<DESCRIPTION>ERR_ROLLBACK</DESCRIPTION>
+				<COMMENTS></COMMENTS>
+				<MESSAGE>Rollback transaction.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="40001">
+				<DESCRIPTION>ERR_ROLLBACK_SERIALIZATION_FAILURE</DESCRIPTION>
+				<COMMENTS></COMMENTS>
+				<MESSAGE>Rollback transaction due to the serialization failure.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="40002">
+				<DESCRIPTION>ERR_ROLLBACK_INTEGRITY_CONSTRAINT_VIOLATION</DESCRIPTION>
+				<COMMENTS></COMMENTS>
+				<MESSAGE>Rollback transaction due to the constraint &quot;%S&quot; violation.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="40003">
+				<DESCRIPTION>ERR_ROLLBACK_STATEMENT_COMPLETION_UNKNOWN</DESCRIPTION>
+				<COMMENTS></COMMENTS>
+				<MESSAGE>Rollback transaction due to the unknown completion state.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="40501">
+				<DESCRIPTION>ERR_ROLLBACK_DEADLOCK_DETECTED</DESCRIPTION>
+				<COMMENTS></COMMENTS>
+				<MESSAGE>Rollback transaction - deadlock is detected.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Database errors">
+		<SQLCLASS name="51" description="Database error" exception_name="xDBError">
+			<SQLSTATE name="51000">
+				<DESCRIPTION>ERR_DB_ERROR</DESCRIPTION>
+				<MESSAGE>Database error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51500">
+				<DESCRIPTION>ERR_DB_IDENTIFIER_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Identifier &quot;%S&quot; is not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51501">
+				<DESCRIPTION>ERR_DB_LOCATION</DESCRIPTION>
+				<MESSAGE>DB location is wrong.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51502">
+				<DESCRIPTION>ERR_DB_VERSION</DESCRIPTION>
+				<MESSAGE>Database version is &quot;%S&quot;. But the current version is &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51503">
+				<DESCRIPTION>ERR_DB_READ_ONLY</DESCRIPTION>
+				<MESSAGE>Database is read-only.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51504">
+				<DESCRIPTION>ERR_DB_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Database &quot;%S&quot; is not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51505">
+				<DESCRIPTION>ERR_DB_NO_ACTIVE_DB</DESCRIPTION>
+				<MESSAGE>No active database.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51506">
+				<DESCRIPTION>ERR_DATABASE_ALREADY_EXISTS</DESCRIPTION>
+				<MESSAGE>Database &quot;%S&quot; already exists.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51507">
+				<DESCRIPTION>ERR_CONVERT_DATABASE_ERROR</DESCRIPTION>
+				<MESSAGE>Convert_1_2 error. &quot;%S&quot; - &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51508">
+				<DESCRIPTION>ERR_DATABASE_AMBIGUOUS_IDENTIFIER</DESCRIPTION>
+				<MESSAGE>Identifier &quot;%S&quot; is ambiguous.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	
+	<GROUP name="Sequence errors">
+		<SQLCLASS name="52" description="Sequence error" exception_name="xSequenceError">
+			<SQLSTATE name="52000">
+				<DESCRIPTION>ERR_SEQUENCE_ERROR</DESCRIPTION>
+				<MESSAGE>Sequence error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52501">
+				<DESCRIPTION>ERR_SEQUENCE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Sequence &quot;%S&quot; not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52502">
+				<DESCRIPTION>ERR_SEQUENCE_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Sequence name &quot;%S&quot; is not unique.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52503">
+				<DESCRIPTION>ERR_SEQUENCE_BAD_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; is bad sequence name.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52504">
+				<DESCRIPTION>ERR_SEQUENCE_LIMIT_REACHED</DESCRIPTION>
+				<MESSAGE>Sequence &quot;%S&quot; - next number limit reached.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52505">
+				<DESCRIPTION>ERR_SEQUENCE_BOUNDARY_ERROR</DESCRIPTION>
+				<MESSAGE>Sequence &quot;%S&quot; - max-value is less than min-value.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52506">
+				<DESCRIPTION>ERR_SEQUENCE_BAD_START_VALUE</DESCRIPTION>
+				<MESSAGE>Sequence &quot;%S&quot; - unappropriated start value &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52507">
+				<DESCRIPTION>ERR_SEQUENCE_BAD_INCREMENT_VALUE</DESCRIPTION>
+				<MESSAGE>Sequence &quot;%S&quot; - unappropriated increment value &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="52508">
+				<DESCRIPTION>ERR_SEQUENCE_BAD_VALUE</DESCRIPTION>
+				<MESSAGE>Sequence &quot;%S&quot; - unappropriated current value &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>							
+			<SQLSTATE name="52509">
+				<DESCRIPTION>ERR_SEQUENCE_IN_USE</DESCRIPTION>
+				<MESSAGE>Sequence &quot;%S&quot; is used by %S.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+	</GROUP>
+	
+	<GROUP name="Table errors">
+		<SQLCLASS name="70" description="Table error" exception_name="xTableError">
+			<SQLSTATE name="70000">
+				<DESCRIPTION>ERR_TABLE_ERROR</DESCRIPTION>
+				<MESSAGE>Table error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="70501">
+				<DESCRIPTION>ERR_TABLE_EMPTY</DESCRIPTION>
+				<MESSAGE>Table &quot;%S&quot; is empty.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="70502">
+				<DESCRIPTION>ERR_TABLE_BAD_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; is bad table name.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="70503">
+				<DESCRIPTION>ERR_TABLE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Table &quot;%S&quot; not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="70504">
+				<DESCRIPTION>ERR_TABLE_RECORD_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Record &quot;%S&quot; does not exist in table &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="70505">
+				<DESCRIPTION>ERR_TABLE_RECORD_LOCKED</DESCRIPTION>
+				<MESSAGE>Record &quot;%S&quot; is locked in table &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="70506">
+				<DESCRIPTION>ERR_TABLE_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Table name &quot;%S&quot; is not unique.</MESSAGE>
+			</SQLSTATE>
+            <SQLSTATE name="70507">
+                <DESCRIPTION>ERR_WRONG_TABLENAME_USED</DESCRIPTION>
+                <COMMENTS>select * from t1 alias, t2 alias2 where t1.fld ...</COMMENTS>
+                <MESSAGE>The column prefix &quot;%S&quot; does not match with a table name or alias name used in the query.</MESSAGE>
+            </SQLSTATE>
+            <SQLSTATE name="70508">
+                <DESCRIPTION>ERR_TABLE_IN_USE</DESCRIPTION>
+                <COMMENTS>select * from t1. Now table t1 has mInUse counter == 1. So it is not possible to drop this table till counter becomes 0. </COMMENTS>
+                <MESSAGE>The table &quot;%S&quot; is used by %S.</MESSAGE>
+            </SQLSTATE>
+            <SQLSTATE name="70509">
+                <DESCRIPTION>ERR_TABLE_INCONSISTENT_FLAGS</DESCRIPTION>
+                <COMMENTS>CREATE SYSTEM TEMPORARY TABLE... </COMMENTS>
+                <MESSAGE>The table &quot;%S&quot; could not be created because of inconsistent flags &quot;%S&quot;.</MESSAGE>
+            </SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Fields errors">
+		<SQLCLASS name="80" description="Fields errors." exception_name="xFieldError">
+			<SQLSTATE name="80000">
+				<DESCRIPTION>ERR_FIELD_ERROR</DESCRIPTION>
+				<MESSAGE>Field error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80501">
+				<DESCRIPTION>ERR_FIELD_NAME_NOT_UNIQUE</DESCRIPTION>
+				<COMMENTS>
+                    create table t ( f1 ulong, f1 ushort )
+                </COMMENTS>
+				<MESSAGE>Field name &quot;%S&quot; is not unique.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80502">
+				<DESCRIPTION>ERR_FIELD_BAD_NAME</DESCRIPTION>
+				<MESSAGE>Bad field name &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80503">
+				<DESCRIPTION>ERR_FIELD_NOT_INDEXED</DESCRIPTION>
+				<MESSAGE>Field &quot;%S&quot; is not indexed.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80504">
+				<DESCRIPTION>ERR_FIELD_IS_CALCULATED</DESCRIPTION>
+				<MESSAGE>Field &quot;%S&quot; is calculated.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80505">
+				<DESCRIPTION>ERR_FIELD_IS_COMPOSED</DESCRIPTION>
+				<MESSAGE>Field &quot;%S&quot; is composed.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80506">
+				<DESCRIPTION>ERR_FIELD_UNIQUE</DESCRIPTION>
+				<MESSAGE>Field &quot;%S&quot; is unique.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80507">
+				<DESCRIPTION>ERR_FIELD_IS_NOT_METHOD</DESCRIPTION>
+				<MESSAGE>Field &quot;%S&quot; is method.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80508">
+				<DESCRIPTION>ERR_FIELD_CANT_BE_CREATED</DESCRIPTION>
+				<MESSAGE>Can't create field &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80509">
+				<DESCRIPTION>ERR_FIELD_LANGUAGE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Field &quot;%S&quot; - language &quot;%S&quot; not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8050A">
+				<DESCRIPTION>ERR_FIELD_WRONG_TYPE</DESCRIPTION>
+				<MESSAGE>Field &quot;%S&quot; - wrong type &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8050B">
+				<DESCRIPTION>ERR_FIELD_NOT_FOUND</DESCRIPTION>
+				<COMMENTS>select NOTEXISTED_COLUMN_NAME from t1</COMMENTS>
+				<MESSAGE>Field &quot;%S&quot; does not exist.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8050C">
+				<DESCRIPTION>ERR_FIELD_METHOD_DEPENDS</DESCRIPTION>
+				<COMMENTS>There is a method in the table which is depended on dropped field.</COMMENTS>
+				<MESSAGE>Field &quot;%S&quot; is used by some method(s).</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8050D">
+				<DESCRIPTION>ERR_FIELD_CANT_BE_METHOD</DESCRIPTION>
+				<COMMENTS>There is no sence to modify existed field to be a method.</COMMENTS>
+				<MESSAGE>Can't modify field &quot;%S&quot; to be a method.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8050E">
+				<DESCRIPTION>ERR_FIELD_VALUE_NOT_PREPARED_FOR_UPDATE</DESCRIPTION>
+				<COMMENTS>Value was not prepared for Update.</COMMENTS>
+				<MESSAGE>Field &quot;%S&quot;: value was not prepared for Update.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8050F">
+				<DESCRIPTION>ERR_FIELD_WRONG_ATTRIBUTE</DESCRIPTION>
+				<MESSAGE>Field &quot;%S&quot;, attribute &quot;%S&quot; is not matched with schema-stored attribute.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80510">
+				<DESCRIPTION>ERR_FIELD_WRONG_TMP_FLAG</DESCRIPTION>
+				<MESSAGE>Field &quot;%S&quot;. Temporary flag is allowed for methods only.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80511">
+				<DESCRIPTION>ERR_FIELD_MAX_LENGTH_TOO_BIG</DESCRIPTION>
+				<MESSAGE>You have specify too big maximal length for VarChar field &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80512">
+				<DESCRIPTION>ERR_FIELD_IN_USE</DESCRIPTION>
+				<MESSAGE>Field &quot;%S&quot; is used by %S.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80513">
+				<DESCRIPTION>ERR_FIELD_CANT_BE_DROPPED</DESCRIPTION>
+				<MESSAGE>Can't drop field &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80514">
+				<DESCRIPTION>ERR_FIELD_WRONG_DEFAULT_EXPRESSION</DESCRIPTION>
+				<MESSAGE>Default expression for field &quot;%S&quot; can not depend on any field.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Methods errors">
+		<SQLCLASS name="90" description="Methods errors" exception_name="xMethodError">
+			<SQLSTATE name="90000">
+				<DESCRIPTION>ERR_METHOD_ERROR</DESCRIPTION>
+				<MESSAGE>Error in function &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90501">
+				<DESCRIPTION>ERR_METHOD_WRONG_LANGUAGE</DESCRIPTION>
+				<MESSAGE>Wrong language in function &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90502">
+				<DESCRIPTION>ERR_METHOD_LEFT_OPERAND_MISSING</DESCRIPTION>
+				<MESSAGE>Left operand missing in function &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90503">
+				<DESCRIPTION>ERR_METHOD_RIGHT_OPERAND_MISSING</DESCRIPTION>
+				<MESSAGE>Right operand missing in function &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90504">
+				<DESCRIPTION>ERR_METHOD_BAD_EXPRESSION</DESCRIPTION>
+				<MESSAGE>Function &quot;%S&quot; - bad expression.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90505">
+				<DESCRIPTION>ERR_METHOD_WRONG_DB_REF</DESCRIPTION>
+				<MESSAGE>Function &quot;%S&quot; - wrong database ref.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90506">
+				<DESCRIPTION>ERR_METHOD_WRONG_BASEOBJECT_REF</DESCRIPTION>
+				<MESSAGE>Function &quot;%S&quot; - wrong base object ref.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90507">
+				<DESCRIPTION>ERR_METHOD_WRONG_FIELD_REF</DESCRIPTION>
+				<MESSAGE>Function &quot;%S&quot; - wrong field ref.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90508">
+				<DESCRIPTION>ERR_METHOD_WRONG_CURSOR_REF</DESCRIPTION>
+				<MESSAGE>Function &quot;%S&quot; - wrong cursor ref.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90509">
+				<DESCRIPTION>ERR_METHOD_OUT_OF_RANGE</DESCRIPTION>
+				<MESSAGE>Function &quot;%S&quot; - out of range.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9050A">
+				<DESCRIPTION>ERR_METHOD_FUNC_MUST_NOT_BE_CALLED</DESCRIPTION>
+				<MESSAGE>Function &quot;%S&quot; - must not to be called.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9050B">
+				<DESCRIPTION>ERR_METHOD_WRONG_PARAM_VALUE</DESCRIPTION>
+				<MESSAGE>Function &quot;%S&quot; - wrong param &quot;%S&quot; value.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9050C">
+				<DESCRIPTION>ERR_METHOD_PARAMS_TOO_FEW</DESCRIPTION>
+				<MESSAGE>Function &quot;%S&quot; - wrong param count. Function requires at least &quot;%S&quot; arguments.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9050D">
+				<DESCRIPTION>ERR_METHOD_PARAMS_TOO_MUCH</DESCRIPTION>
+				<MESSAGE>Function &quot;%S&quot; - wrong param count. Function requires not more than &quot;%S&quot; arguments.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="9050E">
+				<DESCRIPTION>ERR_METHOD_BAD_NAME</DESCRIPTION>
+				<MESSAGE>Error in function name &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9050F">
+				<DESCRIPTION>ERR_METHOD_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Function name &quot;%S&quot; is not unique.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90510">
+				<DESCRIPTION>ERR_METHOD_AMBIGUOUS_IDENTIFIER</DESCRIPTION>
+				<MESSAGE>Identifier &quot;%S&quot; is ambiguous. Found as a field in &quot;%S&quot; table and as a link.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Integrity">
+		<SQLCLASS name="23" description="Integrity Constraints errors" exception_name="xConstraintError">
+			<SQLSTATE name="23000">
+				<DESCRIPTION>ERR_CONSTRAINT_VIOLATION</DESCRIPTION>
+				<MESSAGE>Integrity constraint violation.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23001">
+				<DESCRIPTION>ERR_CONSTRAINT_RESTRICT_VIOLATION</DESCRIPTION>
+				<MESSAGE>Restrict is specified. Dropping is unavailable till constraints exist.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23501">
+				<DESCRIPTION>ERR_CONSTRAINT_NOT_NULL_VIOLATION</DESCRIPTION>
+				<MESSAGE>The column &quot;%S&quot; in table &quot;%S&quot; does not allow null values.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23502">
+				<DESCRIPTION>ERR_CONSTRAINT_FOREIGN_KEY_VIOLATION</DESCRIPTION>
+				<MESSAGE>Foreign key constraint violation occurred, table name = &quot;%S&quot;, constraint name = &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23503">
+				<DESCRIPTION>ERR_CONSTRAINT_UNIQUE_VIOLATION</DESCRIPTION>
+				<MESSAGE>Unique constraint violation occurred, object &quot;%S&quot;, unique index &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23504">
+				<DESCRIPTION>ERR_CONSTRAINT_CHECK_VIOLATION</DESCRIPTION>
+				<MESSAGE>Check constraint violation occurred, table name = &quot;%S&quot;, constraint name = &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23506">
+				<DESCRIPTION>ERR_CONSTRAINT_DEFAULT_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Default value does not exist.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23507">
+				<DESCRIPTION>ERR_CONSTRAINT_EXPECTED_REQUIRED_PROPERTY</DESCRIPTION>
+				<MESSAGE>Expected required property &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23508">
+				<DESCRIPTION>ERR_CONSTRAINT_PRIMARY_KEY_VIOLATION</DESCRIPTION>
+				<MESSAGE>Primary key constraint violation occurred, table name = &quot;%S&quot;, constraint name = &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23509">
+				<DESCRIPTION>ERR_CONSTRAINT_PRIMARY_KEY_ALREADY_DEFINED</DESCRIPTION>
+				<MESSAGE>Attempt of creation of the second primary key, table name = &quot;%S&quot;, constraint name = &quot;%S&quot;, existing constraint name = &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="2350A">
+				<DESCRIPTION>ERR_CONSTRAINT_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>The system already contains constraint with a name &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="2350B">
+				<DESCRIPTION>ERR_CONSTRAINT_BAD_NAME</DESCRIPTION>
+				<MESSAGE>The table &quot;%S&quot; already contains constraint with a name &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="2350C">
+				<DESCRIPTION>ERR_CONSTRAINT_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>The table &quot;%S&quot; not contains constraint with a name &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="2350D">
+				<DESCRIPTION>ERR_CONSTRAINT_WRONG_PROPERTY_TYPE</DESCRIPTION>
+				<MESSAGE>Wrong property type &quot;%S&quot;. Must be &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="2350E">
+				<DESCRIPTION>ERR_CONSTRAINT_FIELD_ALREADY_UNIQUE</DESCRIPTION>
+				<MESSAGE>Field &quot;%S&quot; already  unique.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="2350F">
+				<DESCRIPTION>ERR_CONSTRAINT_PRIMARY_KEY_HAVE_FOREIGN_KEY</DESCRIPTION>
+				<MESSAGE>Primary key constraint &quot;%S&quot; from table &quot;%S&quot; have foreign key(s) - &quot;%S&quot;.</MESSAGE>                
+			</SQLSTATE>
+			<SQLSTATE name="23510">
+				<DESCRIPTION>ERR_CONSTRAINT_FIELD_ALREADY_INDEXED</DESCRIPTION>
+				<MESSAGE>Field &quot;%S&quot; is already indexed.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23511">
+				<DESCRIPTION>ERR_CONSTRAINT_NOT_NULL_AND_NO_DEFAULT_VALUE_VIOLATION</DESCRIPTION>
+				<MESSAGE>Adding column must be nullable or have a DEFAULT definition specified for not empty table. The column &quot;%S&quot; cannot be added to table &quot;%S&quot; because it does not allow null values and does not specify a DEFAULT definition.</MESSAGE>
+			</SQLSTATE>
+			
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Links">
+		<SQLCLASS name="81" description="Link errors." exception_name="xLinkError">
+			<SQLSTATE name="81000">
+				<DESCRIPTION>ERR_LINK_ERROR</DESCRIPTION>
+				<MESSAGE>Link error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81501">
+				<DESCRIPTION>ERR_LINK_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Link name &quot;%S&quot; already exists.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81502">
+				<DESCRIPTION>ERR_LINK_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Link with name &quot;%S&quot; not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81503">
+				<DESCRIPTION>ERR_LINK_FIELDS_FROM_DIFFERENT_TABLES</DESCRIPTION>
+				<MESSAGE>Compaund key's fields must be presented in the single table.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81504">
+				<DESCRIPTION>ERR_LINKED_RECORD_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>The link &quot;%S&quot; is broken. Linked record is not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81505">
+				<DESCRIPTION>ERR_LINK_WRONG_TABLE</DESCRIPTION>
+				<MESSAGE>The table &quot;%S&quot; is not used in link &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81506">
+				<DESCRIPTION>ERR_LINK_WRONG_OWNER</DESCRIPTION>
+				<MESSAGE>The table &quot;%S&quot; is can  not be owner of the link &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81507">
+				<DESCRIPTION>ERR_LINK_BAD_NAME</DESCRIPTION>
+				<MESSAGE>Error in link name &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81508">
+				<DESCRIPTION>ERR_LINK_BAD_PTR_TYPE</DESCRIPTION>
+				<MESSAGE>The field &quot;%S&quot; is not able to point to the &quot;%S&quot; field because of ptr-field type.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81509">
+				<DESCRIPTION>ERR_LINK_BAD_PTR_SIZE</DESCRIPTION>
+				<MESSAGE>The field &quot;%S&quot; is not able to point to the &quot;%S&quot; field because of ptr-field size.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81510">
+				<DESCRIPTION>ERR_LINK_PTR_NOT_NULLABLE</DESCRIPTION>
+				<MESSAGE>Referential action SET NULL can't be applied to the not nullable field &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81511">
+				<DESCRIPTION>ERR_LINK_KEY_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Key field &quot;%S&quot; must have unique flag.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81512">
+				<DESCRIPTION>ERR_LINK_KEY_NOT_INDEXED</DESCRIPTION>
+				<MESSAGE>Key field &quot;%S&quot; must be indexed.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81513">
+				<DESCRIPTION>ERR_LINK_PTR_NOT_INDEXED</DESCRIPTION>
+				<MESSAGE>Pointer field &quot;%S&quot; must be indexed.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81514">
+				<DESCRIPTION>ERR_LINK_TABLES_NOT_LINKED</DESCRIPTION>
+				<MESSAGE>The link(s) is not found between &quot;%S&quot; tables.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81515">
+				<DESCRIPTION>ERR_LINK_LINKS_AMBIGUITY</DESCRIPTION>
+				<MESSAGE>Some tables are linked more than one way - ambiguity.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81516">
+				<DESCRIPTION>ERR_LINK_WRONG_TYPE</DESCRIPTION>
+				<MESSAGE>Link &quot;%S&quot; - wrong type &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81517">
+				<DESCRIPTION>ERR_LINKED_RECORDS_NOT_LINKED</DESCRIPTION>
+				<MESSAGE>The link &quot;%S&quot;. Left-table record &quot;%S&quot; is not linked to the right-table record &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81518">
+				<DESCRIPTION>ERR_LINKED_RECORDS_ALREADY_LINKED</DESCRIPTION>
+				<MESSAGE>The link &quot;%S&quot;. Left-table record &quot;%S&quot; is already linked to the right-table record &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81519">
+				<DESCRIPTION>ERR_LINK_POWER_VIOLATION</DESCRIPTION>
+				<MESSAGE>The link &quot;%S&quot;. kMany-table's record &quot;%S&quot; is already linked to some kOne-table's record.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81520"> 
+				<DESCRIPTION>ERR_LINK_TO_NULL</DESCRIPTION>
+				<MESSAGE>The link &quot;%S&quot;. kMany-table's record &quot;%S&quot; can't be linked to &quot;%S&quot; kOne-table's record. Key can not be NULL.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81521">
+				<DESCRIPTION>ERR_LINK_RESTRICT_VIOLATION</DESCRIPTION>
+				<MESSAGE>The link &quot;%S&quot; refuses operation.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81522">
+				<DESCRIPTION>ERR_LINK_WRONG_ON_DELETE_FLAG</DESCRIPTION>
+				<MESSAGE>Link &quot;%S&quot; - wrong OnDelete behavior.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81523">
+				<DESCRIPTION>ERR_LINK_WRONG_ON_UPDATE_FLAG</DESCRIPTION>
+				<MESSAGE>Link &quot;%S&quot; - wrong OnUpdate behavior.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81524">
+				<DESCRIPTION>ERR_LINK_NO_KEY_VALUE_FOUND_RECORDS_COULD_NOT_BE_LINKED</DESCRIPTION>
+				<MESSAGE>The ptr field &quot;%S&quot; value stored in record &quot;%S&quot; not found in key field &quot;%S&quot;. Records could not be linked.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81525">
+				<DESCRIPTION>ERR_LINK_CONVERT</DESCRIPTION>
+				<MESSAGE>The link(s) &quot;%S&quot; could not be converted to &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81526">
+				<DESCRIPTION>ERR_LINK_CONVERT_TARGET_LINKS_TYPE</DESCRIPTION>
+				<MESSAGE>The link(s) &quot;%S&quot; could not be converted to &quot;%S&quot;. Target link(s) type must be 1::M or 1::1.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81527">
+				<DESCRIPTION>ERR_LINK_CONVERT_SOURCE_LINK_TYPE</DESCRIPTION>
+				<MESSAGE>The link(s) &quot;%S&quot; could not be converted to &quot;%S&quot;. Source link(s) type must be 1::M or 1::1.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81528">
+				<DESCRIPTION>ERR_LINK_CONVERT_DIFFERENT_TABLES</DESCRIPTION>
+				<MESSAGE>The link(s) &quot;%S&quot; could not be converted to &quot;%S&quot;. Source and target links must link the same tables.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81529">
+				<DESCRIPTION>ERR_LINK_CONVERT_TARGET_LINK_NOT_EMPTY</DESCRIPTION>
+				<MESSAGE>The link(s) &quot;%S&quot; could not be converted to &quot;%S&quot;. Target link(s) is not empty.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81530">
+				<DESCRIPTION>ERR_LINK_CONVERT_TARGET_KEY_METHOD</DESCRIPTION>
+				<MESSAGE>The link(s) &quot;%S&quot; could not be converted to &quot;%S&quot;. Target link key-field is method.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81531">
+				<DESCRIPTION>ERR_LINK_CONVERT_TARGET_PTR_METHOD</DESCRIPTION>
+				<MESSAGE>The link(s) &quot;%S&quot; could not be converted to &quot;%S&quot;. Target link ptr-field is method.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81532">
+				<DESCRIPTION>ERR_LINK_CONVERT_TARGET_MUSTBE_MM</DESCRIPTION>
+				<MESSAGE>The link(s) &quot;%S&quot; could not be converted to &quot;%S&quot;. Target link must be M::M.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81533">
+				<DESCRIPTION>ERR_LINK_CONVERT_SOURCE_MUSTBE_MM</DESCRIPTION>
+				<MESSAGE>The link(s) &quot;%S&quot; could not be converted to &quot;%S&quot;. Source link must be M::M.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81534">
+				<DESCRIPTION>ERR_LINK_CONVERT_TARGET_LINKS_NOT_CORRESPONDED</DESCRIPTION>
+				<MESSAGE>The link(s) &quot;%S&quot; could not be converted to &quot;%S&quot;. Target links are not corresponded.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81535">
+				<DESCRIPTION>ERR_LINK_CONVERT_SOURCE_LINKS_NOT_CORRESPONDED</DESCRIPTION>
+				<MESSAGE>The link(s) &quot;%S&quot; could not be converted to &quot;%S&quot;. Source links are not corresponded.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81536">
+				<DESCRIPTION>ERR_LINK_TABLES_KIND_NOT_CORRESPONDED</DESCRIPTION>
+				<MESSAGE>The link(s) &quot;%S&quot; could not be established between tables of different kind.</MESSAGE>
+			</SQLSTATE>
+            <SQLSTATE name="81537">
+                <DESCRIPTION>ERR_LINK_INCONSISTENT_FLAGS</DESCRIPTION>
+                <COMMENTS>CREATE SYSTEM TEMPORARY LINK... </COMMENTS>
+                <MESSAGE>The link &quot;%S&quot; could not be created because of inconsistent flags &quot;%S&quot;.</MESSAGE>
+            </SQLSTATE>
+            <SQLSTATE name="81538">
+                <DESCRIPTION>ERR_LINK_INCONSISTENT_STORAGE_KIND</DESCRIPTION>
+                <COMMENTS>CREATE not-system LINK between system tables </COMMENTS>
+                <MESSAGE>The link &quot;%S&quot; could not be created because of inconsistent storage kind &quot;%S&quot;.</MESSAGE>
+            </SQLSTATE>
+            <SQLSTATE name="81539">
+                <DESCRIPTION>ERR_LINK_MUST_BE_RECURSIVE</DESCRIPTION>
+                <MESSAGE>The link &quot;%S&quot; must be  recursive.</MESSAGE>
+            </SQLSTATE>			
+		</SQLCLASS>
+	</GROUP>
+
+
+	<GROUP name="Connection">
+		<SQLCLASS name="82" description="Connection errors." exception_name="xConnectionError">
+			<SQLSTATE name="82000">
+				<DESCRIPTION>ERR_CONNECTION_ERROR</DESCRIPTION>
+				<MESSAGE>Connection error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82501">
+				<DESCRIPTION>ERR_CONNECTION_LIMIT</DESCRIPTION>
+				<MESSAGE>Connection limit reached.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82502">
+				<DESCRIPTION>ERR_CONNECTION_PROTOCOL_VERSION_IS_TOO_NEW</DESCRIPTION>
+				<MESSAGE>Protocol version is too new.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82503">
+				<DESCRIPTION>ERR_CONNECTION_INVALID_USER_NAME_OR_PASSWORD</DESCRIPTION>
+				<MESSAGE>Invalid user name or password.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82504">
+				<DESCRIPTION>ERR_CONNECTION_INVALID_DATABASE_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; invalid database name.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82507">
+				<DESCRIPTION>ERR_CONNECTION_COMMAND_OUT_OF_SYNC</DESCRIPTION>
+				<MESSAGE>Command &quot;%S&quot; is out of sync.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82508">
+				<DESCRIPTION>ERR_CONNECTION_NO_CURRENT_DB</DESCRIPTION>
+				<MESSAGE>Current database not set.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82509">
+				<DESCRIPTION>ERR_CONNECTION_TIMED_OUT</DESCRIPTION>
+				<MESSAGE>Connection timed out.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8250A">
+				<DESCRIPTION>ERR_CONNECTION_WRONG_DEPLOYMENT_SERIAL</DESCRIPTION>
+				<MESSAGE>Wrong deployment serial.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8250B">
+				<DESCRIPTION>ERR_CONNECTION_FORCEDLY_CLOSED</DESCRIPTION>
+				<MESSAGE>Connection forcedly closed.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8250D">
+				<DESCRIPTION>ERR_CONNECTION_UNKNOWN</DESCRIPTION>
+				<MESSAGE>Unknown connection error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8250E">
+				<DESCRIPTION>ERR_CONNECTION_INVALID_PROPERTY_NAME</DESCRIPTION>
+				<MESSAGE>Invalid property name specified while accessing server configuration property value.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8250F">
+				<DESCRIPTION>ERR_CONNECTION_ACCESS_DENIED</DESCRIPTION>
+				<MESSAGE>Access denied.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82510">
+				<DESCRIPTION>ERR_CONNECTION_DATABASE_ALREADY_EXISTS</DESCRIPTION>
+				<MESSAGE>Database with name &quot;%S&quot; already exists on the server.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82511">
+				<DESCRIPTION>ERR_CONNECTION_USER_ALREADY_EXISTS</DESCRIPTION>
+				<MESSAGE>User with name &quot;%S&quot; already registered on the server.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82512">
+				<DESCRIPTION>ERR_CONNECTION_INTERNAL_SERVER_ERROR</DESCRIPTION>
+				<MESSAGE>Internal server error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82513">
+				<DESCRIPTION>ERR_CONNECTION_INVALID_IDENTIFIER</DESCRIPTION>
+				<MESSAGE>An invalid identifier (%S) was specified while processing client request.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82514">
+				<DESCRIPTION>ERR_CONNECTION_INCONSISTENT_RECEIVED_PACKET_VERSION</DESCRIPTION>
+				<MESSAGE>Received packet's version is inconsistent.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82515">
+				<DESCRIPTION>ERR_CONNECTION_BROKEN_RECEIVED_PACKET</DESCRIPTION>
+				<MESSAGE>Received packet is broken.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82516">
+				<DESCRIPTION>ERR_LOAD_SSL_LIBRARIES_ERROR</DESCRIPTION>
+				<MESSAGE>SSL libraries not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82517">
+				<DESCRIPTION>ERR_CONNECTION_DATABASE_NOT_OPENED</DESCRIPTION>
+				<MESSAGE>Database with name &quot;%S&quot; must be opened or created before operation.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82518">
+				<DESCRIPTION>ERR_CONNECTION_USER_NOT_ALLOWED_REMOVE_SELF</DESCRIPTION>
+				<MESSAGE>User &quot;%S&quot; can not be removed by himself.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82519">
+				<DESCRIPTION>ERR_CONNECTION_OPERATION_REFUSED</DESCRIPTION>
+				<MESSAGE>Operation is refused. User has no '&quot;%S&quot;' privilege.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82520">
+				<DESCRIPTION>ERR_CONNECTION_USER_NOT_EXISTS</DESCRIPTION>
+				<MESSAGE>User '&quot;%S&quot;' is not registered to this server.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82521">
+				<DESCRIPTION>ERR_CONNECTION_OPERATION_NOT_ALLOWED</DESCRIPTION>
+				<MESSAGE>Operation '&quot;%S&quot;' is not allowed for local-mode.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82522">
+				<DESCRIPTION>ERR_CONNECTION_OPERATION_REFUSED_ACL</DESCRIPTION>
+				<MESSAGE>Connection is refused according to ACL rules.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="Indexes">
+		<SQLCLASS name="83" description="Index errors." exception_name="xIndexError">
+			<SQLSTATE name="83000">
+				<DESCRIPTION>ERR_INDEX_ERROR</DESCRIPTION>
+				<MESSAGE>Index error. Please reindex.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83500">
+				<DESCRIPTION>ERR_INDEX_CORRUPTED</DESCRIPTION>
+				<MESSAGE>Index &quot;%S&quot; is corrupted. Please reindex.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83501">
+				<DESCRIPTION>ERR_INDEX_PAGE_INVENTORY_CORRUPTED</DESCRIPTION>
+				<MESSAGE>Inventory corrupted for index &quot;%S&quot;. Please reindex.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83502">
+				<DESCRIPTION>ERR_INDEX_PAGE_CORRUPTED</DESCRIPTION>
+				<MESSAGE>Index &quot;%S&quot; page is corrupted. Please reindex.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83503">
+				<DESCRIPTION>ERR_INDEX_BYTE_RECLIST_CORRUPTED</DESCRIPTION>
+				<MESSAGE>Index &quot;%S&quot; byte rec-list is corrupted. Please reindex.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83504">
+				<DESCRIPTION>ERR_INDEX_UNIQUE_VIOLATION</DESCRIPTION>
+				<MESSAGE>Unique violation for index &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>		
+			<SQLSTATE name="83505">
+				<DESCRIPTION>ERR_INDEX_NOT_SORTED</DESCRIPTION>
+				<MESSAGE>Index is not sorted.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83506">
+				<DESCRIPTION>ERR_INDEX_BUILD</DESCRIPTION>
+				<MESSAGE>Index &quot;%S&quot; is failed to build.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83507">
+				<DESCRIPTION>ERR_INDEX_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Index &quot;%S&quot; not found.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	
+	<GROUP name="IndexePrefs">
+		<SQLCLASS name="84" description="Index style errors." exception_name="xIndexStyleError">
+			<SQLSTATE name="84000">
+				<DESCRIPTION>ERR_INDEXPREFS_ERROR</DESCRIPTION>
+				<MESSAGE>IndexPrefs error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="84501">
+				<DESCRIPTION>ERR_INDEXPREFS_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>IndexPrefs name &quot;%S&quot; is not unique.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	
+	<GROUP name="Licences">
+		<SQLCLASS name="85" description="Licence errors." exception_name="xLicenceError">
+			<SQLSTATE name="85000">
+				<DESCRIPTION>ERR_LICENCE_ERROR</DESCRIPTION>
+				<MESSAGE>Licence error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="85501">
+				<DESCRIPTION>ERR_LICENCE_INVALID</DESCRIPTION>
+				<MESSAGE>Licence file &quot;%S&quot; is invalid.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="85502">
+				<DESCRIPTION>ERR_LICENCE_EXPIRED</DESCRIPTION>
+				<MESSAGE>Licence file &quot;%S&quot; is expired.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	
+	<GROUP name="Compressor">
+		<SQLCLASS name="86" description="Compressor errors." exception_name="xCompressorError">
+			<SQLSTATE name="86000">
+				<DESCRIPTION>ERR_COMPRESSOR_ERROR</DESCRIPTION>
+				<MESSAGE>Compressor error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="86501">
+				<DESCRIPTION>ERR_ZIP_COMPRESSOR_ERROR</DESCRIPTION>
+				<MESSAGE>Zip compressor error: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	
+	<GROUP name="XML Parser Errors">
+		<SQLCLASS name="87" description="XML Parser errors." exception_name="xXMLParserError">
+			<SQLSTATE name="87000">
+				<DESCRIPTION>ERR_XML_PARSER_ERROR</DESCRIPTION>
+				<MESSAGE>XML Parser error: %S</MESSAGE>
+			</SQLSTATE>
+            <SQLSTATE name="87501">
+                <DESCRIPTION>ERR_XML_ATTRIBUTE_NAME_NOT_UNIQUE</DESCRIPTION>
+                <MESSAGE>Column name &quot;%S&quot; is repeated. The same attribute cannot be generated more than once on the same XML tag.</MESSAGE>
+            </SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="View errors">
+		<SQLCLASS name="88" description="View error" exception_name="xViewError">
+			<SQLSTATE name="88000">
+				<DESCRIPTION>ERR_VIEW_ERROR</DESCRIPTION>
+				<MESSAGE>View error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="88501">
+				<DESCRIPTION>ERR_VIEW_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>View &quot;%S&quot; not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="88502">
+				<DESCRIPTION>ERR_VIEW_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>View name &quot;%S&quot; is not unique.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="88503">
+				<DESCRIPTION>ERR_VIEW_BAD_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; is bad view name.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="88504">
+				<DESCRIPTION>ERR_VIEW_COLUMNS_TOO_FEW</DESCRIPTION>
+				<MESSAGE>View &quot;%S&quot; has fewer columns than were specified in the column list.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="88505">
+				<DESCRIPTION>ERR_VIEW_COLUMNS_TOO_MUCH</DESCRIPTION>
+				<MESSAGE>View &quot;%S&quot; has more columns than were specified in the column list.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="88506">
+				<DESCRIPTION>ERR_VIEW_READONLY</DESCRIPTION>
+				<MESSAGE>View name &quot;%S&quot; is read only since no appropriate instead-of trigger found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="88507">
+				<DESCRIPTION>ERR_VIEW_COLUMN_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>View &quot;%S&quot; Column &quot;%S&quot; is not unique.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="Set">
+		<SQLCLASS name="89" description="Set errors." exception_name="xSetError">
+			<SQLSTATE name="89000">
+				<DESCRIPTION>ERR_SET_ERROR</DESCRIPTION>
+				<MESSAGE>Set error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="89501">
+				<DESCRIPTION>ERR_BITSETS_SIZE_NOT_EQUAL_ERROR</DESCRIPTION>
+				<MESSAGE>Size of BitSets must be equal.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="89502">
+				<DESCRIPTION>ERR_ARRAYSET_BIGGER_THAN_BITSET_ERROR</DESCRIPTION>
+				<MESSAGE>ArraySet size can not be bigger than size of BitSet.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="89503">
+				<DESCRIPTION>ERR_INAPPROPRIATE_SET_OBJECT_ERROR</DESCRIPTION>
+				<MESSAGE>Inappropriate object type. &quot;%S&quot; is expected.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="Trigger errors">
+		<SQLCLASS name="91" description="Trigger error" exception_name="xTriggerError">
+			<SQLSTATE name="91000">
+				<DESCRIPTION>ERR_TRIGGER_ERROR</DESCRIPTION>
+				<MESSAGE>Trigger error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91501">
+				<DESCRIPTION>ERR_TRIGGER_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Trigger &quot;%S&quot; not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91502">
+				<DESCRIPTION>ERR_TRIGGER_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Trigger name &quot;%S&quot; is not unique.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91503">
+				<DESCRIPTION>ERR_TRIGGER_BAD_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; is bad trigger name.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91504">
+				<DESCRIPTION>ERR_TRIGGER_TIME</DESCRIPTION>
+				<MESSAGE>Trigger &quot;%S&quot;: time &quot;%S&quot; is not supported in this context.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91505">
+				<DESCRIPTION>ERR_TRIGGER_ACTION</DESCRIPTION>
+				<MESSAGE>Trigger &quot;%S&quot;: action &quot;%S&quot; is not supported in this context.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91506">
+				<DESCRIPTION>ERR_TRIGGER_EXISTS</DESCRIPTION>
+				<MESSAGE>Trigger &quot;%S&quot;: action &quot;%S&quot; for table &quot;%S&quot; - already registered.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91507">
+				<DESCRIPTION>ERR_TRIGGER_ALIAS_ERROR</DESCRIPTION>
+				<MESSAGE>Trigger &quot;%S&quot;: &quot;%S&quot; alias is not allowed for action &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+
+		</SQLCLASS>
+	</GROUP>
+	
+	<GROUP name="Stored procedure errors">
+		<SQLCLASS name="92" description="Stored procedure error" exception_name="xStoredProcedureError">
+			<SQLSTATE name="92000">
+				<DESCRIPTION>ERR_SP_ERROR</DESCRIPTION>
+				<MESSAGE>Stored procedure error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="92501">
+				<DESCRIPTION>ERR_SP_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Stored procedure &quot;%S&quot; not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="92502">
+				<DESCRIPTION>ERR_SP_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Stored procedure name &quot;%S&quot; is not unique.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="92503">
+				<DESCRIPTION>ERR_SP_BAD_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; is bad stored procedure name.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="92504">
+				<DESCRIPTION>ERR_SP_RAISE_ERROR</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; can not be thrown by user.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="92505">
+				<DESCRIPTION>ERR_SP_NO_DEFAULT_ARGUMENT_VALUE_ERROR</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; must have default value.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="Valentina errors">
+		<SQLCLASS name="93" description="Valentina error" exception_name="xValentinaError">
+			<SQLSTATE name="93000">
+				<DESCRIPTION>ERR_VALENTINA_ERROR</DESCRIPTION>
+				<MESSAGE>Valentina error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="93501">
+				<DESCRIPTION>ERR_VALENTINA_PARAM_NAME_ALREADY_EXISTS</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; name is already defined.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="93502">
+				<DESCRIPTION>ERR_VALENTINA_SERIAL_EXPIRED</DESCRIPTION>
+				<MESSAGE>Serial is correct, but its subscription period is expired. You need upgrade your subscription to use builds after this date.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="93503">
+				<DESCRIPTION>ERR_VALENTINA_ASSIGN_TO_SYSTEM_VARIABLE_ERROR</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; is system varaible. Assignment is not allowed.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="93504">
+				<DESCRIPTION>ERR_VALENTINA_ALREADY_INITIALIZED</DESCRIPTION>
+				<MESSAGE>Valentina is already initialized.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="93505">
+				<DESCRIPTION>ERR_VALENTINA_FORMAT_ERROR</DESCRIPTION>
+				<MESSAGE>Format error: &quot;%S&quot; .</MESSAGE>
+			</SQLSTATE>						
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="Stored function errors">
+		<SQLCLASS name="94" description="Stored function error" exception_name="xUDFError">
+			<SQLSTATE name="94000">
+				<DESCRIPTION>ERR_UDF_ERROR</DESCRIPTION>
+				<MESSAGE>User defined function error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="94501">
+				<DESCRIPTION>ERR_UDF_NOT_SUPPORTED_RETURN_TYPE</DESCRIPTION>
+				<MESSAGE>User defined function &quot;%S&quot;: not supported return type.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="94502">
+				<DESCRIPTION>ERR_UDF_MASK_STANDARD_FUNCTION</DESCRIPTION>
+				<MESSAGE>User defined function &quot;%S&quot;: Error - mask standard function is not allowed.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="94503">
+				<DESCRIPTION>ERR_UDF_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>User defined function &quot;%S&quot; is not unique.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	
+	
+	<GROUP name="Report errors">
+		<SQLCLASS name="95" description="Report error" exception_name="xReportError">
+			<SQLSTATE name="95000">
+				<DESCRIPTION>ERR_REPORT_CURSOR_IS_NULL</DESCRIPTION>
+				<MESSAGE>Cursor is NULL.</MESSAGE>
+			</SQLSTATE>
+		
+			<SQLSTATE name="95501">
+				<DESCRIPTION>ERR_REPORT_NOT_FOUND_IN_PROJECT</DESCRIPTION>
+				<MESSAGE>Report with name &quot;%S&quot; is not found in project &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>		
+			<SQLSTATE name="95502">
+				<DESCRIPTION>ERR_REPORT_WRONG_PREVIEW_PAGE_INDEX</DESCRIPTION>
+				<MESSAGE>Wrong preview page index.</MESSAGE>
+			</SQLSTATE>	
+			<SQLSTATE name="95503">
+				<DESCRIPTION>ERR_REPORT_WRONG_SCALE_VALUE</DESCRIPTION>
+				<MESSAGE>Wrong scale value.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="95504">
+				<DESCRIPTION>ERR_REPORT_PREVIEW_WIDTH</DESCRIPTION>
+				<MESSAGE>Wrong preview width.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="95505">
+				<DESCRIPTION>ERR_REPORT_WRONG_PREVIEW_HEIGHT</DESCRIPTION>
+				<MESSAGE>Wrong preview height.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="95506">
+				<DESCRIPTION>ERR_REPORT_FILE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>File &quot;%S&quot; not found.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="95507">
+				<DESCRIPTION>ERR_PROJECT_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Project &quot;%S&quot; not found.</MESSAGE>
+			</SQLSTATE>		
+			<SQLSTATE name="95508">
+				<DESCRIPTION>ERR_REPORT_UNKNOWN_DATASOURCE</DESCRIPTION>
+				<MESSAGE>Unknown datasource prefix: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="95509">
+				<DESCRIPTION>ERR_REPORT_SSH_TUNNEL</DESCRIPTION>
+				<MESSAGE>Can't establish SSH tunnel. Error: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="95510">
+				<DESCRIPTION>ERR_REPORT_GET_LIST</DESCRIPTION>
+				<MESSAGE>Can't get the list of reports. Error: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="95511">
+				<DESCRIPTION>ERR_REPORT_BY_INDEX_NOT_FOUND_IN_PROJECT</DESCRIPTION>
+				<MESSAGE>Report with index &quot;%S&quot; is not found in project &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="95512">
+				<DESCRIPTION>ERR_REPORT_STRUCTURE_NOT_LOADED</DESCRIPTION>
+				<MESSAGE>Report structure is not loaded.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="95513">
+				<DESCRIPTION>ERR_REPORT_DEFAULT_SOURCE_QUERY_NOT_LOADED</DESCRIPTION>
+				<MESSAGE>Default source query of report is not loaded.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="95514">
+				<DESCRIPTION>ERR_REPORT_DATASOURCE</DESCRIPTION>
+				<MESSAGE>Datasource error: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>									
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="Type errors">
+		<SQLCLASS name="96" description="Type error" exception_name="xTypeError">
+			<SQLSTATE name="96000">
+				<DESCRIPTION>ERR_TYPE_ERROR</DESCRIPTION>
+				<MESSAGE>Type error.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96501">
+				<DESCRIPTION>ERR_TYPE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Type &quot;%S&quot; not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96502">
+				<DESCRIPTION>ERR_TYPE_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Type name &quot;%S&quot; is not unique.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96503">
+				<DESCRIPTION>ERR_TYPE_BAD_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; is bad type name.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96504">
+				<DESCRIPTION>ERR_TYPE_UNKNOWN_CATEGORY</DESCRIPTION>
+				<MESSAGE>Type &quot;%S&quot; - unknown type category.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96505">
+				<DESCRIPTION>ERR_TYPE_BASETYPE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Base type for type &quot;%S&quot; is not found.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96506">
+				<DESCRIPTION>ERR_TYPE_HAS_DESCENDANTS</DESCRIPTION>
+				<MESSAGE>Type &quot;%S&quot; has descendants.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96507">
+				<DESCRIPTION>ERR_TYPE_WRONG_BASETYPE</DESCRIPTION>
+				<MESSAGE>Type &quot;%S&quot; is not registered as descendant of type &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96508">
+				<DESCRIPTION>ERR_TYPE_HAS_INTERNAL_CATEGORY</DESCRIPTION>
+				<MESSAGE>Type &quot;%S&quot; has internal category and can not be created, droped or changed.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96509">
+				<DESCRIPTION>ERR_TYPE_IN_USE</DESCRIPTION>
+				<MESSAGE>Type &quot;%S&quot; is used by %S.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96510">
+				<DESCRIPTION>ERR_TYPE_BAD_DEFAULT_VALUE</DESCRIPTION>
+				<MESSAGE>Type &quot;%S&quot; - unappropriated default value &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96511">
+				<DESCRIPTION>ERR_TYPE_WRONG_CATEGORY</DESCRIPTION>
+				<MESSAGE>Type &quot;%S&quot; - unappropriated category.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="96512">
+				<DESCRIPTION>ERR_TYPE_INSUFFICIENT_SPACE</DESCRIPTION>
+				<MESSAGE>Type &quot;%S&quot; - &quot;%S&quot; items available, but &quot;%S&quot; items required.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="96513">
+				<DESCRIPTION>ERR_TYPE_LOCALE_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Locale name &quot;%S&quot; is not unique for type &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>	
+			<SQLSTATE name="96514">
+				<DESCRIPTION>ERR_TYPE_LOCALE_WRONG_PARAMS_COUNT</DESCRIPTION>
+				<MESSAGE>Wrong param count for type &quot;%S&quot;, locale &quot;%S&quot;. Type requires &quot;%S&quot;  values.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="96515">
+				<DESCRIPTION>ERR_TYPE_LOCALE_NAME_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Locale name &quot;%S&quot; is not found for type &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>				
+		</SQLCLASS>
+	</GROUP>
+	
+</DATA>

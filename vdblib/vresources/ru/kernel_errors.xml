@@ -1,0 +1,1611 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml:stylesheet type="text/xsl" href="../xsl/visualization2.xsl"?>
+<DATA>
+	<!--
+ATTENTION!
+Following standard
+
+        1. 	Each SQLSTATE is five-symbols string (digits or latin letters in upper case)
+        2. 	First two symbols define class of state, the rest 3 define subclass.
+            000	subclass means unspecified one.
+        3. 	Class which is first symbol in (0,1,2,3,4 and A, B, C, D, E, F, G, H)
+            or HZ (special case) is reserved by standard.
+        4.	We can define sub-class-extensions for "standard" classes.
+            In this case subclass must begin from (5,6,7,8,9, I, J, K, L, M, N,
+            O, P, Q, R, S, T, U, V, W, X, Y, or Z).
+        5.	Our classes must begin from (5,6,7,8,9, I, J, K, L, M, N,
+            O, P, Q, R, S, T, U, V, W, X, Y, or Z).
+            In this case subclass may begin from any alowable symbol.
+    -->
+	<GROUP name="Warnings">
+		<SQLCLASS name="00" description="Successful Completion" exception_name="xSuccess">
+			<SQLSTATE name="00000">
+				<DESCRIPTION>ERR_OK</DESCRIPTION>
+				<MESSAGE>Успешное завершение.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		<SQLCLASS name="01" description="Warning" exception_name="xWarning">
+			<SQLSTATE name="01000">
+				<DESCRIPTION>ERR_WARNING</DESCRIPTION>
+				<MESSAGE>Предупреждение.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="01001">
+				<DESCRIPTION>ERR_WARNING_CURSOR_OPERATION_CONFLICT</DESCRIPTION>
+				<COMMENTS>Cursor update or delete failure due to optimistic concurrency check failure. It's posible to retry operation.</COMMENTS>
+				<MESSAGE>Конфликт при операции с курсором.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="01002">
+				<DESCRIPTION>ERR_WARNING_DISCONNECT</DESCRIPTION>
+				<MESSAGE>Разрыв соединения.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="01003">
+				<DESCRIPTION>ERR_WARNING_NULL_VALUE_ELIMINATED_IN_SET_FUNCTION</DESCRIPTION>
+				<COMMENTS>
+                    Agregative function receive NULL for processing.
+                </COMMENTS>
+				<MESSAGE>Null значение проигнорировано в set функции.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="01004">
+				<DESCRIPTION>ERR_WARNING_STRING_DATA_RIGHT_TRUNCATION</DESCRIPTION>
+				<COMMENTS>
+                    Select or fetch into host variable that is too short.
+                </COMMENTS>
+				<MESSAGE>Строковые данные - обрезаны справа.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="01501">
+				<DESCRIPTION>ERR_WARNING_NULL_COMPARE</DESCRIPTION>
+				<MESSAGE>Сравнивать с NULL некорректно. Используйте IS (NOT) NULL.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Others">
+		<SQLCLASS name="0A" description="Feature Not Supported" exception_name="xFeatureError">
+			<SQLSTATE name="0A000">
+				<DESCRIPTION>ERR_FEATURE_NOT_SUPPORTED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; не поддерживается.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="0A501">
+				<DESCRIPTION>ERR_FEATURE_NOT_SUPPORTED_EXPORT_FORMAT</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - формат экспорта не поддерживается.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="0A502">
+				<DESCRIPTION>ERR_FEATURE_NOT_SUPPORTED_DUMP_FORMAT</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - формат дампа не поддерживается.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="0A503">
+				<DESCRIPTION>ERR_FEATURE_NOT_SUPPORTED_EMPTY_CONNECTION</DESCRIPTION>
+				<MESSAGE>Использование пустого соединения не поддерживается. Создайте соединение.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="0A504">
+				<DESCRIPTION>ERR_FEATURE_NOT_SUPPORTED_ADV</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; не поддерживается. Используйте &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+		</SQLCLASS>
+		<SQLCLASS name="2C" description="Invalid character set" exception_name="xInvalidCharSetError">
+			<SQLSTATE name="2C000">
+				<DESCRIPTION>ERR_INVALID_CHARACTER_SET</DESCRIPTION>
+				<MESSAGE>Неверный набор символов.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		<SQLCLASS name="53" description="Insufficient Resources" exception_name="xInsufficientError">
+			<SQLSTATE name="53000">
+				<DESCRIPTION>ERR_INSUFFICIENT_RESOURCES</DESCRIPTION>
+				<MESSAGE>Недостаточно ресурсов.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="53501">
+				<DESCRIPTION>ERR_INSUFFICIENT_DISKSPACE</DESCRIPTION>
+				<MESSAGE>Диск заполнен.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="53502">
+				<DESCRIPTION>ERR_INSUFFICIENT_MEMORY</DESCRIPTION>
+				<MESSAGE>Недостаточно памяти.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="53503">
+				<DESCRIPTION>ERR_INSUFFICIENT_CACHE</DESCRIPTION>
+				<MESSAGE>Размер кэша недостаточен.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		<SQLCLASS name="57" description="Interrupt process" exception_name="xInterruptError">
+			<SQLSTATE name="57000">
+				<DESCRIPTION>ERR_INTERRUPT_OPERATION</DESCRIPTION>
+				<MESSAGE>Операция прервана.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="57501">
+				<DESCRIPTION>ERR_INTERRUPT_QUERY</DESCRIPTION>
+				<COMMENTS>
+                    User's choise to interrup query.
+                </COMMENTS>
+				<MESSAGE>Выполнение запроса прервано по вашему требованию.</MESSAGE>
+			</SQLSTATE>
+            <SQLSTATE name="57502">
+	            <DESCRIPTION>ERR_DUPLICATE_COLUMN</DESCRIPTION>
+                <COMMENTS>update Table1 set fld_varchar = 'a',	fld_varchar = 'b'</COMMENTS>
+                <MESSAGE>Имя колонки &quot;%S&quot; используется более чем один раз. </MESSAGE>
+            </SQLSTATE>
+		</SQLCLASS>
+		<SQLCLASS name="58" description="Shutdown system" exception_name="xShutdownError">
+			<SQLSTATE name="58000">
+				<DESCRIPTION>ERR_SHUTDOWN</DESCRIPTION>
+				<MESSAGE>Система останавливается.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="58502">
+				<DESCRIPTION>ERR_SHUTDOWN_ADMIN</DESCRIPTION>
+				<COMMENTS>
+                    Interrupt all user's "process", and preventing shutdown by admin request.
+                </COMMENTS>
+				<MESSAGE>Система останавливается по запросу администратора.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="58503">
+				<DESCRIPTION>ERR_SHUTDOWN_CRASH</DESCRIPTION>
+				<MESSAGE>Система останавливается - обнаружена аварийная ситуация.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="58504">
+				<DESCRIPTION>ERR_SHUTDOWN_CANNOT_CONNECT_NOW</DESCRIPTION>
+				<MESSAGE>Соединение невозможно. Попробуйте позже, пожалуйста.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		
+		<SQLCLASS name="54" description="OS system Errors" exception_name="xExternalError">
+			<SQLSTATE name="54000">
+				<DESCRIPTION>ERR_EXTERNAL</DESCRIPTION>
+				<MESSAGE>Ошибка ОС.</MESSAGE>
+			</SQLSTATE>		
+			<SQLSTATE name="54501">
+				<DESCRIPTION>ERR_EXTERNAL_INVALID_PARAMETER</DESCRIPTION>
+				<MESSAGE>Некорректное значение параметра указано в &quot;%S&quot; позиции.</MESSAGE>
+			</SQLSTATE>		
+			<SQLSTATE name="54502">
+				<DESCRIPTION>ERR_EXTERNAL_STD</DESCRIPTION>
+				<MESSAGE>Ошибка ОС: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>								
+		</SQLCLASS>
+		
+		<SQLCLASS name="59" description="OS File system Errors" exception_name="xOSFileError">
+			<SQLSTATE name="59000">
+				<DESCRIPTION>ERR_OS_FILE</DESCRIPTION>
+				<MESSAGE>Работа с файлом &quot;%S&quot; невозможна.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59501">
+				<DESCRIPTION>ERR_OS_FILE_BUSY</DESCRIPTION>
+				<MESSAGE>Файл &quot;%S&quot; не может быть открыт, так как уже используется другим приложением.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59502">
+				<DESCRIPTION>ERR_OS_FILE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Файл &quot;%S&quot; не существует.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59503">
+				<DESCRIPTION>ERR_OS_FILE_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Файл &quot;%S&quot; уже существует.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59504">
+				<DESCRIPTION>ERR_OS_FILE_OPEN</DESCRIPTION>
+				<MESSAGE>Файл &quot;%S&quot; уже открыт.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59505">
+				<DESCRIPTION>ERR_OS_FILE_NOT_OPEN</DESCRIPTION>
+				<MESSAGE>Файл &quot;%S&quot; не открыт.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59506">
+				<DESCRIPTION>ERR_OS_FILE_EOF</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - достигнут конец файла.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59507">
+				<DESCRIPTION>ERR_OS_FILE_BOF</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - достигнуто начало файла.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59508">
+				<DESCRIPTION>ERR_OS_FILE_READ_ONLY</DESCRIPTION>
+				<MESSAGE>Файл &quot;%S&quot; - только для чтения</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59509">
+				<DESCRIPTION>ERR_OS_FILE_NOT_VALENTINA_DATABASE</DESCRIPTION>
+				<MESSAGE>Файл &quot;%S&quot; не является Valentina2 базой данных.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59510">
+				<DESCRIPTION>ERR_CREATE_FOLDER</DESCRIPTION>
+				<MESSAGE>Невозможно создать папку &quot;%S&quot; , ошибка &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="59511">
+				<DESCRIPTION>ERR_OS_FOLDER_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Папка &quot;%S&quot; не существует.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		<SQLCLASS name="60" description="Stream errors" exception_name="xStreamError">
+			<SQLSTATE name="60000">
+				<DESCRIPTION>ERR_STREAM_ERROR</DESCRIPTION>
+				<MESSAGE>Возникла внешняя ошибка.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="60508">
+				<DESCRIPTION>ERR_STREAM_EOF</DESCRIPTION>
+				<MESSAGE>Достигнут конец потока.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="60509">
+				<DESCRIPTION>ERR_STREAM_BOF</DESCRIPTION>
+				<MESSAGE>Достигнуто начало потока.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="6050A">
+				<DESCRIPTION>ERR_STREAM_READ_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка чтения потока.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="6050B">
+				<DESCRIPTION>ERR_STREAM_WRITE_ERROR</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - ошибка записи.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="6050C">
+				<DESCRIPTION>ERR_STREAM_WOULD_BLOCK</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - будет заблокирован.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="6050D">
+				<DESCRIPTION>ERR_STREAM_PARTIAL_DATA</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - не все данные доступны.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		
+		<SQLCLASS name="61" description="Encryption errors" exception_name="xEncryptionError">
+			<SQLSTATE name="61000">
+				<DESCRIPTION>ERR_ENCRYPTION_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка шифрования.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="61501">
+				<DESCRIPTION>ERR_ENCRYPTION_NOT_ENCRYPTED</DESCRIPTION>
+				<MESSAGE>Объект не зашифрован.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="61502">
+				<DESCRIPTION>ERR_ENCRYPTION_WRONG_ENCRYPTION_KEY</DESCRIPTION>
+				<MESSAGE>Указан неверный ключ шифрования.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="61503">
+				<DESCRIPTION>ERR_ENCRYPTION_KEY_OVERRIDING_NOT_ALLOWED</DESCRIPTION>
+				<MESSAGE>Не разрешается переопределять ключ для объектов составляющих иерархию.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="61504">
+				<DESCRIPTION>ERR_ENCRYPTION_NOT_ROOT_OBJECT</DESCRIPTION>
+				<MESSAGE>Объект шифрования не является корневым.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="61505">
+				<DESCRIPTION>ERR_ENCRYPTION_NOT_EXCLUSIVE_ACCESS</DESCRIPTION>
+				<MESSAGE>В данный момент невозможно (де)шифрование объекта.</MESSAGE>
+			</SQLSTATE>
+
+		</SQLCLASS>
+
+		<SQLCLASS name="62" description="Values errors" exception_name="xValueError">
+			<SQLSTATE name="62000">
+				<DESCRIPTION>ERR_VALUE_INVALID</DESCRIPTION>
+				<MESSAGE>Значение некорректно.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62501">
+				<DESCRIPTION>ERR_DATE_VALUE_NOT_MATCH_FORMAT</DESCRIPTION>
+				<MESSAGE>Дата &quot;%S&quot; некорректна. Недопустимый символ в &quot;%S&quot; позиции.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62502">
+				<DESCRIPTION>ERR_DATE_VALUE_HAVE_WRONG_NUMBERS</DESCRIPTION>
+				<MESSAGE>Дата &quot;%S&quot; некорректна. Недопустимое значение.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62503">
+				<DESCRIPTION>ERR_TIME_VALUE_NOT_MATCH_FORMAT</DESCRIPTION>
+				<MESSAGE>Время &quot;%S&quot; некорректно. Недопустимый символ в &quot;%S&quot; позиции.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62504">
+				<DESCRIPTION>ERR_TIME_VALUE_HAVE_WRONG_NUMBERS</DESCRIPTION>
+				<MESSAGE>Время &quot;%S&quot; некорректно. Недопустимое значение.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62505">
+				<DESCRIPTION>ERR_DATETIME_VALUE_NOT_MATCH_FORMAT</DESCRIPTION>
+				<MESSAGE>Date-time значение &quot;%S&quot; некорректно. Недопустимый символ в &quot;%S&quot; позиции.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62506">
+				<DESCRIPTION>ERR_DATETIME_VALUE_HAVE_WRONG_NUMBERS</DESCRIPTION>
+				<MESSAGE>Date-time значение &quot;%S&quot; некорректно. Недопустимое значение.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62507">
+				<DESCRIPTION>ERR_SQLSTATE_VALUE_INVALID</DESCRIPTION>
+				<MESSAGE>Значение Sql-state &quot;%S&quot; некорректно. Должно быть допустимое 5-значное 16-ричное число.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62508">
+				<DESCRIPTION>ERR_VALUE_BUFFER_OVERFLOW</DESCRIPTION>
+				<MESSAGE>Размер буфера недостаточен для значения &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="62509">
+				<DESCRIPTION>ERR_ENUM_VALUE_INVALID</DESCRIPTION>
+				<MESSAGE>Значение &quot;%S&quot; некорректно для типа &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+		</SQLCLASS>
+
+		<SQLCLASS name="63" description="SSL errors" exception_name="xSSLError">
+			<SQLSTATE name="63000">
+				<DESCRIPTION>ERR_SSL_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка SSL: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="63501">
+				<DESCRIPTION>ERR_SSL_CERTIFICATE_VALIDATION</DESCRIPTION>
+				<MESSAGE>Ошибка SSL сертификата: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+
+		<SQLCLASS name="64" description="Bonjour errors" exception_name="xBonjourError">
+			<SQLSTATE name="64000">
+				<DESCRIPTION>ERR_BONJOUR_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour ошибка.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64501">
+				<DESCRIPTION>ERR_BONJOUR_SERVICE_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour ошибка службы.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64502">
+				<DESCRIPTION>ERR_BONJOUR_SOCKET_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour ошибка сокета.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64503">
+				<DESCRIPTION>ERR_BONJOUR_SOCKET_TIMEOUT_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour сокет тайм-аут.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64504">
+				<DESCRIPTION>ERR_BONJOUR_THREAD_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour ошибка потока.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64505">
+				<DESCRIPTION>ERR_BONJOUR_NAME_IN_USE_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour имя уже используется, пожалуйста, выберите другое.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64506">
+				<DESCRIPTION>ERR_BONJOUR_REGISTRATION_ERROR</DESCRIPTION>
+				<MESSAGE>Bonjour ошибка регистрации.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="64507">
+				<DESCRIPTION>ERR_BONJOUR_SERIAL_NUMBER_ERROR</DESCRIPTION>
+				<MESSAGE>Неправильный серийный номер.</MESSAGE>
+			</SQLSTATE>
+
+		</SQLCLASS>
+		
+		<SQLCLASS name="F0" description="Configuration File Error" exception_name="xConfigError">
+			<SQLSTATE name="F0000">
+				<DESCRIPTION>ERR_CONFIG_FILE_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка в конфигурационном файле.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+		
+		<SQLCLASS name="99" description="Internal Error" exception_name="xInternalError">
+			<SQLSTATE name="99000">
+				<DESCRIPTION>ERR_INTERNAL_ERROR</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Внутренняя ошибка &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99501">
+				<DESCRIPTION>ERR_INTERNAL_DATA_CORRUPTED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Таблица &quot;%S&quot; повреждена.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99503">
+				<DESCRIPTION>ERR_INTERNAL_VARCHAR_CORRUPTED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Varchar данные &quot;%S&quot; повреждены.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99507">
+				<DESCRIPTION>ERR_INTERNAL_EMBFILE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Вложенный файл &quot;%S&quot; не найден.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99508">
+				<DESCRIPTION>ERR_INTERNAL_VARCHAR_PAGE_CORRUPTED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Varchar страница &quot;%S&quot; повреждена.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99509">
+				<DESCRIPTION>ERR_INTERNAL_OPEN_NEW_VERSION</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Не могу открыть новую версию.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9950A">
+				<DESCRIPTION>ERR_INTERNAL_READING_DOMAIN</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Ошибка при чтении домена.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9950B">
+				<DESCRIPTION>ERR_INTERNAL_BASE_OBJECT_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Base object не найден.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99513">
+				<DESCRIPTION>ERR_INTERNAL_INVALID_PARAMETER</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; В функции &quot;%S&quot; задано некорректное значение параметра.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99514">
+				<DESCRIPTION>ERR_INTERNAL_FUNC_MUST_NOT_BE_CALLED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Функция &quot;%S&quot; не должна вызываться.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99515">
+				<DESCRIPTION>ERR_INTERNAL_FUNC</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Ошибка в функции &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99516">
+				<DESCRIPTION>ERR_INTERNAL_EMBFILE_IS_OPENED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Embedded file &quot;%S&quot; is opened already.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="99517">
+				<DESCRIPTION>ERR_INTERNAL_EMBFILE_IS_NOT_OPENED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Вложенный файл &quot;%S&quot; не открыт.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="99518">
+				<DESCRIPTION>ERR_INTERNAL_EMBFILE_EOF</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Вложенный файл &quot;%S&quot; - достигнут конец файла.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="99519">
+				<DESCRIPTION>ERR_INTERNAL_DUPLICATED_RECID_FOUND</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Найдены дубликатные RECID.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="99520">
+				<DESCRIPTION>ERR_INTERNAL_DEMO_TIMEOUT</DESCRIPTION>
+				<MESSAGE>Тайм-аут демо-версии.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9952A">
+				<DESCRIPTION>ERR_INTERNAL_SEGMENTMAP_CORRUPTED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Сегмент-карта повреждена - &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9952B">
+				<DESCRIPTION>ERR_INTERNAL_WRONG_SEGMENT</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Владелец &quot;%S&quot;: Сегмент &quot;%S&quot; неправильный. Последний сегмент - &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9952C">
+				<DESCRIPTION>ERR_INTERNAL_FIELD_WRONG_LENGTH</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Поле &quot;%S&quot;, запись &quot;%S&quot;. Неправильная длина данных - &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9952D">
+				<DESCRIPTION>ERR_JOURNALED_PAGE_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Журнальная страница не уникальна. Тип страницы: &quot;%S&quot;, Том: &quot;%S&quot;, Файл: &quot;%S&quot;, Смещение в файле: &quot;%S&quot;, Смещение в журнале: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9952E">
+				<DESCRIPTION>ERR_INTERNAL_PAGEFILE_CORRUPTED</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; Страничный файл поврежден - &quot;%S&quot;</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+
+		<SQLCLASS name="97" description="Volume errors" exception_name="xVolumeError">
+			<SQLSTATE name="97000">
+				<DESCRIPTION>ERR_VOLUME_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка тома.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="97500">
+				<DESCRIPTION>ERR_WRONG_SEGMENT</DESCRIPTION>
+				<MESSAGE>Сегмент тома &quot;%S&quot; неправильный. Том поврежден.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="97501">
+				<DESCRIPTION>ERR_SEGMENT_LIMIT</DESCRIPTION>
+				<MESSAGE>Том &quot;%S&quot; - достигнуто максимальное количество сегментов. Проклонируйте базу с большим размером сегмента.</MESSAGE>
+			</SQLSTATE>						
+		</SQLCLASS>
+				
+		<SQLCLASS name="98" description="Aspects errors" exception_name="xAspectError">
+			<SQLSTATE name="98000">
+				<DESCRIPTION>ERR_ASPECT_ERROR</DESCRIPTION>
+				<MESSAGE>Aspect ошибка.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="98501">
+				<DESCRIPTION>ERR_ASPECT_BAD_ID</DESCRIPTION>
+				<MESSAGE>Aspect ошибка - неправильный ID.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="98502">
+				<DESCRIPTION>ERR_ASPECT_ALREADY_EXIST</DESCRIPTION>
+				<MESSAGE>Aspect уже существует.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Transactions">
+		<SQLCLASS name="25" description="Invalid Transaction State" exception_name="xTransactionStateError">
+			<SQLSTATE name="25000">
+				<DESCRIPTION>ERR_TRANSACTION_STATE</DESCRIPTION>
+				<MESSAGE>Некоректное состояние транзакции.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="25001">
+				<DESCRIPTION>ERR_TRANSACTION_STATE_ACTIVE</DESCRIPTION>
+				<MESSAGE>Другая транзакция активна.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="25501">
+				<DESCRIPTION>ERR_TRANSACTION_STATE_READ_ONLY</DESCRIPTION>
+				<MESSAGE>Запись запрещена в READ_ONLY транзакции.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="25502">
+				<DESCRIPTION>ERR_TRANSACTION_STATE_SCHEMA_AND_DATA_STATEMENT_MIXING</DESCRIPTION>
+				<MESSAGE>Запрещено смешивание DDL и DML инструкций.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="25503">
+				<DESCRIPTION>ERR_TRANSACTION_STATE_NOT_ACTIVE_FOR_CANCEL</DESCRIPTION>
+				<MESSAGE>ROLLBACK TRANSACTION не согласован с BEGIN TRANSACTION.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="25504">
+				<DESCRIPTION>ERR_TRANSACTION_STATE_NOT_ACTIVE_FOR_COMMIT</DESCRIPTION>
+				<MESSAGE>COMMIT TRANSACTION не согласован с BEGIN TRANSACTION.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="25505">
+				<DESCRIPTION>ERR_TRANSACTION_STATE_NO_CURRENT_TRANSACTION</DESCRIPTION>
+				<MESSAGE>Нет активной транзакции.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+		<SQLCLASS name="40" description="Transaction Rollback" exception_name="xRollbackError">
+			<SQLSTATE name="40000">
+				<DESCRIPTION>ERR_ROLLBACK</DESCRIPTION>
+				<COMMENTS></COMMENTS>
+				<MESSAGE>Откат транзакции.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="40001">
+				<DESCRIPTION>ERR_ROLLBACK_SERIALIZATION_FAILURE</DESCRIPTION>
+				<COMMENTS></COMMENTS>
+				<MESSAGE>Откат транзакции из-за ошибки сериализации.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="40002">
+				<DESCRIPTION>ERR_ROLLBACK_INTEGRITY_CONSTRAINT_VIOLATION</DESCRIPTION>
+				<COMMENTS></COMMENTS>
+				<MESSAGE>Откат транзакции из-за нарушения ограничения &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="40003">
+				<DESCRIPTION>ERR_ROLLBACK_STATEMENT_COMPLETION_UNKNOWN</DESCRIPTION>
+				<COMMENTS></COMMENTS>
+				<MESSAGE>Отка транзакции из-за неизвестного состояния завершения.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="40501">
+				<DESCRIPTION>ERR_ROLLBACK_DEADLOCK_DETECTED</DESCRIPTION>
+				<COMMENTS></COMMENTS>
+				<MESSAGE>Откат транзакции - обнаружен deadlock.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Database errors">
+		<SQLCLASS name="51" description="Database error" exception_name="xDBError">
+			<SQLSTATE name="51000">
+				<DESCRIPTION>ERR_DB_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка БД.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51500">
+				<DESCRIPTION>ERR_DB_IDENTIFIER_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Идентификатор &quot;%S&quot; не найден.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51501">
+				<DESCRIPTION>ERR_DB_LOCATION</DESCRIPTION>
+				<MESSAGE>Неправильный путь к БД.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51502">
+				<DESCRIPTION>ERR_DB_VERSION</DESCRIPTION>
+				<MESSAGE>Версия БД - &quot;%S&quot;. Но текущая версия - &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51503">
+				<DESCRIPTION>ERR_DB_READ_ONLY</DESCRIPTION>
+				<MESSAGE>БД только для чтения.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51504">
+				<DESCRIPTION>ERR_DB_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>БД &quot;%S&quot; не найдена.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51505">
+				<DESCRIPTION>ERR_DB_NO_ACTIVE_DB</DESCRIPTION>
+				<MESSAGE>Нет активной БД.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51506">
+				<DESCRIPTION>ERR_DATABASE_ALREADY_EXISTS</DESCRIPTION>
+				<MESSAGE>БД &quot;%S&quot; уже существует.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51507">
+				<DESCRIPTION>ERR_CONVERT_DATABASE_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка Convert_1_2. &quot;%S&quot; - &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="51508">
+				<DESCRIPTION>ERR_DATABASE_AMBIGUOUS_IDENTIFIER</DESCRIPTION>
+				<MESSAGE>Идентификатор &quot;%S&quot; - неоднозначность.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Sequence errors">
+		<SQLCLASS name="52" description="Sequence error" exception_name="xSequenceError">
+			<SQLSTATE name="52000">
+				<DESCRIPTION>ERR_SEQUENCE_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка последовательности.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52501">
+				<DESCRIPTION>ERR_SEQUENCE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Последовательность &quot;%S&quot; не найдена.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52502">
+				<DESCRIPTION>ERR_SEQUENCE_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Имя последовательности &quot;%S&quot; неуникально.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52503">
+				<DESCRIPTION>ERR_SEQUENCE_BAD_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; некорректное имя последовательности.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52504">
+				<DESCRIPTION>ERR_SEQUENCE_LIMIT_REACHED</DESCRIPTION>
+				<MESSAGE>Последовательность &quot;%S&quot; - достигнут предел.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52505">
+				<DESCRIPTION>ERR_SEQUENCE_BOUNDARY_ERROR</DESCRIPTION>
+				<MESSAGE>Последовательность &quot;%S&quot; - макс. значение меньше чем минимальное.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="52506">
+				<DESCRIPTION>ERR_SEQUENCE_BAD_START_VALUE</DESCRIPTION>
+				<MESSAGE>Последовательность &quot;%S&quot; - недопустимое стартовое значение &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>		
+			<SQLSTATE name="52507">
+				<DESCRIPTION>ERR_SEQUENCE_BAD_INCREMENT_VALUE</DESCRIPTION>
+				<MESSAGE>Последовательность &quot;%S&quot; - недопустимое значение инкремента &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="52508">
+				<DESCRIPTION>ERR_SEQUENCE_BAD_VALUE</DESCRIPTION>
+				<MESSAGE>Последовательность &quot;%S&quot; - недопустимое текущее значение &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>	
+			<SQLSTATE name="52509">
+				<DESCRIPTION>ERR_SEQUENCE_IN_USE</DESCRIPTION>
+				<MESSAGE>Последовательность &quot;%S&quot; используется %S.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+	</GROUP>	
+	<GROUP name="Table errors">
+		<SQLCLASS name="70" description="Table error" exception_name="xTableError">
+			<SQLSTATE name="70000">
+				<DESCRIPTION>ERR_TABLE_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка таблицы.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="70501">
+				<DESCRIPTION>ERR_TABLE_EMPTY</DESCRIPTION>
+				<MESSAGE>Таблица &quot;%S&quot; пуста.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="70502">
+				<DESCRIPTION>ERR_TABLE_BAD_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; некорректное имя таблицы.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="70503">
+				<DESCRIPTION>ERR_TABLE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Таблица &quot;%S&quot; не найдена.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="70504">
+				<DESCRIPTION>ERR_TABLE_RECORD_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Запись &quot;%S&quot; не существует в таблице &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="70505">
+				<DESCRIPTION>ERR_TABLE_RECORD_LOCKED</DESCRIPTION>
+				<MESSAGE>Запись &quot;%S&quot; заблокирована в таблице &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="70506">
+				<DESCRIPTION>ERR_TABLE_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Имя таблицы &quot;%S&quot; не уникально.</MESSAGE>
+			</SQLSTATE>
+            <SQLSTATE name="70507">
+                <DESCRIPTION>ERR_WRONG_TABLENAME_USED</DESCRIPTION>
+                <COMMENTS>select * from t1 alias, t2 alias2 where t1.fld ...</COMMENTS>
+                <MESSAGE>Префикс колонки &quot;%S&quot; не соответствует имени таблицы или алиаса используемого в запросе.</MESSAGE>
+            </SQLSTATE>
+            <SQLSTATE name="70508">
+                <DESCRIPTION>ERR_TABLE_IN_USE</DESCRIPTION>
+                <COMMENTS>select * from t1. Now table t1 has mInUse counter == 1. So it is not possible to drop this table till counter becomes 0. </COMMENTS>
+                <MESSAGE>Таблица &quot;%S&quot; используется %S.</MESSAGE>
+            </SQLSTATE>
+            <SQLSTATE name="70509">
+                <DESCRIPTION>ERR_TABLE_INCONSISTENT_FLAGS</DESCRIPTION>
+                <COMMENTS>CREATE SYSTEM TEMPORARY TABLE... </COMMENTS>
+                <MESSAGE>Невозможно создать таблицу &quot;%S&quot; из-за несовместимости флагов &quot;%S&quot;.</MESSAGE>
+            </SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Fields errors">
+		<SQLCLASS name="80" description="Fields errors." exception_name="xFieldError">
+			<SQLSTATE name="80000">
+				<DESCRIPTION>ERR_FIELD_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка поля.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80501">
+				<DESCRIPTION>ERR_FIELD_NAME_NOT_UNIQUE</DESCRIPTION>
+				<COMMENTS>
+                    create table t ( f1 ulong, f1 ushort )
+                </COMMENTS>
+				<MESSAGE>Имя поля &quot;%S&quot; не уникально.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80502">
+				<DESCRIPTION>ERR_FIELD_BAD_NAME</DESCRIPTION>
+				<MESSAGE>Некорректное имя поля &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80503">
+				<DESCRIPTION>ERR_FIELD_NOT_INDEXED</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot; не индексировано.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80504">
+				<DESCRIPTION>ERR_FIELD_IS_CALCULATED</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot; вычисляемое.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80505">
+				<DESCRIPTION>ERR_FIELD_IS_COMPOSED</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot; составное.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80506">
+				<DESCRIPTION>ERR_FIELD_UNIQUE</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot; уникально.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80507">
+				<DESCRIPTION>ERR_FIELD_IS_NOT_METHOD</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot; - метод.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80508">
+				<DESCRIPTION>ERR_FIELD_CANT_BE_CREATED</DESCRIPTION>
+				<MESSAGE>Невозможно создать поле &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80509">
+				<DESCRIPTION>ERR_FIELD_LANGUAGE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot; - язык &quot;%S&quot; не найдено.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8050A">
+				<DESCRIPTION>ERR_FIELD_WRONG_TYPE</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot; - неправильный тип &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8050B">
+				<DESCRIPTION>ERR_FIELD_NOT_FOUND</DESCRIPTION>
+				<COMMENTS>select NOTEXISTED_COLUMN_NAME from t1</COMMENTS>
+				<MESSAGE>Поле &quot;%S&quot; не существует.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8050C">
+				<DESCRIPTION>ERR_FIELD_METHOD_DEPENDS</DESCRIPTION>
+				<COMMENTS>There is a method in the table which is depended on dropped field.</COMMENTS>
+				<MESSAGE>Поле &quot;%S&quot; используется в методах.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8050D">
+				<DESCRIPTION>ERR_FIELD_CANT_BE_METHOD</DESCRIPTION>
+				<COMMENTS>There is no sence to modify existed field to be a method.</COMMENTS>
+				<MESSAGE>Невозможно преобразовать поле &quot;%S&quot; в метод.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8050E">
+				<DESCRIPTION>ERR_FIELD_VALUE_NOT_PREPARED_FOR_UPDATE</DESCRIPTION>
+				<COMMENTS>Value was not prepared for Update.</COMMENTS>
+				<MESSAGE>Значение поля &quot;%S&quot;: не подготовлено для Update.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8050F">
+				<DESCRIPTION>ERR_FIELD_WRONG_ATTRIBUTE</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot;, атрибут &quot;%S&quot; не совпадает с сохраненным в схеме атрибутом.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80510">
+				<DESCRIPTION>ERR_FIELD_WRONG_TMP_FLAG</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot;. Temporary флаг допустим только для методов.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80511">
+				<DESCRIPTION>ERR_FIELD_MAX_LENGTH_TOO_BIG</DESCRIPTION>
+				<MESSAGE>Вы задали слишком большую максимальную длину для VarChar поля &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80512">
+				<DESCRIPTION>ERR_FIELD_IN_USE</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot; используется %S.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80513">
+				<DESCRIPTION>ERR_FIELD_CANT_BE_DROPPED</DESCRIPTION>
+				<MESSAGE>Невозможно удалить поле &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="80514">
+				<DESCRIPTION>ERR_FIELD_WRONG_DEFAULT_EXPRESSION</DESCRIPTION>
+				<MESSAGE>Дефолтное выражение для поля &quot;%S&quot; не может зависеть от любых полей.</MESSAGE>
+			</SQLSTATE>						
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Methods errors">
+		<SQLCLASS name="90" description="Methods errors" exception_name="xMethodError">
+			<SQLSTATE name="90000">
+				<DESCRIPTION>ERR_METHOD_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка в функции &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90501">
+				<DESCRIPTION>ERR_METHOD_WRONG_LANGUAGE</DESCRIPTION>
+				<MESSAGE>Неправильный язык в функции &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90502">
+				<DESCRIPTION>ERR_METHOD_LEFT_OPERAND_MISSING</DESCRIPTION>
+				<MESSAGE>Пропушен левый операнд в функции &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90503">
+				<DESCRIPTION>ERR_METHOD_RIGHT_OPERAND_MISSING</DESCRIPTION>
+				<MESSAGE>Пропущен правый операнд в функции &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90504">
+				<DESCRIPTION>ERR_METHOD_BAD_EXPRESSION</DESCRIPTION>
+				<MESSAGE>Функция &quot;%S&quot; - некорректное выражение.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90505">
+				<DESCRIPTION>ERR_METHOD_WRONG_DB_REF</DESCRIPTION>
+				<MESSAGE>Функция &quot;%S&quot; - некорректная ссылка на БД.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90506">
+				<DESCRIPTION>ERR_METHOD_WRONG_BASEOBJECT_REF</DESCRIPTION>
+				<MESSAGE>Функция &quot;%S&quot; - некорректная ссылка на таблицу.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90507">
+				<DESCRIPTION>ERR_METHOD_WRONG_FIELD_REF</DESCRIPTION>
+				<MESSAGE>Функция &quot;%S&quot; - некорректная ссылка на поле.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90508">
+				<DESCRIPTION>ERR_METHOD_WRONG_CURSOR_REF</DESCRIPTION>
+				<MESSAGE>Функция &quot;%S&quot; - некорректная ссылка на курсор.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90509">
+				<DESCRIPTION>ERR_METHOD_OUT_OF_RANGE</DESCRIPTION>
+				<MESSAGE>Функция &quot;%S&quot; - вне допустимого диапазона.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9050A">
+				<DESCRIPTION>ERR_METHOD_FUNC_MUST_NOT_BE_CALLED</DESCRIPTION>
+				<MESSAGE>Функция &quot;%S&quot; - не должна вызываться.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9050B">
+				<DESCRIPTION>ERR_METHOD_WRONG_PARAM_VALUE</DESCRIPTION>
+				<MESSAGE>Функция &quot;%S&quot; - некорректное значение параметра &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9050C">
+				<DESCRIPTION>ERR_METHOD_PARAMS_TOO_FEW</DESCRIPTION>
+				<MESSAGE>Функция &quot;%S&quot; - неправильное число параметров. Функция ожидает по-крайней мере &quot;%S&quot; аргументов.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9050D">
+				<DESCRIPTION>ERR_METHOD_PARAMS_TOO_MUCH</DESCRIPTION>
+				<MESSAGE>Функция &quot;%S&quot; - неправильное число параметров. Функция ожидает не более чем &quot;%S&quot; аргументов.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="9050E">
+				<DESCRIPTION>ERR_METHOD_BAD_NAME</DESCRIPTION>
+				<MESSAGE>Ошибка в имени функции &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="9050F">
+				<DESCRIPTION>ERR_METHOD_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Имя функции &quot;%S&quot; не уникально.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="90510">
+				<DESCRIPTION>ERR_METHOD_AMBIGUOUS_IDENTIFIER</DESCRIPTION>
+				<MESSAGE>Идентификатор &quot;%S&quot; - неоднозначность. Найден как поле в таблице &quot;%S&quot; и как линк.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Integrity">
+		<SQLCLASS name="23" description="Integrity Constraints errors" exception_name="xConstraintError">
+			<SQLSTATE name="23000">
+				<DESCRIPTION>ERR_CONSTRAINT_VIOLATION</DESCRIPTION>
+				<MESSAGE>Нарушение целостности.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23001">
+				<DESCRIPTION>ERR_CONSTRAINT_RESTRICT_VIOLATION</DESCRIPTION>
+				<MESSAGE>Присутствует ограничение. Удаление невозможно пока оно существует.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23501">
+				<DESCRIPTION>ERR_CONSTRAINT_NOT_NULL_VIOLATION</DESCRIPTION>
+				<MESSAGE>Колонка &quot;%S&quot; в таблице &quot;%S&quot; не допускает null значений.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23502">
+				<DESCRIPTION>ERR_CONSTRAINT_FOREIGN_KEY_VIOLATION</DESCRIPTION>
+				<MESSAGE>Нарушение Foreign key ограничения, имя таблицы = &quot;%S&quot;, имя ограничения = &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23503">
+				<DESCRIPTION>ERR_CONSTRAINT_UNIQUE_VIOLATION</DESCRIPTION>
+				<MESSAGE>Нарушение уникальности, объект &quot;%S&quot;, уникальный индекс &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23504">
+				<DESCRIPTION>ERR_CONSTRAINT_CHECK_VIOLATION</DESCRIPTION>
+				<MESSAGE>Нарушение Check ограничения, имя таблицы = &quot;%S&quot;, имя ограничения = &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23506">
+				<DESCRIPTION>ERR_CONSTRAINT_DEFAULT_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Значение по-умолчанию не существует.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23507">
+				<DESCRIPTION>ERR_CONSTRAINT_EXPECTED_REQUIRED_PROPERTY</DESCRIPTION>
+				<MESSAGE>Ожидается обязательное свойство &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23508">
+				<DESCRIPTION>ERR_CONSTRAINT_PRIMARY_KEY_VIOLATION</DESCRIPTION>
+				<MESSAGE>Нарушение Primary key ограничения, имя таблицы = &quot;%S&quot;, имя ограничения = &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23509">
+				<DESCRIPTION>ERR_CONSTRAINT_PRIMARY_KEY_ALREADY_DEFINED</DESCRIPTION>
+				<MESSAGE>Попытка создать второй primary key, имя таблицы = &quot;%S&quot;, имя ограничения = &quot;%S&quot;, имя существующего ограничения = &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="2350A">
+				<DESCRIPTION>ERR_CONSTRAINT_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Система уже содержит ограничение с именем &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="2350B">
+				<DESCRIPTION>ERR_CONSTRAINT_BAD_NAME</DESCRIPTION>
+				<MESSAGE>Таблица &quot;%S&quot; уже содержит ограничение с именем &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="2350C">
+				<DESCRIPTION>ERR_CONSTRAINT_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Таблица &quot;%S&quot; не содержит ограничения с именем &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="2350D">
+				<DESCRIPTION>ERR_CONSTRAINT_WRONG_PROPERTY_TYPE</DESCRIPTION>
+				<MESSAGE>Неверный тип свойства &quot;%S&quot;. Должен быть &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="2350E">
+				<DESCRIPTION>ERR_CONSTRAINT_FIELD_ALREADY_UNIQUE</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot; уже уникально.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="2350F">
+				<DESCRIPTION>ERR_CONSTRAINT_PRIMARY_KEY_HAVE_FOREIGN_KEY</DESCRIPTION>
+				<MESSAGE>Primary key ограничение &quot;%S&quot; из таблицы &quot;%S&quot; имеет foreign key(s) - &quot;%S&quot;.</MESSAGE>                
+			</SQLSTATE>
+			<SQLSTATE name="23510">
+				<DESCRIPTION>ERR_CONSTRAINT_FIELD_ALREADY_INDEXED</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot; уже индексировано.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="23511">
+				<DESCRIPTION>ERR_CONSTRAINT_NOT_NULL_AND_NO_DEFAULT_VALUE_VIOLATION</DESCRIPTION>
+				<MESSAGE>Добавляемая колонка в непустой таблице должна быть nullable или иметь значение по-умолчанию. Колонка &quot;%S&quot; не может быть добавлена в таблицу &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			
+		</SQLCLASS>
+	</GROUP>
+	<GROUP name="Links">
+		<SQLCLASS name="81" description="Link errors." exception_name="xLinkError">
+			<SQLSTATE name="81000">
+				<DESCRIPTION>ERR_LINK_ERROR</DESCRIPTION>
+				<MESSAGE>Link ошибка.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81501">
+				<DESCRIPTION>ERR_LINK_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Имя линка &quot;%S&quot; уже существует.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81502">
+				<DESCRIPTION>ERR_LINK_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Линк с именем &quot;%S&quot; не найден.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81503">
+				<DESCRIPTION>ERR_LINK_FIELDS_FROM_DIFFERENT_TABLES</DESCRIPTION>
+				<MESSAGE>Поля компаундного ключа должны быть из одной таблицы.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81504">
+				<DESCRIPTION>ERR_LINKED_RECORD_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; поврежден. Связанная запись не найдена.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81505">
+				<DESCRIPTION>ERR_LINK_WRONG_TABLE</DESCRIPTION>
+				<MESSAGE>Таблица &quot;%S&quot; не используется в линке &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81506">
+				<DESCRIPTION>ERR_LINK_WRONG_OWNER</DESCRIPTION>
+				<MESSAGE>Таблица &quot;%S&quot; не может быть владельцем линка &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81507">
+				<DESCRIPTION>ERR_LINK_BAD_NAME</DESCRIPTION>
+				<MESSAGE>Ошибка в имени линка &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81508">
+				<DESCRIPTION>ERR_LINK_BAD_PTR_TYPE</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot; не может указывать на &quot;%S&quot; поле - несовместимы типы полей.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81509">
+				<DESCRIPTION>ERR_LINK_BAD_PTR_SIZE</DESCRIPTION>
+				<MESSAGE>Поле &quot;%S&quot; не может указывать на &quot;%S&quot; поле - несовместимы размеры полей.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81510">
+				<DESCRIPTION>ERR_LINK_PTR_NOT_NULLABLE</DESCRIPTION>
+				<MESSAGE>Операция SET NULL не может быть применена к не nullable полю &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81511">
+				<DESCRIPTION>ERR_LINK_KEY_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Ключевое поле &quot;%S&quot; должно иметь флаг уникальности.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81512">
+				<DESCRIPTION>ERR_LINK_KEY_NOT_INDEXED</DESCRIPTION>
+				<MESSAGE>Ключевое поле &quot;%S&quot; должно быть индексировано.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81513">
+				<DESCRIPTION>ERR_LINK_PTR_NOT_INDEXED</DESCRIPTION>
+				<MESSAGE>Указуемое поле &quot;%S&quot; должно быть индексировано.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81514">
+				<DESCRIPTION>ERR_LINK_TABLES_NOT_LINKED</DESCRIPTION>
+				<MESSAGE>Не найдено линка(ов) между &quot;%S&quot; таблицами.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81515">
+				<DESCRIPTION>ERR_LINK_LINKS_AMBIGUITY</DESCRIPTION>
+				<MESSAGE>Некоторые таблицы слинкованы более чем одним линком - неопределенность.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81516">
+				<DESCRIPTION>ERR_LINK_WRONG_TYPE</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; - неверный тип &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81517">
+				<DESCRIPTION>ERR_LINKED_RECORDS_NOT_LINKED</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot;. Запись левой таблицы &quot;%S&quot; не связана с записью правой таблицы &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81518">
+				<DESCRIPTION>ERR_LINKED_RECORDS_ALREADY_LINKED</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot;. Запись левой таблицы &quot;%S&quot; уже связана с записью правой таблицы &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81519">
+				<DESCRIPTION>ERR_LINK_POWER_VIOLATION</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot;. Запись из kMany-таблицы &quot;%S&quot; уже связана с некоторыми записями из kOne-таблицы.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81520"> 
+				<DESCRIPTION>ERR_LINK_TO_NULL</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot;. Запись из kMany-таблицы &quot;%S&quot; не может быть связана с &quot;%S&quot; записью kOne-таблицы. Ключ не может быть NULL.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81521">
+				<DESCRIPTION>ERR_LINK_RESTRICT_VIOLATION</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; - нарушение ограничения - операция прервана.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81522">
+				<DESCRIPTION>ERR_LINK_WRONG_ON_DELETE_FLAG</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; - OnDelete действие некорректно.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81523">
+				<DESCRIPTION>ERR_LINK_WRONG_ON_UPDATE_FLAG</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; - OnUpdate действие некорректно.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81524">
+				<DESCRIPTION>ERR_LINK_NO_KEY_VALUE_FOUND_RECORDS_COULD_NOT_BE_LINKED</DESCRIPTION>
+				<MESSAGE>Значение указуемого поля &quot;%S&quot; из записи &quot;%S&quot; не найдено в ключевом поле &quot;%S&quot;. Записи не могут быть связаны.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81525">
+				<DESCRIPTION>ERR_LINK_CONVERT</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; не может быть конвертирован в &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81526">
+				<DESCRIPTION>ERR_LINK_CONVERT_TARGET_LINKS_TYPE</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; не может быть конвертирован в &quot;%S&quot;. Целевой тип линка должен быть 1::M or 1::1.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81527">
+				<DESCRIPTION>ERR_LINK_CONVERT_SOURCE_LINK_TYPE</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; не может быть конвертирован в &quot;%S&quot;. Исходный тип линка должен быть 1::M or 1::1.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81528">
+				<DESCRIPTION>ERR_LINK_CONVERT_DIFFERENT_TABLES</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; не может быть конвертирован в &quot;%S&quot;. Исходный и целевой линки должны связывать одни и те же таблицы.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81529">
+				<DESCRIPTION>ERR_LINK_CONVERT_TARGET_LINK_NOT_EMPTY</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; не может быть конвертирован в &quot;%S&quot;. Целевой линк не пуст.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81530">
+				<DESCRIPTION>ERR_LINK_CONVERT_TARGET_KEY_METHOD</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; не может быть конвертирован в &quot;%S&quot;. Ключевое поле целевого линка - метод.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81531">
+				<DESCRIPTION>ERR_LINK_CONVERT_TARGET_PTR_METHOD</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; не может быть конвертирован в &quot;%S&quot;. Указуемое поле целевого линка - метод.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81532">
+				<DESCRIPTION>ERR_LINK_CONVERT_TARGET_MUSTBE_MM</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; не может быть конвертирован в &quot;%S&quot;. Целевой линк должен быть M::M.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81533">
+				<DESCRIPTION>ERR_LINK_CONVERT_SOURCE_MUSTBE_MM</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; не может быть конвертирован в &quot;%S&quot;. Исходный линк должен быть M::M.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81534">
+				<DESCRIPTION>ERR_LINK_CONVERT_TARGET_LINKS_NOT_CORRESPONDED</DESCRIPTION>
+				<MESSAGE>Линки &quot;%S&quot; не могут быть конвертированы в &quot;%S&quot;. Целевые линки несогласованы.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81535">
+				<DESCRIPTION>ERR_LINK_CONVERT_SOURCE_LINKS_NOT_CORRESPONDED</DESCRIPTION>
+				<MESSAGE>Линки &quot;%S&quot; не могут быть конвертированы в &quot;%S&quot;. Исходные линки несогласованы.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="81536">
+				<DESCRIPTION>ERR_LINK_TABLES_KIND_NOT_CORRESPONDED</DESCRIPTION>
+				<MESSAGE>Линк &quot;%S&quot; не может быть установлен между таблицами различного типа.</MESSAGE>
+			</SQLSTATE>
+            <SQLSTATE name="81537">
+                <DESCRIPTION>ERR_LINK_INCONSISTENT_FLAGS</DESCRIPTION>
+                <COMMENTS>CREATE SYSTEM TEMPORARY LINK... </COMMENTS>
+                <MESSAGE>Невозможно создать линк &quot;%S&quot; из-за несовместимости флагов &quot;%S&quot;.</MESSAGE>
+            </SQLSTATE>
+            <SQLSTATE name="81538">
+                <DESCRIPTION>ERR_LINK_INCONSISTENT_STORAGE_KIND</DESCRIPTION>
+                <COMMENTS>CREATE not-system LINK between system tables </COMMENTS>
+                <MESSAGE>Невозможно создать линк &quot;%S&quot; из-за несовместимости &quot;%S&quot;.</MESSAGE>
+            </SQLSTATE>
+            <SQLSTATE name="81539">
+                <DESCRIPTION>ERR_LINK_MUST_BE_RECURSIVE</DESCRIPTION>
+                <MESSAGE>Линк &quot;%S&quot; должен быть рекурсивным.</MESSAGE>
+            </SQLSTATE>						
+		</SQLCLASS>
+	</GROUP>
+
+
+	<GROUP name="Connection">
+		<SQLCLASS name="82" description="Connection errors." exception_name="xConnectionError">
+			<SQLSTATE name="82000">
+				<DESCRIPTION>ERR_CONNECTION_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка соединения.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82501">
+				<DESCRIPTION>ERR_CONNECTION_LIMIT</DESCRIPTION>
+				<MESSAGE>Лимит соединенеий исчерпан.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82502">
+				<DESCRIPTION>ERR_CONNECTION_PROTOCOL_VERSION_IS_TOO_NEW</DESCRIPTION>
+				<MESSAGE>Более новая версия протокола.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82503">
+				<DESCRIPTION>ERR_CONNECTION_INVALID_USER_NAME_OR_PASSWORD</DESCRIPTION>
+				<MESSAGE>Неверное имя  пользователя или пароль.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82504">
+				<DESCRIPTION>ERR_CONNECTION_INVALID_DATABASE_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; неверное имя БД.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82507">
+				<DESCRIPTION>ERR_CONNECTION_COMMAND_OUT_OF_SYNC</DESCRIPTION>
+				<MESSAGE>Неизвестная команда &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82508">
+				<DESCRIPTION>ERR_CONNECTION_NO_CURRENT_DB</DESCRIPTION>
+				<MESSAGE>Нет текущей БД.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82509">
+				<DESCRIPTION>ERR_CONNECTION_TIMED_OUT</DESCRIPTION>
+				<MESSAGE>Тайм-аут соединения.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8250A">
+				<DESCRIPTION>ERR_CONNECTION_WRONG_DEPLOYMENT_SERIAL</DESCRIPTION>
+				<MESSAGE>Неправильная сигнатура.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8250B">
+				<DESCRIPTION>ERR_CONNECTION_FORCEDLY_CLOSED</DESCRIPTION>
+				<MESSAGE>Соединение закрыто.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8250D">
+				<DESCRIPTION>ERR_CONNECTION_UNKNOWN</DESCRIPTION>
+				<MESSAGE>Неизвестная ошибка соединения.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8250E">
+				<DESCRIPTION>ERR_CONNECTION_INVALID_PROPERTY_NAME</DESCRIPTION>
+				<MESSAGE>Указано неивестное свойство.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="8250F">
+				<DESCRIPTION>ERR_CONNECTION_ACCESS_DENIED</DESCRIPTION>
+				<MESSAGE>Доступ запрещен.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82510">
+				<DESCRIPTION>ERR_CONNECTION_DATABASE_ALREADY_EXISTS</DESCRIPTION>
+				<MESSAGE>БД с именем &quot;%S&quot; уже существует.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82511">
+				<DESCRIPTION>ERR_CONNECTION_USER_ALREADY_EXISTS</DESCRIPTION>
+				<MESSAGE>Пользователь с именем &quot;%S&quot; уже зарегистрирован на сервере.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82512">
+				<DESCRIPTION>ERR_CONNECTION_INTERNAL_SERVER_ERROR</DESCRIPTION>
+				<MESSAGE>Внутренняя ошибка сервера.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82513">
+				<DESCRIPTION>ERR_CONNECTION_INVALID_IDENTIFIER</DESCRIPTION>
+				<MESSAGE>Использован неизвестный идентификатор (%S) при обработке запроса клиента.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82514">
+				<DESCRIPTION>ERR_CONNECTION_INCONSISTENT_RECEIVED_PACKET_VERSION</DESCRIPTION>
+				<MESSAGE>Версия принятого пакета несовместима.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82515">
+				<DESCRIPTION>ERR_CONNECTION_BROKEN_RECEIVED_PACKET</DESCRIPTION>
+				<MESSAGE>Принятый пакет поврежден.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82516">
+				<DESCRIPTION>ERR_LOAD_SSL_LIBRARIES_ERROR</DESCRIPTION>
+				<MESSAGE>SSL библиотека не найдена.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82517">
+				<DESCRIPTION>ERR_CONNECTION_DATABASE_NOT_OPENED</DESCRIPTION>
+				<MESSAGE>БД с именем &quot;%S&quot; должна быть открыта или создана перед использованием.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82518">
+				<DESCRIPTION>ERR_CONNECTION_USER_NOT_ALLOWED_REMOVE_SELF</DESCRIPTION>
+				<MESSAGE>Пользователь &quot;%S&quot; не может удалять сам себя.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82519">
+				<DESCRIPTION>ERR_CONNECTION_OPERATION_REFUSED</DESCRIPTION>
+				<MESSAGE>Операция прекращена. Пользователь не имеет '&quot;%S&quot;' привилегии.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82520">
+				<DESCRIPTION>ERR_CONNECTION_USER_NOT_EXISTS</DESCRIPTION>
+				<MESSAGE>Пользователь '&quot;%S&quot;' не зарегистрирован на этом сервере.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82521">
+				<DESCRIPTION>ERR_CONNECTION_OPERATION_NOT_ALLOWED</DESCRIPTION>
+				<MESSAGE>Операция '&quot;%S&quot;' не поддерживается в локальном режиме.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="82522">
+				<DESCRIPTION>ERR_CONNECTION_OPERATION_REFUSED_ACL</DESCRIPTION>
+				<MESSAGE>Доступ запрещен в соответствии с ACL правилами.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="Indexes">
+		<SQLCLASS name="83" description="Index errors." exception_name="xIndexError">
+			<SQLSTATE name="83000">
+				<DESCRIPTION>ERR_INDEX_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка индекса. Выполните реиндексацию.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83500">
+				<DESCRIPTION>ERR_INDEX_CORRUPTED</DESCRIPTION>
+				<MESSAGE>Индекс &quot;%S&quot; поврежден. Выполните реиндексацию.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83501">
+				<DESCRIPTION>ERR_INDEX_PAGE_INVENTORY_CORRUPTED</DESCRIPTION>
+				<MESSAGE>Повреждение инвентарной страницы для индекса &quot;%S&quot;. Выполните реиндексацию.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83502">
+				<DESCRIPTION>ERR_INDEX_PAGE_CORRUPTED</DESCRIPTION>
+				<MESSAGE>Индекс &quot;%S&quot; страница повреждена. Выполните реиндексацию.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83503">
+				<DESCRIPTION>ERR_INDEX_BYTE_RECLIST_CORRUPTED</DESCRIPTION>
+				<MESSAGE>Индекс &quot;%S&quot; типа byte. Поврежден список записей. Выполните реиндексацию.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83504">
+				<DESCRIPTION>ERR_INDEX_UNIQUE_VIOLATION</DESCRIPTION>
+				<MESSAGE>Нарушение уникальности в индексе &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>		
+			<SQLSTATE name="83505">
+				<DESCRIPTION>ERR_INDEX_NOT_SORTED</DESCRIPTION>
+				<MESSAGE>Индекс не сортирован.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83506">
+				<DESCRIPTION>ERR_INDEX_BUILD</DESCRIPTION>
+				<MESSAGE>Индекс &quot;%S&quot; не может быть построен.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="83507">
+				<DESCRIPTION>ERR_INDEX_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Индекс &quot;%S&quot; не найден.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	
+	<GROUP name="IndexePrefs">
+		<SQLCLASS name="84" description="Index style errors." exception_name="xIndexStyleError">
+			<SQLSTATE name="84000">
+				<DESCRIPTION>ERR_INDEXPREFS_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка индекс-стиля.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="84501">
+				<DESCRIPTION>ERR_INDEXPREFS_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Имя индекс-стиля &quot;%S&quot; не уникально.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	
+	<GROUP name="Licences">
+		<SQLCLASS name="85" description="Licence errors." exception_name="xLicenceError">
+			<SQLSTATE name="85000">
+				<DESCRIPTION>ERR_LICENCE_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка лицензии.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="85501">
+				<DESCRIPTION>ERR_LICENCE_INVALID</DESCRIPTION>
+				<MESSAGE>Некорректный лицензионный файл &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="85502">
+				<DESCRIPTION>ERR_LICENCE_EXPIRED</DESCRIPTION>
+				<MESSAGE>Недействительный лицензионный файл &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	
+	<GROUP name="Compressor">
+		<SQLCLASS name="86" description="Compressor errors." exception_name="xCompressorError">
+			<SQLSTATE name="86000">
+				<DESCRIPTION>ERR_COMPRESSOR_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка сжатия.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="86501">
+				<DESCRIPTION>ERR_ZIP_COMPRESSOR_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка zip-компрессии: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	
+	<GROUP name="XML Parser Errors">
+		<SQLCLASS name="87" description="XML Parser errors." exception_name="xXMLParserError">
+			<SQLSTATE name="87000">
+				<DESCRIPTION>ERR_XML_PARSER_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка XML-парсера: %S</MESSAGE>
+			</SQLSTATE>
+            <SQLSTATE name="87501">
+                <DESCRIPTION>ERR_XML_ATTRIBUTE_NAME_NOT_UNIQUE</DESCRIPTION>
+                <MESSAGE>Имя колонки &quot;%S&quot; не уникально. Один и тот же атрибут не может использоваться более одного раза в пределах одного XML тэга.</MESSAGE>
+            </SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="View errors">
+		<SQLCLASS name="88" description="View error" exception_name="xViewError">
+			<SQLSTATE name="88000">
+				<DESCRIPTION>ERR_VIEW_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка представления.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="88501">
+				<DESCRIPTION>ERR_VIEW_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Представление &quot;%S&quot; не найдено.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="88502">
+				<DESCRIPTION>ERR_VIEW_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Имя представления &quot;%S&quot; не уникально.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="88503">
+				<DESCRIPTION>ERR_VIEW_BAD_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; некорректное имя представления.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="88504">
+				<DESCRIPTION>ERR_VIEW_COLUMNS_TOO_FEW</DESCRIPTION>
+				<MESSAGE>Представление &quot;%S&quot; содержит меньше колонок чем объявлено в списке.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="88505">
+				<DESCRIPTION>ERR_VIEW_COLUMNS_TOO_MUCH</DESCRIPTION>
+				<MESSAGE>Представление &quot;%S&quot; содержит больше колонок чем объявлено в списке.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="88506">
+				<DESCRIPTION>ERR_VIEW_READONLY</DESCRIPTION>
+				<MESSAGE>Представление &quot;%S&quot; только для чтения т.к. не найден подходящий instead-of триггер.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="88507">
+				<DESCRIPTION>ERR_VIEW_COLUMN_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Представление &quot;%S&quot; Колонка &quot;%S&quot; не уникальна.</MESSAGE>
+			</SQLSTATE>			
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="Set">
+		<SQLCLASS name="89" description="Set errors." exception_name="xSetError">
+			<SQLSTATE name="89000">
+				<DESCRIPTION>ERR_SET_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка сета.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="89501">
+				<DESCRIPTION>ERR_BITSETS_SIZE_NOT_EQUAL_ERROR</DESCRIPTION>
+				<MESSAGE>Размеры BitSetов должны быть одинаковы.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="89502">
+				<DESCRIPTION>ERR_ARRAYSET_BIGGER_THAN_BITSET_ERROR</DESCRIPTION>
+				<MESSAGE>Размер ArraySet не может быть больше размера BitSet.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="89503">
+				<DESCRIPTION>ERR_INAPPROPRIATE_SET_OBJECT_ERROR</DESCRIPTION>
+				<MESSAGE>Несоответствующий тип объекта. Ожидается &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>			
+
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="Trigger errors">
+		<SQLCLASS name="91" description="Trigger error" exception_name="xTriggerError">
+			<SQLSTATE name="91000">
+				<DESCRIPTION>ERR_TRIGGER_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка триггера.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91501">
+				<DESCRIPTION>ERR_TRIGGER_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Триггер &quot;%S&quot; не найден.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91502">
+				<DESCRIPTION>ERR_TRIGGER_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Имя триггера &quot;%S&quot; не уникально.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91503">
+				<DESCRIPTION>ERR_TRIGGER_BAD_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; некорректное имя триггера.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91504">
+				<DESCRIPTION>ERR_TRIGGER_TIME</DESCRIPTION>
+				<MESSAGE>Триггер &quot;%S&quot;: типа &quot;%S&quot; не поддерживается в данном контексте.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91505">
+				<DESCRIPTION>ERR_TRIGGER_ACTION</DESCRIPTION>
+				<MESSAGE>Триггер &quot;%S&quot;: действие &quot;%S&quot; не поддерживается в данном контексте.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91506">
+				<DESCRIPTION>ERR_TRIGGER_EXISTS</DESCRIPTION>
+				<MESSAGE>Триггер &quot;%S&quot;: действие &quot;%S&quot; для таблицы &quot;%S&quot; уже зарегистрирован.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="91507">
+				<DESCRIPTION>ERR_TRIGGER_ALIAS_ERROR</DESCRIPTION>
+				<MESSAGE>Триггер &quot;%S&quot;: &quot;%S&quot; алиас не определен для действия &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>
+
+		</SQLCLASS>
+	</GROUP>
+	
+	<GROUP name="Stored procedure errors">
+		<SQLCLASS name="92" description="Stored procedure error" exception_name="xStoredProcedureError">
+			<SQLSTATE name="92000">
+				<DESCRIPTION>ERR_SP_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка хранимой процедуры.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="92501">
+				<DESCRIPTION>ERR_SP_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Хранимая процедура &quot;%S&quot; не найдена.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="92502">
+				<DESCRIPTION>ERR_SP_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Имя хранимой процедуры &quot;%S&quot; не уникально.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="92503">
+				<DESCRIPTION>ERR_SP_BAD_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; некорректное имя хранимой процедуры.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="92504">
+				<DESCRIPTION>ERR_SP_RAISE_ERROR</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; не может быть инициировано пользователем.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="92505">
+				<DESCRIPTION>ERR_SP_NO_DEFAULT_ARGUMENT_VALUE_ERROR</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; должен иметь значение по умолчанию.</MESSAGE>
+			</SQLSTATE>						
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="Valentina errors">
+		<SQLCLASS name="93" description="Valentina error" exception_name="xValentinaError">
+			<SQLSTATE name="93000">
+				<DESCRIPTION>ERR_VALENTINA_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка Valentina.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="93501">
+				<DESCRIPTION>ERR_VALENTINA_PARAM_NAME_ALREADY_EXISTS</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; имя уже определено.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="93502">
+				<DESCRIPTION>ERR_VALENTINA_SERIAL_EXPIRED</DESCRIPTION>
+				<MESSAGE>Корректный серийный номер, но период подписки завершен. Вы должны обновить подписку для использования обновленных версий.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="93503">
+				<DESCRIPTION>ERR_VALENTINA_ASSIGN_TO_SYSTEM_VARIABLE_ERROR</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; - системная переменная. Присваивание запрещено.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="93504">
+				<DESCRIPTION>ERR_VALENTINA_ALREADY_INITIALIZED</DESCRIPTION>
+				<MESSAGE>Valentina уже инициализирована.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="93505">
+				<DESCRIPTION>ERR_VALENTINA_FORMAT_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка форматирования: &quot;%S&quot; .</MESSAGE>
+			</SQLSTATE>									
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="Stored function errors">
+		<SQLCLASS name="94" description="Stored function error" exception_name="xUDFError">
+			<SQLSTATE name="94000">
+				<DESCRIPTION>ERR_UDF_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка УДФ.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="94501">
+				<DESCRIPTION>ERR_UDF_NOT_SUPPORTED_RETURN_TYPE</DESCRIPTION>
+				<MESSAGE>Ошибка УДФ &quot;%S&quot;: не поддерживаемый тип возвращаемого значения.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="94502">
+				<DESCRIPTION>ERR_UDF_MASK_STANDARD_FUNCTION</DESCRIPTION>
+				<MESSAGE>Ошибка УДФ &quot;%S&quot;: Не допускается маскирование стандартных функций.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="94503">
+				<DESCRIPTION>ERR_UDF_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Ошибка УДФ &quot;%S&quot; не уникальна.</MESSAGE>
+			</SQLSTATE>
+		</SQLCLASS>
+	</GROUP>
+	
+	
+	<GROUP name="Report errors">
+		<SQLCLASS name="95" description="Report error" exception_name="xReportError">
+			<SQLSTATE name="95000">
+				<DESCRIPTION>ERR_REPORT_CURSOR_IS_NULL</DESCRIPTION>
+				<MESSAGE>Нет курсора.</MESSAGE>
+			</SQLSTATE>
+		
+			<SQLSTATE name="95501">
+				<DESCRIPTION>ERR_REPORT_NOT_FOUND_IN_PROJECT</DESCRIPTION>
+				<MESSAGE>Отчет с именем &quot;%S&quot; не найден в проекте &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>		
+			<SQLSTATE name="95502">
+				<DESCRIPTION>ERR_REPORT_WRONG_PREVIEW_PAGE_INDEX</DESCRIPTION>
+				<MESSAGE>Неправильный индекс страницы.</MESSAGE>
+			</SQLSTATE>	
+			<SQLSTATE name="95503">
+				<DESCRIPTION>ERR_REPORT_WRONG_SCALE_VALUE</DESCRIPTION>
+				<MESSAGE>Неправильное значение масштаба.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="95504">
+				<DESCRIPTION>ERR_REPORT_PREVIEW_WIDTH</DESCRIPTION>
+				<MESSAGE>Неправильное значение ширины для предварительно просмотра.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="95505">
+				<DESCRIPTION>ERR_REPORT_WRONG_PREVIEW_HEIGHT</DESCRIPTION>
+				<MESSAGE>Неправильное значение высоты для предварительно просмотра.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="95506">
+				<DESCRIPTION>ERR_REPORT_FILE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Файл &quot;%S&quot; не найден.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="95507">
+				<DESCRIPTION>ERR_PROJECT_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Проект &quot;%S&quot; не найден.</MESSAGE>
+			</SQLSTATE>	
+			<SQLSTATE name="95508">
+				<DESCRIPTION>ERR_REPORT_UNKNOWN_DATASOURCE</DESCRIPTION>
+				<MESSAGE>Неизвестный префикс источника данных: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="95509">
+				<DESCRIPTION>ERR_REPORT_SSH_TUNNEL</DESCRIPTION>
+				<MESSAGE>Невозможно установить SSH тоннель. Error: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="95510">
+				<DESCRIPTION>ERR_REPORT_GET_LIST</DESCRIPTION>
+				<MESSAGE>Невозможно получить список отчетов. Error: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="95511">
+				<DESCRIPTION>ERR_REPORT_BY_INDEX_NOT_FOUND_IN_PROJECT</DESCRIPTION>
+				<MESSAGE>Отчет с индексом &quot;%S&quot; не найден в проекте &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="95512">
+				<DESCRIPTION>ERR_REPORT_STRUCTURE_NOT_LOADED</DESCRIPTION>
+				<MESSAGE>Не загружена структура отчета.</MESSAGE>
+			</SQLSTATE>						
+			<SQLSTATE name="95513">
+				<DESCRIPTION>ERR_REPORT_DEFAULT_SOURCE_QUERY_NOT_LOADED</DESCRIPTION>
+				<MESSAGE>Не загружен запрос по-молчанию для отчета.</MESSAGE>
+			</SQLSTATE>	
+			<SQLSTATE name="95514">
+				<DESCRIPTION>ERR_REPORT_DATASOURCE</DESCRIPTION>
+				<MESSAGE>Ошибка источника данных: &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>																						
+		</SQLCLASS>
+	</GROUP>
+
+	<GROUP name="Type errors">
+		<SQLCLASS name="96" description="Type error" exception_name="xTypeError">
+			<SQLSTATE name="96000">
+				<DESCRIPTION>ERR_TYPE_ERROR</DESCRIPTION>
+				<MESSAGE>Ошибка типа.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96501">
+				<DESCRIPTION>ERR_TYPE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Тип &quot;%S&quot; не найден.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96502">
+				<DESCRIPTION>ERR_TYPE_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Имя типа &quot;%S&quot; неуникально.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96503">
+				<DESCRIPTION>ERR_TYPE_BAD_NAME</DESCRIPTION>
+				<MESSAGE>&quot;%S&quot; некорректное имя типа.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96504">
+				<DESCRIPTION>ERR_TYPE_UNKNOWN_CATEGORY</DESCRIPTION>
+				<MESSAGE>Тип &quot;%S&quot; - неизвестная категория.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96505">
+				<DESCRIPTION>ERR_TYPE_BASETYPE_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Базовый тип для типа &quot;%S&quot; не найден.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="96506">
+				<DESCRIPTION>ERR_TYPE_HAS_DESCENDANTS</DESCRIPTION>
+				<MESSAGE>Тип &quot;%S&quot; имеет наследников.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="96507">
+				<DESCRIPTION>ERR_TYPE_WRONG_BASETYPE</DESCRIPTION>
+				<MESSAGE>Тип &quot;%S&quot; не зарегистрирован как наследник типа &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="96508">
+				<DESCRIPTION>ERR_TYPE_HAS_INTERNAL_CATEGORY</DESCRIPTION>
+				<MESSAGE>Категория типа &quot;%S&quot; - встроенная. Тип встроенной категории не может быть создан, удален или изменен.</MESSAGE>
+			</SQLSTATE>
+			<SQLSTATE name="96509">
+				<DESCRIPTION>ERR_TYPE_IN_USE</DESCRIPTION>
+				<MESSAGE>Тип &quot;%S&quot; используется в %S.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="96510">
+				<DESCRIPTION>ERR_TYPE_BAD_DEFAULT_VALUE</DESCRIPTION>
+				<MESSAGE>Тип &quot;%S&quot; - недопустимое значение по-умолчанию &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="96511">
+				<DESCRIPTION>ERR_TYPE_WRONG_CATEGORY</DESCRIPTION>
+				<MESSAGE>Тип &quot;%S&quot; - недопустимая категория.</MESSAGE>
+			</SQLSTATE>		
+			<SQLSTATE name="96512">
+				<DESCRIPTION>ERR_TYPE_INSUFFICIENT_SPACE</DESCRIPTION>
+				<MESSAGE>Тип &quot;%S&quot; - доступно элементов &quot;%S&quot;, но требуется &quot;%S&quot; элементов.</MESSAGE>
+			</SQLSTATE>	
+			<SQLSTATE name="96513">
+				<DESCRIPTION>ERR_TYPE_LOCALE_NAME_NOT_UNIQUE</DESCRIPTION>
+				<MESSAGE>Локаль &quot;%S&quot; не уникальна для типа &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>			
+			<SQLSTATE name="96514">
+				<DESCRIPTION>ERR_TYPE_LOCALE_WRONG_PARAMS_COUNT</DESCRIPTION>
+				<MESSAGE>Ошибочнное количество параметров для типа &quot;%S&quot;, локаль &quot;%S&quot;. Тип требует  &quot;%S&quot; значений.</MESSAGE>
+			</SQLSTATE>	
+			<SQLSTATE name="96515">
+				<DESCRIPTION>ERR_TYPE_LOCALE_NAME_NOT_FOUND</DESCRIPTION>
+				<MESSAGE>Локаль &quot;%S&quot; не найдена для типа &quot;%S&quot;.</MESSAGE>
+			</SQLSTATE>				
+
+		</SQLCLASS>
+	</GROUP>
+	
+</DATA>

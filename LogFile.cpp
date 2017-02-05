@@ -1,6 +1,8 @@
+/*******************************************************************************/
 #include "LogFile.h"
 
 
+/*******************************************************************************/
 void LogFile::write(const string& error)
 {
 	get_local_time();
@@ -23,6 +25,7 @@ void LogFile::write(const string& error)
 }
 
 
+/*******************************************************************************/
 void LogFile::get_local_time()
 {
 	local_time = time(NULL);
@@ -30,6 +33,7 @@ void LogFile::get_local_time()
 }
 
 
+/*******************************************************************************/
 void LogFile::path_initialization()
 {
 	char* temp_path = new char [256];

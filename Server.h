@@ -1,41 +1,53 @@
+#ifndef _Server_H
+	#define _Server_H
 #pragma once
 
 
+/*******************************************************************************/
 #define port_connection 27015
 
 
+/*******************************************************************************/
 #include <conio.h>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
+#include <iomanip>
 #include <string>
-#include <sqlite3.h>
 #include <sstream>
 #include <cstdio>
 #include <fstream>
 #include <memory>
-#include <map>
 #include <vector>
+
+// Socket
 #include <winsock2.h>
 #include <winsock.h>
+
+// OpenSSL
 #include <openssl\sha.h>
 #include <openssl\bio.h>
 #include <openssl\evp.h>
 #include <openssl\buffer.h>
+#include <openssl\rc4.h>
+
+// Win .h
 #include <Windows.h>
 #include <stdexcept>
-/*#include <vld.h>*/ // Visual Leak Detector 
+/*#include <vld.h>*/ // Visual Leak Detector
+
+// My exception
+#include "OtherExceptions.h"
 
 
+/*******************************************************************************/
 #pragma comment(lib, "WS2_32.lib")
 
 
-#pragma warning(disable : 4996)
-
-
+/*******************************************************************************/
 using namespace std;
 
-
+/*******************************************************************************/
 extern const uint16_t gLengthMessage;
 
 
@@ -45,7 +57,7 @@ class Server
 	public://////////////////////////////////////////////////////////////////////
 
 		void start_server();
-		
+
 
 	protected:///////////////////////////////////////////////////////////////////
 
@@ -63,3 +75,5 @@ class Server
 		void listening_connection();
 		void Processing_a_connection_request();
 };
+
+#endif // _Server_H

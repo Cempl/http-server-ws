@@ -1,3 +1,5 @@
+#ifndef _Interrupt_H
+	#define _Interrupt_H
 #pragma once
 
 
@@ -67,9 +69,9 @@ class interruptible_thread
 										{
 											func();
 										}
-										catch(exception& e)
+										catch(interruptException& e)
 										{
-											
+											// We need only catch exception, and nothing else
 										}
 									 });
 
@@ -87,9 +89,9 @@ class interruptible_thread
 										{
 											func(arg);
 										}
-										catch(exception& e)
+										catch(interruptException& e)
 										{
-											
+											// We need only catch exception, and nothing else
 										}
 									 });
 
@@ -107,9 +109,9 @@ class interruptible_thread
 										{
 											(class_ptr->*func)(arg); 
 										}
-										catch(exception& e)
+										catch(interruptException& e)
 										{
-											
+											// We need only catch exception, and nothing else
 										}
 									 });
 
@@ -120,6 +122,7 @@ class interruptible_thread
 		void join();
 };
 
+
 /*******************************************************************************/
 struct interrupt_flag::clear_cv_on_destruct
 {
@@ -129,16 +132,23 @@ struct interrupt_flag::clear_cv_on_destruct
 	}
 };
 
+
 /*******************************************************************************/
 template<typename Predicate>
 void interruptible_wait(condition_variable& cv, unique_lock<mutex>& lk, Predicate pred)
 {
 	interruption_point();
+
 	this_thread_interrupt_flag.set_condition_variable(cv);
+
 	interrupt_flag::clear_cv_on_destruct guard;
+
 	while(!this_thread_interrupt_flag.is_set() && !pred())
 	{
 		cv.wait_for(lk, chrono::milliseconds(1));
 	}
+
 	interruption_point();
 }
+
+#endif // _Interrupt_H
