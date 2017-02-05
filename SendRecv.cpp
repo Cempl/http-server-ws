@@ -286,18 +286,8 @@ int SendRecv::Thread_recv(SSL* inSSL)
 	{
 		try
 		{
-			try
-			{
-				// Accept data from client
-				my_recv(inSSL, message);
-			}
-			catch (exception& e)
-			{
-				message.clear();
-
-				LogFile log;
-				log.write(e.what());
-			}
+			// Accept data from client
+			my_recv(inSSL, message);
 
 			int result = recv_data(message);
 
@@ -307,8 +297,7 @@ int SendRecv::Thread_recv(SSL* inSSL)
 				thr.join();
 				message.clear();
 
-				// Normal exit
-				return 0;
+				break;
 			}
 
 			message.clear();
@@ -319,9 +308,14 @@ int SendRecv::Thread_recv(SSL* inSSL)
 
 			LogFile log;
 			log.write(e.what());
+
+			thr.interrupt();
+			thr.join();
+			message.clear();
+
+			break;
 		}
 	}  
 
-	// Not normal exit
-	return 1;
+	return 0;
 }
