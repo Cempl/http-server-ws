@@ -14,5 +14,5 @@ function get_Name_Reg_Form()
     sessionStorage.setItem("u_name", tmp_user_name);
 }
 
-document.getElementById("send_login_data").onclick = get_Name_Auth_Form;
-document.getElementById("send_reg_data").onclick = get_Name_Reg_Form;
+//document.getElementById("send_login_data").onclick = get_Name_Auth_Form;
+//document.getElementById("send_reg_data").onclick = get_Name_Reg_Form;

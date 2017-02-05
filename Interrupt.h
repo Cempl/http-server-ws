@@ -1,5 +1,3 @@
-#ifndef _Interrupt_H
-	#define _Interrupt_H
 #pragma once
 
 
@@ -109,7 +107,7 @@ class interruptible_thread
 										{
 											(class_ptr->*func)(arg); 
 										}
-										catch(interruptException& e)
+										catch(interruptException&)
 										{
 											// We need only catch exception, and nothing else
 										}
@@ -150,5 +148,3 @@ void interruptible_wait(condition_variable& cv, unique_lock<mutex>& lk, Predicat
 
 	interruption_point();
 }
-
-#endif // _Interrupt_H

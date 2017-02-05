@@ -14,6 +14,7 @@ void main()
 		CD.InitValentina();
 
 		CD.OpenDB();
+		CD.AddAllFiles();
 
 		first_server.start_server();
 	}

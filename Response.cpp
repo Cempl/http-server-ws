@@ -1,6 +1,7 @@
 /*******************************************************************************/
 #include "ResponseRequest.h"
 #include "LogFile.h"
+#include "ControlsDatabase.h"
 
 
 /*******************************************************************************/
@@ -21,30 +22,50 @@ string ResponseRequest::Path_folder()
 
 
 /*******************************************************************************/
-string ResponseRequest::Read_symbolic_content(ifstream& inFin)
+void ResponseRequest::Cleanup_OpenSSL(SSL* inSSL)
 {
-	string response_body((istreambuf_iterator<char>(inFin)), istreambuf_iterator<char>());
+	SOCKET client_socket = SSL_get_fd(inSSL);
 
-	return response_body;
-}
-
-
-/*******************************************************************************/
-void ResponseRequest::Send_response(SOCKET client_socket, string &tmp_res, int &t_result)
-{
-	t_result = send(client_socket, tmp_res.c_str(), static_cast<int>(tmp_res.size()), 0);
-
-	if (t_result == SOCKET_ERROR)
+	if (client_socket == -1)
 	{
-		throw exception("Error in send(): " + WSAGetLastError());
+		throw exception("The operation failed, because the underlying BIO is not of the correct type.");
+	}
+
+	SSL_free(inSSL);
+
+	if ((closesocket(client_socket)) != 0)
+	{
+		throw exception("ResponseRequest::Send_response::closesocket(2): " + WSAGetLastError());
 	}
 }
 
 
 /*******************************************************************************/
-void ResponseRequest::Response_js(SOCKET client_socket, string &file_name)
+string ResponseRequest::Read_symbolic_content(ifstream& inFin)
 {
-	int result = int();
+	string response_body((istreambuf_iterator<char>(inFin)), istreambuf_iterator<char>());
+	
+	return response_body;
+}
+
+
+/*******************************************************************************/
+void ResponseRequest::Send_response(SSL* inSSL, string &data)
+{
+	int ret_code = SSL_write(inSSL, data.c_str(), static_cast<int>(data.size()));
+
+	if (ret_code <= 0)
+	{
+		Cr.get_ssl_error(inSSL, ret_code);
+	}
+
+	Cleanup_OpenSSL(inSSL);
+}
+
+
+/*******************************************************************************/
+void ResponseRequest::Response_js(SSL* inSSL, string &file_name)
+{
 	string response = string();
 	string path_to_file = string();
 	string folder = "\\js\\";
@@ -60,6 +81,7 @@ void ResponseRequest::Response_js(SOCKET client_socket, string &file_name)
 	else
 	{
 		response += "HTTP/1.1 200 OK\n";
+		response += "Access-Control-Allow-Origin: *\n";
 		response += "Server: VaV/V2\n";
 		response += "Content-Type: application/javascript;\r\n\r\n";
 
@@ -68,14 +90,13 @@ void ResponseRequest::Response_js(SOCKET client_socket, string &file_name)
 
 	fin.close();
 
-	Send_response(client_socket, response, result);
+	Send_response(inSSL, response);
 }
 
 
 /*******************************************************************************/
-void ResponseRequest::Response_image(SOCKET client_socket, string &file_name)
+void ResponseRequest::Response_image(SSL* inSSL, string &file_name)
 {
-	int result = int();
 	string response = string();
 	string path_to_file = string();
 	string folder = "\\image\\";
@@ -99,14 +120,13 @@ void ResponseRequest::Response_image(SOCKET client_socket, string &file_name)
 
 	fin.close();
 
-	Send_response(client_socket, response, result);
+	Send_response(inSSL, response);
 }
 
 
 /*******************************************************************************/
-void ResponseRequest::Response_css(SOCKET client_socket, string &file_name)
+void ResponseRequest::Response_css(SSL* inSSL, string &file_name)
 {
-	int result = int();
 	string response = string();
 	string path_to_file = string();
 	string folder = "\\css\\";
@@ -130,14 +150,15 @@ void ResponseRequest::Response_css(SOCKET client_socket, string &file_name)
 
 	fin.close();
 
-	Send_response(client_socket, response, result);
+	Send_response(inSSL, response);
 }
 
 
 /*******************************************************************************/
-void ResponseRequest::Response_default_html(SOCKET client_socket)
+void ResponseRequest::Response_default_html(SSL* inSSL)
 {
-	int result = int();
+	//string response = CD.get_file_from_db("index.html");
+	
 	string response = string();
 	string path_to_file = string();
 	string folder = "\\html\\index.html";
@@ -163,14 +184,13 @@ void ResponseRequest::Response_default_html(SOCKET client_socket)
 
 	fin.close();
 
-	Send_response(client_socket, response, result);
+	Send_response(inSSL, response);
 }
 
 
 /*******************************************************************************/
-void ResponseRequest::Response_html(SOCKET client_socket, string &file_name)
+void ResponseRequest::Response_html(SSL* inSSL, string &file_name)
 {
-	int result = int();
 	string response = string();
 	string path_to_file = string();
 	string folder = "\\html\\";
@@ -196,5 +216,5 @@ void ResponseRequest::Response_html(SOCKET client_socket, string &file_name)
 
 	fin.close();
 
-	Send_response(client_socket, response, result);
+	Send_response(inSSL, response);
 }

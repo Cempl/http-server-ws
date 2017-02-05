@@ -247,6 +247,11 @@ function inBinary(inData)
 
 // RC4
 function rc4(key, str) {
+
+    // generate secret key
+    var degree = Math.pow(event.data, gPrivateNumber);
+    var key = String(degree % gSimpleMod);
+
 	var s = [], j = 0, x, res = '';
 	for (var i = 0; i < 256; i++) {
 		s[i] = i;
@@ -272,8 +277,13 @@ function rc4(key, str) {
 }
 
 
-// DH and Encrypt Auth data
-function encryptAuthData()
+// Calculate DH
+var gPrivateNumber;
+var gSimpleMod;
+var gLogin = 'Login:[' + String($("input[name='AuthLogin']").val() + ']');
+var gPass;
+
+function preDH()
 {
     // gen  
     var g_beg = 2;
@@ -299,18 +309,26 @@ function encryptAuthData()
     var res_degree = Math.pow(gen, private_number);
     var res_module = res_degree % simple_mod;
 
+    gPrivateNumber = private_number;
+    gSimpleMod = simple_mod;
+
     // send gen, mod to server
-    var msg = "DH_proto" + gen + "&" + simple_mod + "&" + res_module;
-        $.ajax({
-          async: false,
-          type: 'POST',
-          url: '127.0.0.1',
-          data: msg,
-          success: function(data) {
+    beta_socket.send("DH_proto" + gen + "&" + simple_mod + "&" + res_module);
+    beta_socket.onmessage = function(event) {
+        gLogin = rc4(event.data, gLogin);
+    }
+
+    return gLogin;
+}
+
+// DH and Encrypt Auth data
+function encryptAuthData()
+{
+    beta_socket.onmessage = function(event) {
 
             // generate secret key
-            var degree = Math.pow(data, private_number);
-            var secret_key = String(degree % simple_mod);
+            var degree = Math.pow(event.data, gPrivateNumber);
+            var secret_key = String(degree % gSimpleMod);
             //alert(secret_key);
 
             var amoundRounds = 16;
@@ -322,8 +340,8 @@ function encryptAuthData()
             var encryptPass;
 
             // get auth data
-            var get_login = String($("input[name='AuthLogin']").val());
-            var get_pass = String($("input[name='AuthPass']").val());
+            var get_login = 'Login:[' + String($("input[name='AuthLogin']").val() + ']');
+            var get_pass = 'Password:[' + String($("input[name='AuthPass']").val()) + ']';
 
             // hashing auth data (SHA512)
             secret_key = hex_sha512(secret_key);
@@ -359,18 +377,12 @@ function encryptAuthData()
             //
             encryptPass = encryptFeistelNetwork(leftBlock, rightBlock, arrayRounderKeys, amoundRounds);
 
-            // start preloader
-            go_preloader();
-
             // data overwrite
-            $('#user_name').val(encryptLogin);
-            $('#user_pass').val(encryptPass);
+            gLogin = encryptLogin;
+            gPass = encryptPass;
 
-          },
-          error:  function(xhr, str){
-	        alert('Возникла ошибка: ' + xhr.responseCode);
-          }
-        });  
+            alert(gLogin);
+    }
 }
 
 
@@ -406,7 +418,7 @@ function encryptRegData()
         $.ajax({
           async: false,
           type: 'POST',
-          url: '127.0.0.1',
+          url: 'https://127.0.0.1/',
           data: msg,
           success: function(data) {
 

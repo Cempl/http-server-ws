@@ -3,11 +3,10 @@
 #include "LogFile.h"
 #include "ControlsDatabase.h"
 #include "Encryption.h"
-#include "WSLexer.h"
 
 
 /*******************************************************************************/
-int ResponseRequest::Request(SOCKET client_socket)
+int ResponseRequest::Request(SSL* inSSL)
 {
 			bool				flag = bool();
 
@@ -24,7 +23,7 @@ int ResponseRequest::Request(SOCKET client_socket)
 	
 	try
 	{
-		my_recv(client_socket, buf);
+		my_recv(inSSL, buf);
 
 		cout << buf << "\n";
 
@@ -45,15 +44,14 @@ int ResponseRequest::Request(SOCKET client_socket)
 
 				if ((key_find - entire_query.begin()) != entire_query.size())
 				{
-					SR.websocket_handshake(client_socket, entire_query.at((key_find - entire_query.begin()) + 1));
-
-					closesocket(client_socket);
+					SR.websocket_handshake(inSSL, entire_query.at((key_find - entire_query.begin()) + 1));
+					
+					Cleanup_OpenSSL(inSSL);
 
 					return 0;
 				}
 
-				Response_default_html(client_socket);
-				closesocket(client_socket);
+				Response_default_html(inSSL);
 
 				return 0;
 			}
@@ -64,8 +62,7 @@ int ResponseRequest::Request(SOCKET client_socket)
 			{
 				file_name = "index.html";
 
-				Response_html(client_socket, file_name);
-				closesocket(client_socket);
+				Response_html(inSSL, file_name);
 
 				return 0;
 			}
@@ -79,8 +76,7 @@ int ResponseRequest::Request(SOCKET client_socket)
 				{
 					if (extension_file == additional_type_list.at(count))
 					{
-						Response_css(client_socket, file_name);
-						closesocket(client_socket);
+						Response_css(inSSL, file_name);
 
 						return 0;
 					}
@@ -90,8 +86,7 @@ int ResponseRequest::Request(SOCKET client_socket)
 				{
 					if (extension_file == image_type_list.at(count))
 					{
-						Response_image(client_socket, file_name);
-						closesocket(client_socket);
+						Response_image(inSSL, file_name);
 
 						return 0;
 					}
@@ -104,17 +99,15 @@ int ResponseRequest::Request(SOCKET client_socket)
 				{
 					if (extension_file == web_type_list.at(count))
 					{
-						Response_html(client_socket, file_name);
-						closesocket(client_socket);
+						Response_html(inSSL, file_name);
 
 						return 0;
 					}
 				}
 			}
-			catch (exception& e)
+			catch (exception&)
 			{
-				Response_default_html(client_socket);
-				closesocket(client_socket);
+				Response_default_html(inSSL);
 
 				return 0;
 			}
@@ -123,8 +116,7 @@ int ResponseRequest::Request(SOCKET client_socket)
 				{
 					if (extension_file == js_type_list.at(count))
 					{
-						Response_js(client_socket, file_name);
-						closesocket(client_socket);
+						Response_js(inSSL, file_name);
 
 						return 0;
 					}
@@ -139,8 +131,7 @@ int ResponseRequest::Request(SOCKET client_socket)
 			{
 				file_name = "index.html";
 
-				Response_html(client_socket, file_name);
-				closesocket(client_socket);
+				Response_html(inSSL, file_name);
 
 				return 0;
 			}
@@ -154,20 +145,19 @@ int ResponseRequest::Request(SOCKET client_socket)
 				static int secret_key = int();
 
 				// Search in body data from DH
-				Search_DH_gen_and_mod(entire_query, secret_key, client_socket);
+				Search_DH_gen_and_mod(entire_query, secret_key, inSSL);
 
 				// Search auth data in the body of request
-				Search_auth_data(entire_query, inLogin, inPass, secret_key, client_socket, file_name);
+				Search_auth_data(entire_query, inLogin, inPass, secret_key, file_name, inSSL);
 
 				// Search reg data in the body of request
-				Search_reg_data(entire_query, inName, inLogin, inPass, secret_key, client_socket, file_name);
+				Search_reg_data(entire_query, inName, inLogin, inPass, secret_key, file_name, inSSL);
 			}
 			else
 			{
 				file_name = "index.html";
 
-				Response_html(client_socket, file_name);
-				closesocket(client_socket);
+				Response_html(inSSL, file_name);
 
 				return 0;
 			}
@@ -190,8 +180,9 @@ int ResponseRequest::Request(SOCKET client_socket)
 			method_http == "TRACE" ||
 			method_http == "CONNECT")
 		{
-			Response_html(client_socket, not_supported_method);
-			closesocket(client_socket);
+			Response_html(inSSL, file_name);
+
+			return 0;
 		}
 	}
 	catch(exception& e)
@@ -230,7 +221,7 @@ void ResponseRequest::Cleaning_refuse_in_buffer(const string& InBuf, vector<stri
 		{
 			OutEntire_query.push_back( temp_entire_query.at(i).substr(first_pos, (last_pos - first_pos)) );
 
-			first_pos = last_pos+1;
+			first_pos = last_pos + 1;
 		}	
 
 		OutEntire_query.push_back(temp_entire_query.at(i).substr(first_pos));
@@ -239,7 +230,13 @@ void ResponseRequest::Cleaning_refuse_in_buffer(const string& InBuf, vector<stri
 
 
 /*******************************************************************************/
-void ResponseRequest::Search_auth_data(vector<string>& entire_query, string& inLogin, string& inPass, int& secret_key, SOCKET& client_socket, string& file_name)
+void ResponseRequest::Search_auth_data(
+	vector<string>& entire_query, 
+	string& inLogin, 
+	string& inPass, 
+	int& secret_key, 
+	string& file_name,
+	SSL* inSSL)
 {
 	size_t entire_query_size = entire_query.size();
 	size_t index_auth_login = size_t();
@@ -257,7 +254,7 @@ void ResponseRequest::Search_auth_data(vector<string>& entire_query, string& inL
 	// Hashing secret key (DH)
 	key = Enc.hashingKey(secret_key);
 
-	// Generate array riunder keys
+	// Generate array raunder keys
 	arrayRounderKeys = Enc.arrayKeys(key, amoundRounds);
 
 	// Search in the login request
@@ -316,21 +313,26 @@ void ResponseRequest::Search_auth_data(vector<string>& entire_query, string& inL
 		if (authData)
 		{
 			file_name = "chat.html";
-			Response_html(client_socket, file_name);
-			closesocket(client_socket);
+			Response_html(inSSL, file_name);
 		}
 		else
 		{
 			file_name = "index.html";
-			Response_html(client_socket, file_name);
-			closesocket(client_socket);
+			Response_html(inSSL, file_name);
 		}
 	}
 }
 
 
 /*******************************************************************************/
-void ResponseRequest::Search_reg_data(vector<string>& entire_query,string& inName, string& inLogin, string& inPass, int& secret_key, SOCKET& client_socket, string& file_name)
+void ResponseRequest::Search_reg_data(
+	vector<string>& entire_query, 
+	string& inName, 
+	string& inLogin, 
+	string& inPass, 
+	int& secret_key, 
+	string& file_name,
+	SSL* inSSL)
 {
 	size_t entire_query_size = entire_query.size();
 	size_t index = size_t();
@@ -433,21 +435,19 @@ void ResponseRequest::Search_reg_data(vector<string>& entire_query,string& inNam
 		if (regData)
 		{
 			file_name = "chat.html";
-			Response_html(client_socket, file_name);
-			closesocket(client_socket);
+			Response_html(inSSL, file_name);
 		}
 		else
 		{
 			file_name = "index.html";
-			Response_html(client_socket, file_name);
-			closesocket(client_socket);
+			Response_html(inSSL, file_name);
 		}
 	}
 }
 
 
 /*******************************************************************************/
-void ResponseRequest::Search_DH_gen_and_mod(vector<string>& entire_query, int& secret_key, SOCKET& client_socket)
+void ResponseRequest::Search_DH_gen_and_mod(vector<string>& entire_query, int& secret_key, SSL* inSSL)
 {
 	size_t entire_query_size = entire_query.size();
 
@@ -492,7 +492,7 @@ void ResponseRequest::Search_DH_gen_and_mod(vector<string>& entire_query, int& s
 			int out_mod_res = Enc.get_mod_and_gen(int_gen, int_mod, private_number);
 			
 			// send res_mod
-			Send_DH_res_mod(client_socket, out_mod_res);
+			Send_DH_res_mod(inSSL, out_mod_res);
 
 			secret_key = Enc.calculated_mod(int_in_res_mod, int_mod, private_number);
 		}
@@ -501,10 +501,10 @@ void ResponseRequest::Search_DH_gen_and_mod(vector<string>& entire_query, int& s
 
 
 /*******************************************************************************/
-void ResponseRequest::Send_DH_res_mod(SOCKET& client_socket, int& out_mod_res)
+void ResponseRequest::Send_DH_res_mod(SSL* inSSL, int& out_mod_res)
 {
 	int result = int();
-
+	
 	string response = string();
 	string double_str;
 
@@ -520,9 +520,7 @@ void ResponseRequest::Send_DH_res_mod(SOCKET& client_socket, int& out_mod_res)
 	response += "X-Powered-By: c++\r\n\r\n";
 	response += double_str;
 
-	Send_response(client_socket, response, result);
-
-	closesocket(client_socket);
+	Response_html(inSSL, response);
 }
 
 

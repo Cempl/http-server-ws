@@ -1,10 +1,8 @@
-#ifndef _Server_H
-	#define _Server_H
 #pragma once
 
 
 /*******************************************************************************/
-#define port_connection 27015
+#define port_connection 443
 
 
 /*******************************************************************************/
@@ -23,18 +21,21 @@
 // Socket
 #include <winsock2.h>
 #include <winsock.h>
+#include <fcntl.h>
 
 // OpenSSL
 #include <openssl\sha.h>
+#include <openssl\ssl.h>
 #include <openssl\bio.h>
-#include <openssl\evp.h>
 #include <openssl\buffer.h>
+#include <openssl\evp.h>
+#include <openssl\err.h>
 #include <openssl\rc4.h>
 
 // Win .h
 #include <Windows.h>
 #include <stdexcept>
-/*#include <vld.h>*/ // Visual Leak Detector
+//#include <vld.h> // Visual Leak Detector
 
 // My exception
 #include "OtherExceptions.h"
@@ -65,6 +66,10 @@ class Server
 		SOCKET server_socket;
 		SOCKET client_socket;
 		sockaddr_in storage_addresses;// Для хранения адреса
+		SSL_CTX *myContextOpenSSL; // OpenSSL context
+		SSL *mySSL;
+		struct sockaddr_in addr;
+		int addrLen = sizeof(addr);
 
 
 	protected:///////////////////////////////////////////////////////////////////
@@ -74,6 +79,11 @@ class Server
 		void bundle_socket_adresse();
 		void listening_connection();
 		void Processing_a_connection_request();
-};
 
-#endif // _Server_H
+
+	protected:///////////////////////////////////////////////////////////////////
+
+		void configure_openssl_context(SSL_CTX *inCtx);
+		void init_openssl();
+		SSL_CTX *create_openssl_context();
+};

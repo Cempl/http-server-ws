@@ -1,5 +1,3 @@
-#ifndef _MyCover_H
-	#define _MyCover_H
 #pragma once
 
 
@@ -17,10 +15,15 @@ class Cover
 				~Cover() {};
 
 
+	public: /////////////////////////////////////////////////////////////////////
+
+		void		get_ssl_error(SSL* inSSL, int ret_code);
+
+
 	protected:///////////////////////////////////////////////////////////////////
 
-		void		my_send(SOCKET& client_socket, string& message);
-		void		my_recv(SOCKET& client_socket, string& message);
+		void		my_send(SSL* inSSL, string& message);
+		void		my_recv(SSL* inSSL, string& message);
 };
 
-#endif // _LogFile_H
+extern Cover Cr;

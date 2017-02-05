@@ -1,6 +1,7 @@
 /*******************************************************************************/
 #include "SendRecv.h"
 #include "LogFile.h"
+#include "ResponseRequest.h"
 
 
 /*******************************************************************************/
@@ -12,7 +13,7 @@ bool queueClear = false;
 
 
 /*******************************************************************************/
-void SendRecv::websocket_handshake(SOCKET client_socket, string key)
+void SendRecv::websocket_handshake(SSL* inSSL, string key)
 {
 	string response;
 
@@ -26,7 +27,7 @@ void SendRecv::websocket_handshake(SOCKET client_socket, string key)
 
 	try
 	{
-		my_send(client_socket, response);
+		my_send(inSSL, response);
 	}
 	catch(exception& e)
 	{
@@ -34,7 +35,7 @@ void SendRecv::websocket_handshake(SOCKET client_socket, string key)
 		log.write(e.what());
 	}
 
-	Thread_recv(client_socket);
+	Thread_recv(inSSL);
 }
 
 
@@ -203,7 +204,7 @@ void SendRecv::websocket_set_content(string& data, int64_t data_length, int data
 
 
 /*******************************************************************************/
-void SendRecv::send_data(SOCKET& client_socket)
+void SendRecv::send_data(SSL* inSSL)
 {		
 	int index = 0;
 	int max_length = 100;
@@ -222,7 +223,7 @@ void SendRecv::send_data(SOCKET& client_socket)
 			}
 
 			interruptible_wait(gdata_cond, u_mutex, [&index]{return (index < my_gList.size());});
-			my_send(client_socket, my_gList[index]);
+			my_send(inSSL, my_gList[index]);
 			++index;
 
 			// Max length of the queue
@@ -257,6 +258,8 @@ int SendRecv::recv_data(string& data)
 		return 1;
 	}
 
+	//data = CD.get_file_from_db("chat.html");
+
 	// recoded data
 	websocket_set_content(data, data.size(), result);
 
@@ -273,9 +276,9 @@ int SendRecv::recv_data(string& data)
 
 
 /*******************************************************************************/
-int SendRecv::Thread_recv(SOCKET client_socket)
+int SendRecv::Thread_recv(SSL* inSSL)
 {
-	interruptible_thread thr(this, &SendRecv::send_data,  client_socket);
+	interruptible_thread thr(this, &SendRecv::send_data, inSSL);
 
 	string message;
 
@@ -283,8 +286,18 @@ int SendRecv::Thread_recv(SOCKET client_socket)
 	{
 		try
 		{
-			// Accept data from client
-			my_recv(client_socket, message);
+			try
+			{
+				// Accept data from client
+				my_recv(inSSL, message);
+			}
+			catch (exception& e)
+			{
+				message.clear();
+
+				LogFile log;
+				log.write(e.what());
+			}
 
 			int result = recv_data(message);
 

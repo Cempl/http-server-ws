@@ -1,5 +1,3 @@
-#ifndef _ControlsDatabase_H
-	#define _ControlsDatabase_H
 #pragma once
 
 
@@ -22,16 +20,22 @@ class ControlsDatabase
 {
 	public://////////////////////////////////////////////////////////////////////
 
-		void InitValentina(int inCacheSize = 8 * 1024 * 1024);
+		void InitValentina(int inCacheSize = 10 * 1024 * 1024);
 		void ShutdownValentina(void);
 		void OpenDB();
 		void Flag_online();
+		void AddAllFiles();
 
 		bool FindAuthData(String inEmail, String inPass);
 		bool AddNewUser(String inName, String inEmail, String inPass);
 
+		string Path_folder();
+		string get_file_from_drive(string path);
+		string get_file_from_db(string nameFile);
+
 	protected:///////////////////////////////////////////////////////////////////
 
+		I_Database_Ptr pVDB;
 		I_SqlDatabase_Ptr pSqlVDB;
 
 		bool gClient = true;
@@ -43,5 +47,3 @@ class ControlsDatabase
 };
 
 extern ControlsDatabase CD;
-
-#endif // _ControlsDatabase_H
