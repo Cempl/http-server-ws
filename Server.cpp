@@ -1,5 +1,6 @@
 /*******************************************************************************/
 #include "Server.h"
+#include "LogFile.h"
 
 
 /*******************************************************************************/
@@ -46,14 +47,20 @@ SSL_CTX* Server::create_openssl_context()
 	const SSL_METHOD *method;
 	SSL_CTX *ctx;
 
-	method = TLSv1_2_server_method();
-
-	ctx = SSL_CTX_new(method);
-	if (!ctx) 
+	try
 	{
-		perror("Unable to create SSL context");
-		ERR_print_errors_fp(stderr);
+		method = TLSv1_2_server_method();
 
+		ctx = SSL_CTX_new(method);
+		if (!ctx)
+		{
+			throw exception("Unable to create SSL context");
+		}
+	}
+	catch(exception& e)
+	{
+		LogFile log;
+		log.write(e.what());
 		exit(EXIT_FAILURE);
 	}
 
@@ -64,19 +71,25 @@ SSL_CTX* Server::create_openssl_context()
 /*******************************************************************************/
 void Server::configure_openssl_context(SSL_CTX *inCtx)
 {
-	SSL_CTX_set_ecdh_auto(inCtx, 1);
-
-	/* Set the key and cert */
-	if (SSL_CTX_use_certificate_file(inCtx, "127.0.0.1.crt", SSL_FILETYPE_PEM) < 0) 
+	try
 	{
-		ERR_print_errors_fp(stderr);
-		exit(EXIT_FAILURE);
+		SSL_CTX_set_ecdh_auto(inCtx, 1);
+
+		/* Set the key and cert */
+		if (SSL_CTX_use_certificate_file(inCtx, PUBL_CERT, SSL_FILETYPE_PEM) < 0)
+		{
+			throw exception("Error load certificate");
+		}
+
+		if (SSL_CTX_use_PrivateKey_file(inCtx, PRIV_KEY, SSL_FILETYPE_PEM) < 0)
+		{
+			throw exception("Error load private key");
+		}
 	}
-	
-	if (SSL_CTX_use_PrivateKey_file(inCtx, "127.0.0.1.key", SSL_FILETYPE_PEM) < 0) 
+	catch (exception& e)
 	{
-		ERR_print_errors_fp(stderr);
-
+		LogFile log;
+		log.write(e.what());
 		exit(EXIT_FAILURE);
 	}
 }
@@ -103,7 +116,7 @@ void Server::bundle_socket_adresse()
 
 	storage_addresses.sin_family = AF_INET;
 	storage_addresses.sin_addr.S_un.S_addr = INADDR_ANY;
-	storage_addresses.sin_port = htons(port_connection);
+	storage_addresses.sin_port = htons(PORT_CONNECTION);
 
 	if (bind(server_socket, (LPSOCKADDR)&storage_addresses, sizeof(storage_addresses)) != 0)
 	{
