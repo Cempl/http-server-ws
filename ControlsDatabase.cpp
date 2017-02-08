@@ -228,20 +228,21 @@ string ControlsDatabase::get_file_from_db(string nameFile)
 
 	nameFile = nameFile.c_str();
 
-	I_Table_Ptr pTable = pVDB->get_Table("AllFiles");
+	I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect("SELECT *FROM AllFiles");
+	I_Field_Ptr pField;
 	
-	I_Field_Ptr pFieldNameFile = pTable->get_Field("fileName");
-	I_Field_Ptr pFieldContent = pTable->get_Field("html/css/js");
-	
-	if (pTable->FirstRecord())
+	if (pVdbCursor->FirstRecord())
 	{
 		do
 		{
-			getName = pFieldNameFile->get_Value()->get_String();
+			pField = pVdbCursor->get_Field("fileName");
+			getName = pField->get_Value()->get_String();
 
 			if (tNameFile == getName)
 			{
-				I_FldBlob_Ptr pFBlob = fbl_dynamic_cast<I_FldBlob>(pFieldContent);
+				pField = pVdbCursor->get_Field("html/css/js");
+
+				I_FldBlob_Ptr pFBlob = fbl_dynamic_cast<I_FldBlob>(pField);
 
 				const int size = pFBlob->get_DataSize();
 				MemPtr<char> buff(size);
@@ -250,7 +251,7 @@ string ControlsDatabase::get_file_from_db(string nameFile)
 				res = string(buff, (size_t)read);
 				// End of cycle
 			}
-		} while (pTable->NextRecord());
+		} while (pVdbCursor->NextRecord());
 	}
 	
 	return res;

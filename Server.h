@@ -20,6 +20,9 @@
 #include <memory>
 #include <vector>
 
+// WSLexer
+#include "WSLexer.h"
+
 // Socket
 #include <winsock2.h>
 #include <winsock.h>

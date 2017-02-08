@@ -2,6 +2,7 @@
 #include "SendRecv.h"
 #include "LogFile.h"
 #include "ResponseRequest.h"
+#include "ControlsDatabase.h"
 
 
 /*******************************************************************************/
@@ -24,7 +25,7 @@ void SendRecv::websocket_handshake(SSL* inSSL, string key)
 	response += "Connection: Upgrade\r\n";
 	response += ("Sec-WebSocket-Accept: " + key + "\r\n");
 	response += "Sec-WebSocket-Version: 13\r\n\r\n";
-
+	
 	try
 	{
 		my_send(inSSL, response);
@@ -163,11 +164,11 @@ void SendRecv::websocket_set_content(string& data, int64_t data_length, int data
 	if (data_type == 2)
 	{
 		// binary data
-		message.push_back(130);
+		message = (char)130;
 	}
 	else
 	{
-		message.push_back(129);
+		message = (char)129;
 	}
 
 	if(data_length <= 125)
@@ -258,7 +259,7 @@ int SendRecv::recv_data(string& data)
 		return 1;
 	}
 
-	//data = CD.get_file_from_db("chat.html");
+	incoming_data_processing(data);
 
 	// recoded data
 	websocket_set_content(data, data.size(), result);
@@ -272,6 +273,130 @@ int SendRecv::recv_data(string& data)
 	gdata_cond.notify_all();
 	
 	return 0;
+}
+
+
+/*******************************************************************************/
+bool SendRecv::incoming_data_processing(string& data)
+{
+	string hash_login = string();
+	string hash_pass = string();
+	string login = "Login";
+	string password = "Password";
+	string temp = string();
+	
+	bool dataEnd = false;
+	bool unknown = false;
+	bool check_login = false;
+	bool check_pass = false;
+
+	WSLexer lexer;
+	
+	lexer.Put_HttpRequest(data.c_str(), (data.size() + data.c_str()));
+
+	WSLexer::Token* token = new WSLexer::Token();
+
+	do
+	{
+		dataEnd = lexer.GetNextToken(token);
+
+		switch (token->mType)
+		{
+			case wsDefaultType:
+			{
+				temp = string(token->ps, token->pe);
+
+				if (login == temp)
+				{
+					check_login = true;
+					temp.clear();
+				}
+
+				if (password == temp)
+				{
+					check_pass = true;
+					temp.clear();
+				}
+
+				break;
+			}
+			case wsBracketsSymbolType:
+			{
+				if (check_login)
+				{
+					lexer.GetNextToken(token);
+
+					if (token->mType == wsDefaultType)
+					{
+						hash_login = string(token->ps, token->pe);
+						check_login = false;
+						//check db
+					}
+				}
+
+				if (check_pass)
+				{
+					lexer.GetNextToken(token);
+
+					if (token->mType == wsDefaultType)
+					{
+						hash_pass = string(token->ps, token->pe);
+						check_pass = false;
+						dataEnd = false;
+						//check db
+					}
+				}
+
+				break;
+			}
+			default:
+			{
+				// unknown data
+				login.clear();
+				password.clear();
+				temp.clear();
+				hash_login.clear();
+				hash_pass.clear();
+
+				unknown = true;
+
+				break;
+			}
+		}
+	} while (dataEnd);
+
+	if (hash_login.size() != 0 && hash_pass.size() != 0)
+	{
+		// Check the authorization data in DB
+		bool authData = CD.FindAuthData(hash_login.c_str(), hash_pass.c_str());
+
+		if (authData)
+		{
+			data = CD.get_file_from_db("chat.html");
+
+			unknown = false;
+		}
+		else
+		{
+			data = "error";
+
+			unknown = true;
+		}
+	}
+	else
+	{
+		unknown = true;
+	}
+
+	login.clear();
+	password.clear();
+	temp.clear();
+	hash_login.clear();
+	hash_pass.clear();
+
+	delete token;
+
+	return unknown;
 }
 
 

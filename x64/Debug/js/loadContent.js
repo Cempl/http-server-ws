@@ -89,24 +89,24 @@ function sendAuthData()
 {
     var flagSignin = false;
 
-    var gLogin = String($("input[name='AuthLogin']").val() + ']');
-    var gPassword = String($("input[name='AuthPass']").val()) + ']';
+    var gLogin = String($("input[name='AuthLogin']").val());
+    var gPassword = String($("input[name='AuthPass']").val());
 
-    gLogin = 'Login:[' + hex_sha512(gLogin) + ']';
-    gPassword = 'Password:[' + hex_sha512(gPassword) + ']';
+    gLogin = 'Login[' + hex_sha512(gLogin) + ']';
+    gPassword = 'Password[' + hex_sha512(gPassword) + ']';
 
     // generate token
     var t_token ='';
     while(t_token.length < 30)
         t_token += String.fromCharCode(Math.random() *127).replace(/\W|\d|_/g,'');
-    var Token = 'Token:[' + t_token + ']';
+    var Token = 'Token[' + t_token + ']';
 
     if(flagSignin == false)
     {
-        beta_socket.send(gLogin + gPassword + Token);
+        beta_socket.send(gLogin + gPassword);
         beta_socket.onmessage = function(event)
         {
-            if(event.data.length > 30)
+            if(event.data != "error")
             {
                 var contOne = document.getElementById('authorization');
                 contOne.innerHTML = event.data;   

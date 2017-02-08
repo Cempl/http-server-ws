@@ -51,7 +51,8 @@ int ResponseRequest::Request(SSL* inSSL)
 					return 0;
 				}
 
-				Response_default_html(inSSL);
+				//Response_default_html(inSSL);
+				Send_response(inSSL, CD.get_file_from_db("index.html"));
 
 				return 0;
 			}
@@ -62,7 +63,7 @@ int ResponseRequest::Request(SSL* inSSL)
 			{
 				file_name = "index.html";
 
-				Response_html(inSSL, file_name);
+				Send_response(inSSL, CD.get_file_from_db(file_name));
 
 				return 0;
 			}
@@ -76,7 +77,7 @@ int ResponseRequest::Request(SSL* inSSL)
 				{
 					if (extension_file == additional_type_list.at(count))
 					{
-						Response_css(inSSL, file_name);
+						Send_response(inSSL, CD.get_file_from_db(file_name));
 
 						return 0;
 					}
@@ -86,7 +87,7 @@ int ResponseRequest::Request(SSL* inSSL)
 				{
 					if (extension_file == image_type_list.at(count))
 					{
-						Response_image(inSSL, file_name);
+						Send_response(inSSL, CD.get_file_from_db(file_name));
 
 						return 0;
 					}
@@ -99,7 +100,7 @@ int ResponseRequest::Request(SSL* inSSL)
 				{
 					if (extension_file == web_type_list.at(count))
 					{
-						Response_html(inSSL, file_name);
+						Send_response(inSSL, CD.get_file_from_db(file_name));
 
 						return 0;
 					}
@@ -107,7 +108,7 @@ int ResponseRequest::Request(SSL* inSSL)
 			}
 			catch (exception&)
 			{
-				Response_default_html(inSSL);
+				Send_response(inSSL, CD.get_file_from_db(file_name));
 
 				return 0;
 			}
@@ -116,73 +117,11 @@ int ResponseRequest::Request(SSL* inSSL)
 				{
 					if (extension_file == js_type_list.at(count))
 					{
-						Response_js(inSSL, file_name);
+						Send_response(inSSL, CD.get_file_from_db(file_name));
 
 						return 0;
 					}
 				}
-		}
-
-		// If query POST
-		if (entire_query.at(0) == "POST")
-		{
-			// It may JS not have time to perform calculations and sends an POST empty query (size empty query 518)
-			if (buf.size() == 518)
-			{
-				file_name = "index.html";
-
-				Response_html(inSSL, file_name);
-
-				return 0;
-			}
-
-			if (file_name != "index.html" || file_name == "")
-			{
-				string inLogin = string();
-				string inName = string();
-				string inPass = string();
-
-				static int secret_key = int();
-
-				// Search in body data from DH
-				Search_DH_gen_and_mod(entire_query, secret_key, inSSL);
-
-				// Search auth data in the body of request
-				Search_auth_data(entire_query, inLogin, inPass, secret_key, file_name, inSSL);
-
-				// Search reg data in the body of request
-				Search_reg_data(entire_query, inName, inLogin, inPass, secret_key, file_name, inSSL);
-			}
-			else
-			{
-				file_name = "index.html";
-
-				Response_html(inSSL, file_name);
-
-				return 0;
-			}
-		}
-
-		string method_http = entire_query.at(0);
-
-		//Skip empty queries and if query less minimum query (HTTP)
-		if (entire_query.size() <= 5)
-		{
-			return 0;
-		}
-
-		// Show unsupported methods
-		if (method_http == "OPTIONS" ||
-			method_http == "HEAD" ||
-			method_http == "PUT" ||
-			method_http == "PATCH" ||
-			method_http == "DELETE" ||
-			method_http == "TRACE" ||
-			method_http == "CONNECT")
-		{
-			Response_html(inSSL, file_name);
-
-			return 0;
 		}
 	}
 	catch(exception& e)
@@ -226,301 +165,6 @@ void ResponseRequest::Cleaning_refuse_in_buffer(const string& InBuf, vector<stri
 
 		OutEntire_query.push_back(temp_entire_query.at(i).substr(first_pos));
 	}	
-}
-
-
-/*******************************************************************************/
-void ResponseRequest::Search_auth_data(
-	vector<string>& entire_query, 
-	string& inLogin, 
-	string& inPass, 
-	int& secret_key, 
-	string& file_name,
-	SSL* inSSL)
-{
-	size_t entire_query_size = entire_query.size();
-	size_t index_auth_login = size_t();
-
-	vector<int> inData(3072);
- 	vector<int> decrypt(3072);
-	vector<int> key(3072);
-	vector<int> leftBlock(1536);
-	vector<int> rightBlock(1536);
-	vector<int>	arrayRounderKeys(24576);
-
-	// Amount rounds encryption
-	int amoundRounds = 16;
-
-	// Hashing secret key (DH)
-	key = Enc.hashingKey(secret_key);
-
-	// Generate array raunder keys
-	arrayRounderKeys = Enc.arrayKeys(key, amoundRounds);
-
-	// Search in the login request
-	for (size_t i = 0; i < entire_query_size; ++i)
-	{
-		size_t pos = entire_query[i].find("AuthLogin=");
-
-		if (pos != string::npos)
-		{
-			index_auth_login = i + 1;
-
-			inLogin = entire_query[i].erase(0, 10);
-
-			inData = Enc.strBinaryToIntBinary(inLogin);
-
-			decrypt = Enc.decryptFeistelNetwork(inData, amoundRounds, arrayRounderKeys);
-
-			inLogin = Enc.vectorCharToString(decrypt);
-		}
-	}
-
-	// Vectors cleaning
-	decrypt.clear();
-	inData.clear();
-	leftBlock.clear();
-	rightBlock.clear();
-
-	// Search in the pass request
-	for (size_t i = index_auth_login; i < entire_query_size; ++i)
-	{
-		size_t pos = entire_query[i].find("AuthPass=");
-
-		if (pos != string::npos)
-		{
-			index_auth_login = i + 1;
-
-			inPass = entire_query[i].erase(0, 9);
-			
-			inData = Enc.strBinaryToIntBinary(inPass);
-
-			decrypt = Enc.decryptFeistelNetwork(inData, amoundRounds, arrayRounderKeys);
-
-			inPass = Enc.vectorCharToString(decrypt);
-		}
-	}
-
-	if (inLogin.size() != 0 && inPass.size() != 0)
-	{
-		// Copy STD string in FBL string
-		String inLogin(inLogin.c_str());
-		String inPass(inPass.c_str());
-
-		// Check the authorization data in DB
-		bool authData = CD.FindAuthData(inLogin, inPass);
-
-		if (authData)
-		{
-			file_name = "chat.html";
-			Response_html(inSSL, file_name);
-		}
-		else
-		{
-			file_name = "index.html";
-			Response_html(inSSL, file_name);
-		}
-	}
-}
-
-
-/*******************************************************************************/
-void ResponseRequest::Search_reg_data(
-	vector<string>& entire_query, 
-	string& inName, 
-	string& inLogin, 
-	string& inPass, 
-	int& secret_key, 
-	string& file_name,
-	SSL* inSSL)
-{
-	size_t entire_query_size = entire_query.size();
-	size_t index = size_t();
-
-	vector<int> inData(3072);
-	vector<int> decrypt(3072);
-	vector<int> key(3072);
-	vector<int> leftBlock(1536);
-	vector<int> rightBlock(1536);
-	vector<int>	arrayRounderKeys(24576);
-
-	// Amount rounds encryption
-	int amoundRounds = 16;
-
-	// Hashing secret key (DH)
-	key = Enc.hashingKey(secret_key);
-
-	// Generate array riunder keys
-	arrayRounderKeys = Enc.arrayKeys(key, amoundRounds);
-
-	// Search in the name request
-	for (size_t i = 0; i < entire_query_size; ++i)
-	{
-		size_t pos = entire_query[i].find("RegName=");
-
-		if (pos != string::npos)
-		{
-			index = i + 1;
-
-			inName = entire_query[i].erase(0, 8);
-
-			inData = Enc.strBinaryToIntBinary(inName);
-
-			decrypt = Enc.decryptFeistelNetwork(inData, amoundRounds, arrayRounderKeys);
-
-			inName = Enc.vectorCharToString(decrypt);
-		}
-	}
-
-	// Vectors cleaning
-	decrypt.clear();
-	inData.clear();
-	leftBlock.clear();
-	rightBlock.clear();
-
-	// Search in the login request
-	for (size_t i = index; i < entire_query_size; ++i)
-	{
-		size_t pos = entire_query[i].find("RegLogin=");
-
-		if (pos != string::npos)
-		{
-			index = i + 1;
-
-			inLogin = entire_query[i].erase(0, 9);
-
-			inData = Enc.strBinaryToIntBinary(inLogin);
-
-			decrypt = Enc.decryptFeistelNetwork(inData, amoundRounds, arrayRounderKeys);
-
-			inLogin = Enc.vectorCharToString(decrypt);
-		}
-	}
-
-	// Vectors cleaning
-	decrypt.clear();
-	inData.clear();
-	leftBlock.clear();
-	rightBlock.clear();
-
-	// Search in the password request
-	for (size_t i = index; i < entire_query_size; ++i)
-	{
-		size_t pos = entire_query[i].find("RegPass=");
-
-		if (pos != string::npos)
-		{
-			index = i + 1;
-
-			inPass = entire_query[i].erase(0, 8);
-
-			inData = Enc.strBinaryToIntBinary(inPass);
-
-			decrypt = Enc.decryptFeistelNetwork(inData, amoundRounds, arrayRounderKeys);
-
-			inPass = Enc.vectorCharToString(decrypt);
-		}
-	}
-
-	if (inName.size() != 0 && inLogin.size() != 0 && inPass.size() != 0)
-	{
-		// Copy STD string in FBL string
-		String inName(inName.c_str());
-		String inLogin(inLogin.c_str());
-		String inPass(inPass.c_str());
-
-		// Add registration data in DB
-		bool regData = CD.AddNewUser(inName, inLogin, inPass);
-
-		if (regData)
-		{
-			file_name = "chat.html";
-			Response_html(inSSL, file_name);
-		}
-		else
-		{
-			file_name = "index.html";
-			Response_html(inSSL, file_name);
-		}
-	}
-}
-
-
-/*******************************************************************************/
-void ResponseRequest::Search_DH_gen_and_mod(vector<string>& entire_query, int& secret_key, SSL* inSSL)
-{
-	size_t entire_query_size = entire_query.size();
-
-	string gen = string();
-	string mod = string();
-	string gen_mod = string();
-	string in_res_mod = string();
-
-	for (size_t i = 0; i < entire_query_size; ++i)
-	{
-		size_t pos = entire_query.at(i).find("DH_proto");
-
-		if (pos != string::npos)
-		{
-			gen_mod = entire_query[i].erase(0, 8);
-
-			size_t gen_size = gen_mod.size();
-			size_t p_ampersant = entire_query.at(i).find('&');
-
-			gen = gen_mod;
-			mod = gen_mod;
-			in_res_mod = gen_mod;
-
-			gen = gen.erase(p_ampersant, (gen_size - p_ampersant));
-			mod = mod.erase(0, p_ampersant);
-			in_res_mod = mod.erase(0, 1);
-			p_ampersant = in_res_mod.find('&');
-
-			in_res_mod = in_res_mod.erase(0, p_ampersant + 1);
-
-			p_ampersant = mod.find('&');
-			size_t tmp_size_mod = mod.size();
-			mod = mod.erase(p_ampersant, (tmp_size_mod - p_ampersant));
-
-			int int_gen = stoi(gen);
-			int int_mod = stoi(mod);
-
-			int int_in_res_mod = stoi(in_res_mod);
-
-			int private_number = int();
-
-			int out_mod_res = Enc.get_mod_and_gen(int_gen, int_mod, private_number);
-			
-			// send res_mod
-			Send_DH_res_mod(inSSL, out_mod_res);
-
-			secret_key = Enc.calculated_mod(int_in_res_mod, int_mod, private_number);
-		}
-	}
-}
-
-
-/*******************************************************************************/
-void ResponseRequest::Send_DH_res_mod(SSL* inSSL, int& out_mod_res)
-{
-	int result = int();
-	
-	string response = string();
-	string double_str;
-
-	ostringstream t_buff;
-
-	t_buff << fixed << setprecision(0) << (out_mod_res);
-
-	double_str = t_buff.str();
-
-	response += "HTTP/1.1 200 OK\n";
-	response += "Server: VaV/V2\n";
-	response += "Content-Type: text/html;\n";
-	response += "X-Powered-By: c++\r\n\r\n";
-	response += double_str;
-
-	Response_html(inSSL, response);
 }
 
 
