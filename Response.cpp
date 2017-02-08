@@ -1,7 +1,8 @@
 /*******************************************************************************/
-#include "ResponseRequest.h"
-#include "LogFile.h"
 #include "ControlsDatabase.h"
+#include "LogFile.h"
+#include "OtherExceptions.h"
+#include "ResponseRequest.h"
 
 
 /*******************************************************************************/
@@ -28,10 +29,9 @@ void ResponseRequest::Send_response(SSL* inSSL, string &data)
 {
 	int ret_code = SSL_write(inSSL, data.c_str(), static_cast<int>(data.size()));
 
-	// This is bullshit
 	if (ret_code <= 0)
 	{
-		Cr.get_ssl_error(inSSL, ret_code);
+		get_ssl_error(inSSL, ret_code);
 	}
 
 	Cleanup_OpenSSL(inSSL);

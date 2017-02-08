@@ -1,7 +1,8 @@
 /*******************************************************************************/
-#include "Server.h"
 #include "Interrupt.h"
+#include "OtherExceptions.h"
 #include "ResponseRequest.h"
+#include "Server.h"
 
 
 /*******************************************************************************/
@@ -44,10 +45,9 @@ void Server::Processing_a_connection_request()
 
 		int ret_code = SSL_accept(mySSL);
 
-		// This is bullshit
 		if ( ret_code <= 0 )
 		{
-			Cr.get_ssl_error(mySSL, ret_code);
+			get_ssl_error(mySSL, ret_code);
 		}
 		
 		//unlock thread thr(ParseHttpHEAD, mySSL); this code and lock thread thr(&ResponseRequest::Request, &RR, mySSL); for using new parser

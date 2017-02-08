@@ -133,6 +133,7 @@
     <ClCompile Include="Encryption.cpp" />
     <ClCompile Include="LogFile.cpp" />
     <ClCompile Include="MyCover.cpp" />
+    <ClCompile Include="OtherException.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Request.cpp" />
     <ClCompile Include="Interrupt.cpp" />
