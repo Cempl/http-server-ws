@@ -55,8 +55,7 @@ bool WSLexer::GetNextToken(Token* outToken)
 				{
 					mpCurrChar = mpCurrChar + 1; // I only work with UTF-8 char, it has a length of 1.
 
-					outToken->mType = wsSpaceType;
-					outToken->pe = mpCurrChar;
+					continue; // Space is not a token
 				}
 				else
 				{
@@ -176,7 +175,7 @@ bool WSLexer::GetNextToken(Token* outToken)
 	while(flagLongWord);
 
 	outToken->mLen = (outToken->pe - outToken->ps);
-	outToken->mPosition = (outToken->pe - mpHttpStr);
+	outToken->mPosition = (outToken->ps - mpHttpStr);
 
 	return res;
 }

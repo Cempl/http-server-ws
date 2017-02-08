@@ -10,7 +10,6 @@ enum wsTokenTypes
 {
 	wsDefaultType = 0,
 
-	wsSpaceType,
 	wsSymbolType, // : ; . , / \ 
 	wsNewLineSymbolType, // \n \r
 	wsBracketsSymbolType, // ()

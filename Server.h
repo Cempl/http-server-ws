@@ -57,6 +57,9 @@ using namespace std;
 extern const uint16_t gLengthMessage;
 
 
+int ParseHttpHEAD( SSL* inSSL );
+
+
 /*******************************************************************************/
 class Server
 {

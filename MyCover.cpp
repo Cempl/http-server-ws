@@ -3,12 +3,12 @@
 
 
 /*******************************************************************************/
-Cover Cr;
+MyCover Cr;
 const uint16_t gLengthMessage = 12288;
 
 
 /*******************************************************************************/
-void Cover::my_send(SSL* inSSL, string& message)
+void MyCover::my_send(SSL* inSSL, string& message)
 {
 	int ret_code = SSL_write(inSSL, message.c_str(), static_cast<int>(message.size()));
 
@@ -20,7 +20,7 @@ void Cover::my_send(SSL* inSSL, string& message)
 
 
 /*******************************************************************************/
-void Cover::my_recv(SSL* inSSL, string& message)
+void MyCover::my_recv(SSL* inSSL, string& message)
 {
 	char buffer[gLengthMessage] = {};
 	
@@ -38,7 +38,8 @@ void Cover::my_recv(SSL* inSSL, string& message)
 }
 
 
-void Cover::get_ssl_error(SSL* inSSL, int ret_code)
+// This is bullshit
+void MyCover::get_ssl_error(SSL* inSSL, int ret_code)
 {
 	int ret = SSL_get_error(inSSL, ret_code);
 
