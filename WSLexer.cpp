@@ -31,16 +31,17 @@ bool WSLexer::GetNextToken(Token* outToken)
 {
 	outToken->Clear();
 
+	bool res = false;
+	bool flagLongWord = false;
+
 	if( mpCurrChar == mpHttpStrEnd )
 	{
 		if(flagBracketsOpen || flagQuotesOpen)
 		{
 			throw exception("Error WSLexer: Don't closed brackets or quotes");
 		}
-		return false; // end of string
+		return res; // end of string
 	}
-
-	bool flagLongWord = false;
 
 	outToken->ps = mpCurrChar;
 
@@ -147,24 +148,29 @@ bool WSLexer::GetNextToken(Token* outToken)
 			// All other symbol
 			default:
 			{
-				if (mpCurrChar == mpHttpStrEnd)
-				{
-					if (flagBracketsOpen || flagQuotesOpen)
-					{
-						throw exception("Error WSLexer: Don't closed brackets or quotes");
-					}
-					return false; // end of string
-				}
-				else
-				{
-					mpCurrChar = mpCurrChar + 1;
+				mpCurrChar = mpCurrChar + 1;
 
-					outToken->mType = wsDefaultType;
-					outToken->pe = mpCurrChar;
+				outToken->mType = wsDefaultType;
+				outToken->pe = mpCurrChar;
 
-					flagLongWord = true;
-				}
+				flagLongWord = true;
+
 			}break;
+		}
+
+		if (mpCurrChar == mpHttpStrEnd)
+		{
+			if (flagBracketsOpen || flagQuotesOpen)
+			{
+				throw exception("Error WSLexer: Don't closed brackets or quotes");
+			}
+
+			flagLongWord = false;
+			res = false; // end of string
+		}
+		else
+		{
+			res = true;
 		}
 	}
 	while(flagLongWord);
@@ -172,5 +178,5 @@ bool WSLexer::GetNextToken(Token* outToken)
 	outToken->mLen = (outToken->pe - outToken->ps);
 	outToken->mPosition = (outToken->pe - mpHttpStr);
 
-	return true;
+	return res;
 }
