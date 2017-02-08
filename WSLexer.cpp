@@ -50,7 +50,7 @@ bool WSLexer::GetNextToken(Token* outToken)
 		{
 			case 32: // " "
 			{
-				if( !flagLongWord)
+				if( !flagLongWord )
 				{
 					mpCurrChar = mpCurrChar + 1; // I only work with UTF-8 char, it has a length of 1.
 
@@ -102,6 +102,8 @@ bool WSLexer::GetNextToken(Token* outToken)
 				}
 			}break;
 
+			case 91: // "["
+			case 93: // "]"
 			case 28: // "("
 			case 29: // ")"
 			{
@@ -145,12 +147,23 @@ bool WSLexer::GetNextToken(Token* outToken)
 			// All other symbol
 			default:
 			{
-				mpCurrChar = mpCurrChar + 1;
+				if (mpCurrChar == mpHttpStrEnd)
+				{
+					if (flagBracketsOpen || flagQuotesOpen)
+					{
+						throw exception("Error WSLexer: Don't closed brackets or quotes");
+					}
+					return false; // end of string
+				}
+				else
+				{
+					mpCurrChar = mpCurrChar + 1;
 
-				outToken->mType = wsDefaultType;
-				outToken->pe = mpCurrChar;
+					outToken->mType = wsDefaultType;
+					outToken->pe = mpCurrChar;
 
-				flagLongWord = true;
+					flagLongWord = true;
+				}
 			}break;
 		}
 	}
