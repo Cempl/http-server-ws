@@ -1,7 +1,7 @@
 // get user name for show in chat (save in storage)
 function get_Name_Auth_Form()
 {
-    var tmp_user_name = document.getElementById("user_name").value;
+    var user_name = document.getElementById("user_name").value;
 
     sessionStorage.setItem("u_name", tmp_user_name);
 }

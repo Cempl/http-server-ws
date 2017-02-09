@@ -97,16 +97,19 @@ function sendAuthData()
 
     // generate token
     var t_token ='';
-    while(t_token.length < 30)
+    while(t_token.length < 40)
         t_token += String.fromCharCode(Math.random() *127).replace(/\W|\d|_/g,'');
     var Token = 'Token[' + t_token + ']';
+    
+    // save token
+    sessionStorage.setItem("session_token", Token);
 
     if(flagSignin == false)
     {
-        beta_socket.send(gLogin + gPassword);
+        beta_socket.send(gLogin + gPassword + Token);
         beta_socket.onmessage = function(event)
         {
-            if(event.data != "error")
+            if(event.data != "error" && event.data != "error2" && event.data != "error3")
             {
                 var contOne = document.getElementById('authorization');
                 contOne.innerHTML = event.data;   
@@ -116,8 +119,18 @@ function sendAuthData()
             else
             {
                 flagSignin = false;
-                document.getElementById('user_name').style.backgroundColor = '#FF4500';
-                document.getElementById('user_pass').style.backgroundColor = '#FF4500';
+
+                document.getElementById("user_name").style.color = "red";
+                document.getElementById("user_name").style.transition = "2s";
+                document.getElementById("user_pass").style.color = "red";
+                document.getElementById("user_pass").style.transition = "2s";
+
+                setTimeout(function() {
+                    document.getElementById("user_name").style.color = "DodgerBlue";
+                    document.getElementById("user_name").style.transition = "2s";
+                    document.getElementById("user_pass").style.color = "DodgerBlue";
+                    document.getElementById("user_pass").style.transition = "2s";
+                }, 2000);
             }
         };
     }
@@ -125,9 +138,8 @@ function sendAuthData()
 
 function validProc()
 {
-    var user_name = sessionStorage.getItem("u_name");
+    var currToken = sessionStorage.getItem("session_token");
 
-    document.getElementById('name_in_chat').innerHTML = "Your name in chat: " + user_name;
     document.getElementById('connection').innerHTML = "Connect: Yes";
 
     document.forms.message_test.onsubmit = function ()
@@ -146,7 +158,7 @@ function validProc()
             }
             else
             {
-                beta_socket.send(outgoingMessage);
+                beta_socket.send(currToken + outgoingMessage);
                 
                 document.forms.message_test.reset();
                 
@@ -178,7 +190,7 @@ function validProc()
     {
     var textarea = document.getElementById('input-message'); 
 
-    document.getElementById('input-message').innerHTML += user_name + ": " + event.data + "\n";
+    document.getElementById('input-message').innerHTML += event.data + "\n";
 
     textarea.scrollTop = textarea.scrollHeight;
     };

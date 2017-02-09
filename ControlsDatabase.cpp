@@ -76,36 +76,37 @@ void ControlsDatabase::OpenDB()
 
 
 /*******************************************************************************/
-bool ControlsDatabase::FindAuthData(String inLogin, String inPass)
+bool ControlsDatabase::FindAuthData(String inLogin, String inPass, String inToken)
 {
-	I_Cursor_Ptr pVdbCursor;
-
-	I_Field_Ptr nameField;
+	I_Field_Ptr pField;
 
 	String getEmail = String();
-	String getName = String();
 	String getPass = String();
+	String getUserID = String();
+	String token(inToken.c_str(), inToken.length());
 
 	bool res = false;
 
-	pVdbCursor = pSqlVDB->SqlSelect("SELECT *FROM UserAuthData");
-
+	I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect("SELECT *FROM UserAuthData");
+	
 	if (pVdbCursor->FirstRecord())
 	{
 		do
 		{
-			nameField = pVdbCursor->get_Field("user_email");
-			getEmail = nameField->get_Value()->get_String();
+			pField = pVdbCursor->get_Field("user_email");
+			getEmail = pField->get_Value()->get_String();
 
-			nameField = pVdbCursor->get_Field("user_name");
-			getName = nameField->get_Value()->get_String();
-
-			if (inLogin == getEmail || inLogin == getName)
+			if ( inLogin == getEmail )
 			{
-				nameField = pVdbCursor->get_Field("user_password");
-				getPass = nameField->get_Value()->get_String();
+				pField = pVdbCursor->get_Field("user_password");
+				getPass = pField->get_Value()->get_String();
 
 				res = (inPass == getPass);
+
+				pField = pVdbCursor->get_Field("user_id");
+				getUserID = pField->get_Value()->get_String();
+				
+				pSqlVDB->SqlSelect("UPDATE UserAuthData SET token = '" + token + "' WHERE user_id =" + getUserID + ";");
 
 				// End of cycle
 				break;
@@ -113,6 +114,8 @@ bool ControlsDatabase::FindAuthData(String inLogin, String inPass)
 		} 
 		while (pVdbCursor->NextRecord());
 	}
+
+	pVdbCursor->Flush();
 
 	return res;
 }
@@ -288,6 +291,40 @@ string ControlsDatabase::get_file_from_drive(string path)
 	string res((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>());
 
 	fin.close();
+
+	return res;
+}
+
+
+/*******************************************************************************/
+bool ControlsDatabase::check_token(String inToken, string& outName)
+{
+	String currToken = String();
+	String Name = String();
+
+	bool res = false;
+
+	I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect("SELECT *FROM UserAuthData");
+	I_Field_Ptr pField = pVdbCursor->get_Field("token");
+	
+	if (pVdbCursor->FirstRecord())
+	{
+		do
+		{
+			currToken = pField->get_Value()->get_String();
+
+			if (currToken == inToken)
+			{
+				pField = pVdbCursor->get_Field("user_name");
+				Name = pField->get_Value()->get_String();
+				outName = string(Name.getBufferA(), Name.length());
+
+				res = true;
+				// End of cycle
+				break;
+			}
+		} while (pVdbCursor->NextRecord());
+	}
 
 	return res;
 }

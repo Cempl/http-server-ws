@@ -20,8 +20,7 @@ class SendRecv : protected MyCover
 
 		void	websocket_handshake(SSL* inSSL, string key);
 		void	send_data(SSL* inSSL);
-
-		bool	incoming_data_processing(string& data);
+		void	incoming_data_processing(string& data);
 
 	protected:///////////////////////////////////////////////////////////////////
 

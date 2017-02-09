@@ -277,18 +277,24 @@ int SendRecv::recv_data(string& data)
 
 
 /*******************************************************************************/
-bool SendRecv::incoming_data_processing(string& data)
+void SendRecv::incoming_data_processing(string& data)
 {
 	string hash_login = string();
 	string hash_pass = string();
+	string hash_token = string();
 	string login = "Login";
 	string password = "Password";
+	string s_token = "Token";
 	string temp = string();
+	string Name = string();
 	
 	bool dataEnd = false;
-	bool unknown = false;
 	bool check_login = false;
 	bool check_pass = false;
+	bool check_token = false;
+	bool presence_token = false;
+	bool authToken = false;
+	bool authData = false;
 
 	WSLexer lexer;
 	
@@ -310,13 +316,27 @@ bool SendRecv::incoming_data_processing(string& data)
 				{
 					check_login = true;
 					temp.clear();
+
+					break;
 				}
 
 				if (password == temp)
 				{
 					check_pass = true;
 					temp.clear();
+
+					break;
 				}
+
+				if (s_token == temp)
+				{
+					check_token = true;
+					temp.clear();
+
+					break;
+				}
+
+				// if msg
 
 				break;
 			}
@@ -342,8 +362,16 @@ bool SendRecv::incoming_data_processing(string& data)
 					{
 						hash_pass = string(token->ps, token->pe);
 						check_pass = false;
-						dataEnd = false;
 						//check db
+					}
+				}
+
+				if (check_token)
+				{
+					if (lexer.GetNextToken(token))
+					{
+						hash_token = string(token->ps, token->pe);
+						check_token = false;
 					}
 				}
 
@@ -354,49 +382,59 @@ bool SendRecv::incoming_data_processing(string& data)
 				// unknown data
 				login.clear();
 				password.clear();
+				s_token.clear();
 				temp.clear();
-				hash_login.clear();
-				hash_pass.clear();
-
-				unknown = true;
 
 				break;
 			}
 		}
 	} while (dataEnd);
 
-	if (hash_login.size() != 0 && hash_pass.size() != 0)
+	if (hash_login.size() != 0 && hash_pass.size() != 0 && (hash_token.size() > 10 && hash_token.size() < 50))
 	{
 		// Check the authorization data in DB
-		bool authData = CD.FindAuthData(hash_login.c_str(), hash_pass.c_str());
+		authData = CD.FindAuthData(hash_login.c_str(), hash_pass.c_str(), hash_token.c_str());
 
 		if (authData)
 		{
 			data = CD.get_file_from_db("chat.html");
 
-			unknown = false;
+			presence_token = true;
 		}
 		else
 		{
 			data = "error";
-
-			unknown = true;
 		}
 	}
-	else
+
+	if (!presence_token && (hash_token.size() > 10 && hash_token.size() < 50))
 	{
-		unknown = true;
+		Sleep(500);
+		authToken = CD.check_token(hash_token.c_str(), Name);
+
+		if (authToken)
+		{
+			data = Name + ": " + data.erase(0, hash_token.size() + 7);
+			presence_token = true;
+		}
+	}
+	
+	if (!presence_token)
+	{
+		data = "error3";
 	}
 
 	login.clear();
 	password.clear();
+	s_token.clear();
 	temp.clear();
 	hash_login.clear();
 	hash_pass.clear();
+	hash_token.clear();
+	presence_token = false;
+	authToken = false;
 
 	delete token;
-
-	return unknown;
 }
 
 

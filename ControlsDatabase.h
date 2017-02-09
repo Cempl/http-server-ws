@@ -26,8 +26,9 @@ class ControlsDatabase
 		void Flag_online();
 		void AddAllFiles();
 
-		bool FindAuthData(String inEmail, String inPass);
+		bool FindAuthData(String inEmail, String inPass, String inToken);
 		bool AddNewUser(String inName, String inEmail, String inPass);
+		bool check_token(String inToken, string& outName);
 
 		string Path_folder();
 		string get_file_from_drive(string path);
