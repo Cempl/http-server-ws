@@ -85,54 +85,57 @@ var data;
     document.body.appendChild(y);
 } 
 
-function sendAuthData()
+function sendAuthData(data, curr_event)
 {
-    var flagSignin = false;
+    if( data != "" && curr_event.keyCode == 13 ) {
 
-    var gLogin = String($("input[name='AuthLogin']").val());
-    var gPassword = String($("input[name='AuthPass']").val());
+        var flagSignin = false;
 
-    gLogin = 'Login[' + hex_sha512(gLogin) + ']';
-    gPassword = 'Password[' + hex_sha512(gPassword) + ']';
+        var gLogin = String($("input[name='AuthLogin']").val());
+        var gPassword = String($("input[name='AuthPass']").val());
 
-    // generate token
-    var t_token ='';
-    while(t_token.length < 40)
-        t_token += String.fromCharCode(Math.random() *127).replace(/\W|\d|_/g,'');
-    var Token = 'Token[' + t_token + ']';
-    
-    // save token
-    sessionStorage.setItem("session_token", Token);
+        gLogin = 'Login[' + hex_sha512(gLogin) + ']';
+        gPassword = 'Password[' + hex_sha512(gPassword) + ']';
 
-    if(flagSignin == false)
-    {
-        beta_socket.send(gLogin + gPassword + Token);
-        beta_socket.onmessage = function(event)
+        // generate token
+        var t_token ='';
+        while(t_token.length < 40)
+            t_token += String.fromCharCode(Math.random() *127).replace(/\W|\d|_/g,'');
+        var Token = 'Token[' + t_token + ']';
+        
+        // save token
+        sessionStorage.setItem("session_token", Token);
+
+        if(flagSignin == false)
         {
-            if(event.data != "error")
+            beta_socket.send(gLogin + gPassword + Token);
+            beta_socket.onmessage = function(event)
             {
-                var contOne = document.getElementById('authorization');
-                contOne.innerHTML = event.data;   
-                flagSignin = true;
-                validProc();
-            }
-            else
-            {
-                flagSignin = false;
+                if(event.data != "error")
+                {
+                    var contOne = document.getElementById('authorization');
+                    contOne.innerHTML = event.data;   
+                    flagSignin = true;
+                    validProc();
+                }
+                else
+                {
+                    flagSignin = false;
 
-                document.getElementById("user_name").style.color = "red";
-                document.getElementById("user_name").style.transition = "2s";
-                document.getElementById("user_pass").style.color = "red";
-                document.getElementById("user_pass").style.transition = "2s";
-
-                setTimeout(function() {
-                    document.getElementById("user_name").style.color = "DodgerBlue";
+                    document.getElementById("user_name").style.borderColor = "red";
                     document.getElementById("user_name").style.transition = "2s";
-                    document.getElementById("user_pass").style.color = "DodgerBlue";
+                    document.getElementById("user_pass").style.borderColor = "red";
                     document.getElementById("user_pass").style.transition = "2s";
-                }, 2000);
-            }
-        };
+
+                    setTimeout(function() {
+                        document.getElementById("user_name").style.borderColor = "DodgerBlue";
+                        document.getElementById("user_name").style.transition = "2s";
+                        document.getElementById("user_pass").style.borderColor = "DodgerBlue";
+                        document.getElementById("user_pass").style.transition = "2s";
+                    }, 2000);
+                }
+            };
+        }
     }
 } 
 

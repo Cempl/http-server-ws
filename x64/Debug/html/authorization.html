@@ -11,10 +11,10 @@
 </div>
     <div id="authorization">
                     <form class="form-login" id="t_data">
-                        <input type="text" id="user_name" class="login" required="" autofocus="" placeholder="Login or Email" name="AuthLogin">
-                        <input type="password" id="user_pass" required class="password" placeholder="Password" name="AuthPass">
-                        <button form="" class="to-send" onclick="sendAuthData()">sign in</button>
-                        <button form="" class="to-send" onclick="">forgot password</button>
+                        <input type="text" id="user_name" class="login" required="" autofocus placeholder="Login" name="AuthLogin">
+                        <input type="password" id="user_pass" required class="password" placeholder="Password" name="AuthPass" onkeypress = "sendAuthData(this.value, event)">
+                        <button form="" class="to-send" onclick = "">sign up</button>
+                        <button form="" class="to-send" onclick = "">forgot password</button>
                     </form>
     </div>
 
