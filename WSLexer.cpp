@@ -27,12 +27,13 @@ void WSLexer::Put_HttpRequest(const char* inHttpStr, const char* inHttpStrEnd)
 
 
 /*******************************************************************************/
-bool WSLexer::GetNextToken(Token* outToken)
+bool WSLexer::GetNextToken(Token* outToken, bool WithoutSpace)
 {
 	outToken->Clear();
 
 	bool res = false;
 	bool flagLongWord = false;
+	bool flagThisTokenIsSpace = false;
 
 	if( mpCurrChar == mpHttpStrEnd )
 	{
@@ -47,15 +48,26 @@ bool WSLexer::GetNextToken(Token* outToken)
 
 	do
 	{
+		flagThisTokenIsSpace = false;
+
 		switch(*mpCurrChar)
 		{
 			case 32: // " "
 			{
 				if( !flagLongWord )
 				{
-					mpCurrChar = mpCurrChar + 1; // I only work with UTF-8 char, it has a length of 1.
-					outToken->pe = mpCurrChar;
-					continue; // Space is not a token
+					if(WithoutSpace)
+					{
+						flagThisTokenIsSpace = true;
+						mpCurrChar = mpCurrChar + 1;
+						outToken->ps = mpCurrChar;
+					}
+					else
+					{
+						mpCurrChar = mpCurrChar + 1; // I only work with UTF-8 char, it has a length of 1.
+						outToken->mType = wsSpaceType;
+						outToken->pe = mpCurrChar;
+					}
 				}
 				else
 				{
@@ -93,8 +105,6 @@ bool WSLexer::GetNextToken(Token* outToken)
 
 					outToken->mType = wsQuotesSymbolType;
 					outToken->pe = mpCurrChar;
-
-					flagQuotesOpen = flagQuotesOpen ? false : true;
 				}
 				else
 				{
@@ -113,8 +123,6 @@ bool WSLexer::GetNextToken(Token* outToken)
 
 					outToken->mType = wsBracketsSymbolType;
 					outToken->pe = mpCurrChar;
-
-					flagBracketsOpen = flagBracketsOpen ? false : true;
 				}
 				else
 				{
@@ -159,10 +167,6 @@ bool WSLexer::GetNextToken(Token* outToken)
 
 		if (mpCurrChar == mpHttpStrEnd)
 		{
-			if (flagBracketsOpen || flagQuotesOpen)
-			{
-				//throw exception("Error WSLexer: Don't closed brackets or quotes");
-			}
 
 			flagLongWord = false;
 			res = false; // end of string
@@ -172,7 +176,7 @@ bool WSLexer::GetNextToken(Token* outToken)
 			res = true;
 		}
 	}
-	while(flagLongWord);
+	while(flagLongWord || flagThisTokenIsSpace);
 
 	outToken->mLen = (outToken->pe - outToken->ps);
 	outToken->mPosition = (outToken->ps - mpHttpStr);
