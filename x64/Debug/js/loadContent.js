@@ -109,7 +109,7 @@ function sendAuthData()
         beta_socket.send(gLogin + gPassword + Token);
         beta_socket.onmessage = function(event)
         {
-            if(event.data != "error" && event.data != "error2" && event.data != "error3")
+            if(event.data != "error")
             {
                 var contOne = document.getElementById('authorization');
                 contOne.innerHTML = event.data;   

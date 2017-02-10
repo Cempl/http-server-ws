@@ -395,7 +395,7 @@ void SendRecv::incoming_data_processing(string& data)
 			}
 		} while (dataEnd);
 		
-		if (hash_login.size() != 0 && hash_pass.size() != 0 && (hash_token.size() > 10 && hash_token.size() < 50))
+		if (hash_login.size() == 128 && hash_pass.size() == 128 && (hash_token.size() > 10 && hash_token.size() < 50))
 		{
 			// Check the authorization data in DB
 			authData = CD.FindAuthData(hash_login.c_str(), hash_pass.c_str(), hash_token.c_str());
@@ -403,29 +403,22 @@ void SendRecv::incoming_data_processing(string& data)
 			if (authData)
 			{
 				data = CD.get_file_from_db("chat.html");
-
-				presence_token = true;
-			}
-			else
-			{
-				data = "error";
 			}
 		}
 
-		if (!presence_token && (hash_token.size() > 10 && hash_token.size() < 50))
+		if (!authData && (hash_token.size() > 10 && hash_token.size() < 50))
 		{
 			authToken = CD.check_token(hash_token.c_str(), Name);
 
 			if (authToken)
 			{
 				data = Name + ": " + data.erase(0, hash_token.size() + 7);
-				presence_token = true;
 			}
 		}
 
-		if (!presence_token)
+		if (!authData && !authToken)
 		{
-			data = "error3";
+			data = "error";
 		}
 
 		login.clear();
