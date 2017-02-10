@@ -395,7 +395,7 @@ void SendRecv::incoming_data_processing(string& data)
 			}
 		} while (dataEnd);
 		
-		if (hash_login.size() == 128 && hash_pass.size() == 128 && (hash_token.size() > 10 && hash_token.size() < 50))
+		if (hash_login.size() > 100 && hash_pass.size() > 100 && (hash_token.size() > 10 && hash_token.size() < 50))
 		{
 			// Check the authorization data in DB
 			authData = CD.FindAuthData(hash_login.c_str(), hash_pass.c_str(), hash_token.c_str());

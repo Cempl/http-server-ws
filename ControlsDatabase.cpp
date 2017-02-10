@@ -80,19 +80,30 @@ bool ControlsDatabase::FindAuthData(String inLogin, String inPass, String inToke
 {
 	bool res = false;
 
+	String getLogin;
+	String getPass;
 	String Query = "SELECT *FROM UserAuthData WHERE user_email = '" + inLogin + "';";
 
 	try
 	{
 		I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect(Query);
+		getLogin = pVdbCursor->get_Field("user_email")->get_Value()->get_String();
 
-		Query = "SELECT *FROM UserAuthData WHERE user_password = '" + inPass + "';";
+		if (getLogin == inLogin)
+		{
+			Query = "SELECT *FROM UserAuthData WHERE user_password = '" + inPass + "';";
 
-		pVdbCursor = pSqlVDB->SqlSelect(Query);
+			pVdbCursor = pSqlVDB->SqlSelect(Query);
 
-		pVdbCursor = pSqlVDB->SqlSelect("UPDATE UserAuthData SET token = '" + inToken + "' WHERE user_email = '" + inLogin + "';");
+			getPass = pVdbCursor->get_Field("user_password")->get_Value()->get_String();
 
-		res = true;
+			if (getPass == inPass)
+			{
+				pVdbCursor = pSqlVDB->SqlSelect("UPDATE UserAuthData SET token = '" + inToken + "' WHERE user_email = '" + inLogin + "';");
+				
+				res = true;
+			}
+		}
 	}
 	catch (xException&)
 	{
@@ -283,17 +294,22 @@ bool ControlsDatabase::check_token(String inToken, string& outName)
 {
 	bool res = false;
 
-	String currToken;
+	String getToken;
 	String Name;
 	String Query = "SELECT *FROM UserAuthData WHERE token = '" + inToken + "';";
 
 	try
 	{
 		I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect(Query);
-		Name = pVdbCursor->get_Field("user_name")->get_Value()->get_String();
-		outName = string(Name.getBufferA(), Name.length());
+		getToken = pVdbCursor->get_Field("token")->get_Value()->get_String();
 
-		res = true;
+		if (getToken == inToken)
+		{
+			Name = pVdbCursor->get_Field("user_name")->get_Value()->get_String();
+			outName = string(Name.getBufferA(), Name.length());
+
+			res = true;
+		}
 	}
 	catch (xException&)
 	{
