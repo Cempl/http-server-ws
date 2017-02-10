@@ -12,10 +12,10 @@ function showContent(link)
     {
         contentContx = 'chatBody';
     }
-    if (link == 'reloadFullHome')
+    if (link == 'reloadfullhome')
     {
         contentContx = 'chatBody';
-        link = 'FullHome.html';
+        link = 'fullhome.html';
     }
 
         var cont = document.getElementById(contentContx);   

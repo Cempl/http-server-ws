@@ -152,12 +152,14 @@ void ControlsDatabase::AddAllFiles()
 	names.push_back("authorization.html");
 	files.push_back("\\html\\chat.html");
 	names.push_back("chat.html");
-	files.push_back("\\html\\FullHome.html");
-	names.push_back("FullHome.html");
+	files.push_back("\\html\\fullhome.html");
+	names.push_back("fullhome.html");
 	files.push_back("\\html\\home.html");
 	names.push_back("home.html");
 	files.push_back("\\html\\index.html");
 	names.push_back("index.html");
+	files.push_back("\\html\\deviceidentity.html");
+	names.push_back("deviceidentity.html");
 
 	// js
 	files.push_back("\\js\\chat.js");
@@ -170,6 +172,8 @@ void ControlsDatabase::AddAllFiles()
 	names.push_back("loadContent.js");
 	files.push_back("\\js\\sha512min.js");
 	names.push_back("sha512min.js");
+	files.push_back("\\js\\deviceidentity.js");
+	names.push_back("deviceidentity.js");
 
 	// css
 	files.push_back("\\css\\authorization.css");
@@ -178,6 +182,8 @@ void ControlsDatabase::AddAllFiles()
 	names.push_back("chat.css");
 	files.push_back("\\css\\index.css");
 	names.push_back("index.css");
+	files.push_back("\\css\\deviceidentity.css");
+	names.push_back("deviceidentity.css");
 
 	// picture
 	files.push_back("\\image\\favicon.ico");
