@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Algs_Table.h																			  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 /*
@@ -213,6 +213,15 @@ FBL_SHARED_EXP I_Field_Ptr CreateVarCharField(
 
 
 /**********************************************************************************************/
+FBL_SHARED_EXP I_Field_Ptr CreateVarBinaryField(
+	I_Table_Ptr 	inTable, 
+	const String& 	inName,
+	vuint32			inMaxLength = 1022,
+	vuint16			inFlags = fNone,
+	const String& 	inMethod = String::sEmpty() );	
+
+
+/**********************************************************************************************/
 FBL_SHARED_EXP I_Field_Ptr CreateBLOBField( 
 	I_Table_Ptr 	inTable, 
 	const String& 	inName,
@@ -261,6 +270,13 @@ FBL_SHARED_EXP I_Field_Ptr CreateMoneyField(
 	const String& 	inName,
 	vuint16			inFlags = fNone,
 	const String& 	inMethod = String::sEmpty() );
+
+
+/**********************************************************************************************/
+FBL_SHARED_EXP I_Field_Ptr CreateVariantField(
+	I_Table_Ptr 	inTable, 
+	const String& 	inName,
+	vuint16			inFlags = fNone );
 
 
 /**********************************************************************************************/

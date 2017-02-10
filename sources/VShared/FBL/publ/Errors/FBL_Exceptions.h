@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Exceptions.h																		 	  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -152,6 +152,8 @@ virtual						~xException( void ) throw();
 virtual String				get_ErrorString( void ) const;
 
 		const String& 		get_Param( vuint32 inIndex ) const;
+
+		void				FindAndReplaceParams( const String& inOldValue, const String& inNewValue );
 
 		I_Connection*		get_Connection( void ) const 
 								{ return mpConnection; }

@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Value_Compound.cpp                                                    				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -63,7 +63,7 @@ void Value_Compound::InitWithArray(
             vuint32 size = CalcSizeOfSubValue( pSubValue );
             mpSizes->AddItem( size );
             
-            if( size == 0 ) // i.e. string category.
+            if( size == 0 ) // i.e. string or binary category.
             	mIsVariable = true;
         } 
 	}
@@ -95,10 +95,11 @@ vuint32 Value_Compound::CalcSizeOfSubValue(
         }break;
     
 		case vcString:
+        case vcBinary:
         {
         	res = 0; // will be asked at runtime 
         }break;
-        
+                    
         default:
         {
         	// Some code before should check that sub-values are legal
@@ -297,12 +298,12 @@ void Value_Compound::put_IsRemote( bool inValue )
 /**********************************************************************************************/
 vuint32 Value_Compound::get_Length( void ) const
 {
-	vuint32 Count = mpValues->get_Count();
-	for( vuint32 i = 1; i <= Count ; ++i )
-    {
-		// TODO
-        FBL_CHECK( false );
-    } 
+//	vuint32 Count = mpValues->get_Count();
+//	for( vuint32 i = 1; i <= Count ; ++i )
+//    {
+//		// TODO
+//        FBL_CHECK( false );
+//    } 
 	return 0;
 }
 
@@ -529,19 +530,21 @@ int Value_Compound::CompareIndexValues(
         if( res )
             break; // loop
             
-        // calculate pointer to next sub-value in the index:
+        // calculate pointer to the next sub-value in the index:
         vuint32 size = mpSizes->get_ItemAt( i );
         if( size )
         {
         	pLValue += size;
         	pRValue += size;
         }
-        else // this is a string
+        else // this is a string, we already know that both strings are equal.
         {
-        	vuint32 slen = pMySubValue->get_ByteLengthForIndex();
+        	// This assumes that it is a single-byte string.
+            //	FIXME if can be UTF16 here. Use as example Value_string::CompareIndexValues();
+			vuint8 LenInBytes = *(vuint8*) pLValue;
         
-        	pLValue += slen;
-        	pRValue += slen;
+        	pLValue += LenInBytes;
+        	pRValue += LenInBytes;
         }
     } 
 
@@ -550,10 +553,15 @@ int Value_Compound::CompareIndexValues(
 
 
 /**********************************************************************************************/
+// inParam - is used in simialr way as for VarChars: it indicates need of STAR WITH search,
+//			just here is specify the First N sub-values, which must be compared. Rests are NULLs.
+//
+//	We have added support of START WITH for compound values, for KeyValues.
+//
 int Value_Compound::CompareToIndexValue( 
     Const_I_Value_Ptr 	inTestValue,
     const void* 		inIndexValue,
-    vuint32				inParam,
+    vuint32				inParam,				// non-zero if START WITH search.
     bool				inSwapBytes ) const
 {
 	int res = 0;
@@ -562,15 +570,14 @@ int Value_Compound::CompareToIndexValue(
     
 	char* pIndexValue = (char*) inIndexValue + IndexPrefixLen();
 
-	vuint16 Count = (vuint16)mpValues->get_Count();
+	vuint16 Count = inParam ? (vuint16)inParam : (vuint16)mpValues->get_Count();
 	for( vuint16 i = 1; i <= Count ; ++i )
     {
 		I_Value_Ptr pMySubValue   = mpValues->get_ItemAt( i );
 		I_Value_Ptr pTestSubValue = pTestCompound->get_SubValue( i );
         
-        // FIXME: RZ 01/04/12: must be checked role of inParam here.
-        // May be we need reduce it. May be for a compound value it never exists.
-     	res = pMySubValue->CompareToIndexValue( pTestSubValue, pIndexValue, inParam, inSwapBytes );     
+        // 3d param is 0, because we do NOT do START WITHsearch for sub-values.
+     	res = pMySubValue->CompareToIndexValue( pTestSubValue, pIndexValue, 0, inSwapBytes );
         if( res )
             break; // loop
             
@@ -582,7 +589,7 @@ int Value_Compound::CompareToIndexValue(
         }
         else // this is a string
         {
-        	pIndexValue += pMySubValue->get_ByteLengthForIndex();
+        	pIndexValue += pTestSubValue->get_ByteLengthForIndex();
         }
     } 
 

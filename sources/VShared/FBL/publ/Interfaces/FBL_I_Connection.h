@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_Connection.h																		  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -80,15 +80,22 @@ enum EResponseCode
 	/* Notification */
 	kNotification		= 'T',
 
+	/* File transfer error */
+	kFileTransferError	= 'W',
+
 	kResponse_Dummy = 0xFFFFFFFF
 };
 
 
 /**********************************************************************************************/
+// forward declarations:
+//
 SMART_INTERFACE(I_IStream);
 SMART_INTERFACE(I_OStream);
 SMART_INTERFACE(I_NotificationCenter);
+//
 SMART_CLASS(NotificationQueue);
+
 
 /**********************************************************************************************/
 const vuint16 kDefaultPort 			= 15432;
@@ -113,10 +120,6 @@ const vuint16 kDefaultTimeout = 60 * 5;		// 5 minutes - if client needs more or 
 
 
 /**********************************************************************************************/
-SMART_INTERFACE(I_Connection);
-
-
-/**********************************************************************************************/
 enum ErrorLevel
 {
 	kErrorLevel_Undefined				= 0,
@@ -130,6 +133,10 @@ enum ErrorLevel
 	// Not-critical errors (connection still alive).
 	kErrorLevel_Regular					= 3
 };
+
+
+/**********************************************************************************************/
+SMART_INTERFACE(I_Connection);
 
 
 /**********************************************************************************************/

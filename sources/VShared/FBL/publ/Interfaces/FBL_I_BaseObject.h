@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_BaseObject.h	                                                      				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -155,7 +155,7 @@ virtual	vuint16				get_FieldCount( void ) const  = 0;
 							/** Returns a field by Index.
 								Returns NULL if the field is not found. 
 								BaseObject: works on array of all fields. */
-virtual I_Field_Ptr			get_Field( vuint16 inIndex )  const  = 0;
+virtual I_Field_Ptr			get_Field( vuint16 inIndex ) const  = 0;
 
 							/** Returns a field by Name.
 								Returns NULL if the field is not found.

@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_PtrValidators.cpp                                                   					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -85,6 +85,30 @@ bool IsValidLinkPointer( I_Link* inPointer )
 			I_Link_Ptr pLnk = pDb->get_Link(j);
 		
 			if( pLnk.get() == inPointer )
+				return true;		
+		}
+	}
+	
+	return false;
+}
+
+
+/**********************************************************************************************/
+bool IsValidKeyValuePointer( I_KeyValue* inPointer )
+{
+	ArrayOfDatabases_Ptr dbs = DatabaseManager::get_DatabaseManager()->get_Databases();
+	vuint32 count = dbs->get_Count();
+	
+	for( vuint32 i = 1; i <= count; ++i )
+	{
+		I_Database* pDb = dbs->get_ItemAt( i );
+		
+		vuint32 kvCount = pDb->get_KeyValueCount();
+		for( vuint32 j = 1; j <= kvCount; ++j )
+		{
+			I_KeyValue_Ptr pKeyValue = pDb->get_KeyValue(j);
+		
+			if( pKeyValue.get() == inPointer )
 				return true;		
 		}
 	}

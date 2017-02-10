@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Starter_Mac.cpp                                                 						  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -206,9 +206,11 @@ void Init_ValentinaDlls( bool inUseClientStrings )
 	void* dll = 0;
 	
     // We must choose vclient if 
-    // 	* inUseClientStrings is FALSE, i.e. call from Valentina.Init()
-    // 	* VKERNEL.dll is not found. ???? RZ 04/24/12 ???? 
-    bool use_vclient_dll = inUseClientStrings || (dll = LoadLibrary(kernel_URL)) == NULL; 
+    // 	* inUseClientStrings is TRUE, i.e. call from Valentina.InitClient()
+    // OR
+    // 	* VKERNEL.dll is not found, but call was from Valentina.Init()
+    bool use_vclient_dll = inUseClientStrings
+    				 	|| (dll = LoadLibrary(kernel_URL)) == NULL;
     
 	if( use_vclient_dll )
 	{
@@ -239,13 +241,14 @@ void Init_ValentinaDlls( bool inUseClientStrings )
 	CFRelease( kernel_URL ); 	kernel_URL = NULL;
 	CFRelease( vcomp_url ); 	vcomp_url  = NULL;
 
-	// --------------------------------
-	// Get init callbacks function.
+	// GET init callbacks function
 	typedef void (*InitBackpointers_PTR)( void );
 	InitBackpointers_PTR pfn;
 
-	// Store reference to the function and call it:
+	// STORE reference to the function and call it:
 	pfn = (InitBackpointers_PTR) GetFunction( dll, "InitBackpointers" );
+    
+    // CALL that function:
 	pfn();
 
 #endif // FBL_STATIC 

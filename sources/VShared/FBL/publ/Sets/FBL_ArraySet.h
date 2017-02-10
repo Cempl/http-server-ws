@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_ArraySet.h																			  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                       					  */
+/* Copyright Paradigma, 1998-2017                                       					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -160,7 +160,7 @@ virtual void				To( I_PacketSnd*		inPacket,
 		vuint32				get_Size( void ) const
 								{ return (ID_TYPE)(mpStorageEnd - mpStart) * sizeof(ID_TYPE); }
 
-							/// Returns reference on item at the specified position.
+							/// Returns reference on item at the specified position. 1..
 		ID_TYPE&	 		operator()( vuint32 inPos ) const;
 				
     						// Returns how much bytes use all existed ArraySet objects.
@@ -288,9 +288,9 @@ FBL_SHARED_EXP ArraySet_Ptr RemoveItemsExcept(
 
 
 /**********************************************************************************************/
-// HELPER ALGORITHM:
+// HELPER ALGORITHM: appends inSet to the end of ioSet.
 //
-FBL_SHARED_EXP void SimpleUnion( ArraySet_Ptr ioSet, ArraySet_Ptr inSet );
+FBL_SHARED_EXP void Append( ArraySet_Ptr ioSet, ArraySet_Ptr inSet );
 
 
 /**********************************************************************************************/

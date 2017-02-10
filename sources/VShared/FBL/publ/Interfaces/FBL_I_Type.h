@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_Type.h		                                                     					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -222,7 +222,7 @@ virtual void				UnRegisterDerivedType( const I_Type_Ptr inpType ) = 0;
 
 virtual vuint16 			get_DerivedTypeCount( void ) const = 0;
 
-virtual I_Type_Ptr			get_DerivedType( vuint16 inIndex )  const = 0;
+virtual I_Type_Ptr			get_DerivedType( vuint16 inIndex ) const = 0;
 
 }; 
 

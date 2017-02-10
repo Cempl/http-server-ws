@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Starter_Unix.cpp                                                						  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -26,9 +26,6 @@ FBL_Begin_Namespace
 UnixHandle gVReportDllHandle;
 
 /**********************************************************************************************/
-typedef void (*InitBackpointers_PTR)( void );
-
-/**********************************************************************************************/
 extern "C" void InitBackpointers( void );
 
 
@@ -42,12 +39,23 @@ void Init_ValentinaDlls( bool inUseClientStrings )
 
 #else // FBL_STATIC
 
-	// Kernel-dll string-factory has priority.
+	// KERNEL DLL string-factory has priority, i.e.
+	// if sFactory is not NULL and call is from VCLIENT.DLL, we do not change pointers.
+	// if sFactory is not NULL but call is from KERNEL.DLL, we will reset pointers to KERNEL strings. 
+	// 
 	if( String::sFactory && inUseClientStrings )
 		return;
 
-	// At first search for already loaded symbols
-	// to avoid conflicts (different betas of vshared/vclient/vkernel) on dlopen
+
+// --------------------
+// This part is Linux-specific.
+// We asking APP itself for 2 entry points, which for linux have different names.
+// --------------------
+
+	// Search for already loaded symbols to avoid conflicts
+	// (different betas of vshared/vclient/vkernel) on dlopen
+	typedef void (*InitBackpointers_PTR)( void );
+    //
 	InitBackpointers_PTR pfn_app_client = nullptr;
 	InitBackpointers_PTR pfn_app_kernel = nullptr;
 	
@@ -55,42 +63,48 @@ void Init_ValentinaDlls( bool inUseClientStrings )
 	if( hDLL )
 	{
 		pfn_app_kernel = (InitBackpointers_PTR) ::dlsym( hDLL, "InitBackpointersKernel" );
-		if( !pfn_app_kernel )
-			pfn_app_client = (InitBackpointers_PTR) ::dlsym( hDLL, "InitBackpointersClient" );
+		pfn_app_client = (InitBackpointers_PTR) ::dlsym( hDLL, "InitBackpointersClient" );
 	}
 	
-	InitBackpointers_PTR pfn = pfn_app_kernel;
-	if( !pfn && inUseClientStrings )
-		pfn = pfn_app_client;
+	// GET init callbacks function.
+	InitBackpointers_PTR pfn = (inUseClientStrings || (pfn_app_kernel == NULL))
+                            ? pfn_app_client
+    						: pfn_app_kernel;
 
-	// Need to dynamically load libraries
-	if( !pfn )
+
+// --------------------
+// This part more or less corresponds to Mac + Win version
+// At 2016-08-22 Sergey and Team found that this part never works, as far as we see.
+// So we not delete it for now ... and it not harms.
+// --------------------
+	if( !pfn ) // Need to dynamically load libraries
 	{
-		// VKERNEL
-		if( !inUseClientStrings )
-		{
-			hDLL = ::dlopen( GetKernelDllName(), RTLD_NOW | RTLD_LOCAL );
-			if( hDLL )
-			{
-				pfn = (InitBackpointers_PTR) ::dlsym( hDLL, "InitBackpointersKernel" );
-				if( !pfn )
-					pfn = (InitBackpointers_PTR) ::dlsym( hDLL, "InitBackpointers" );
-			}
-		}
-		
-		// VCLIENT
-		if( !pfn )
-		{
-			hDLL = ::dlopen( GetClientDllName(), RTLD_NOW | RTLD_LOCAL );
-			if( hDLL )
-			{
-				pfn = (InitBackpointers_PTR) ::dlsym( hDLL, "InitBackpointersClient" );
-				if( !pfn )
-					pfn = (InitBackpointers_PTR) ::dlsym( hDLL, "InitBackpointers" );
-			}
-		}
-	}
+	    bool use_vclient_dll = inUseClientStrings
+        					|| (hDLL = ::dlopen( GetKernelDllName(), RTLD_NOW | RTLD_LOCAL )) == NULL;
 
+
+		if( use_vclient_dll )
+		{
+			// Try to load VCLIENT implementation.
+			hDLL = ::dlopen( GetClientDllName(), RTLD_NOW | RTLD_LOCAL );
+
+            if( !hDLL )
+            {
+                // CRITICAL SITUATION: neither kernel nor client dll was not found!
+                // Valentina cannot continue to work.
+                // FIXME: throw exception!
+                return;
+            }
+		}
+
+	 	// GET init callbacks function
+       pfn = use_vclient_dll
+       		? (InitBackpointers_PTR) ::dlsym( hDLL, "InitBackpointersKernel" )
+			: (InitBackpointers_PTR) ::dlsym( hDLL, "InitBackpointers" );
+	}
+// --------------------
+
+    // CALL that function:
 	if( pfn )
 		pfn();
 

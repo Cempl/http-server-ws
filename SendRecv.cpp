@@ -279,162 +279,166 @@ int SendRecv::recv_data(string& data)
 /*******************************************************************************/
 void SendRecv::incoming_data_processing(string& data)
 {
-	string hash_login = string();
-	string hash_pass = string();
-	string hash_token = string();
-	string login = "Login";
-	string password = "Password";
-	string s_token = "Token";
-	string temp = string();
-	string Name = string();
-	
-	bool dataEnd = false;
-	bool check_login = false;
-	bool check_pass = false;
-	bool check_token = false;
-	bool presence_token = false;
-	bool authToken = false;
-	bool authData = false;
+		string hash_login = string();
+		string hash_pass = string();
+		string hash_token = string();
+		string login = "Login";
+		string password = "Password";
+		string s_token = "Token";
+		string temp = string();
+		string Name = string();
 
-	WSLexer lexer;
-	
-	lexer.Put_HttpRequest(data.c_str(), (data.size() + data.c_str()));
+		bool dataEnd = false;
+		bool check_login = false;
+		bool check_pass = false;
+		bool check_token = false;
+		bool presence_token = false;
+		bool authToken = false;
+		bool authData = false;
 
-	WSLexer::Token* token = new WSLexer::Token();
+		WSLexer lexer;
 
-	do
-	{
-		dataEnd = lexer.GetNextToken(token);
+		lexer.Put_HttpRequest(data.c_str(), (data.size() + data.c_str()));
 
-		switch (token->mType)
+		WSLexer::Token* token = new WSLexer::Token();
+
+		do
 		{
-			case wsDefaultType:
-			{
-				temp = string(token->ps, token->pe);
+			dataEnd = lexer.GetNextToken(token);
 
-				if (login == temp)
+			switch (token->mType)
+			{
+				case wsDefaultType:
 				{
-					check_login = true;
-					temp.clear();
+					temp = string(token->ps, token->pe);
+
+					if (login == temp)
+					{
+						
+						check_login = true;
+						temp.clear();
+
+						break;
+					}
+					
+					if (password == temp)
+					{
+						
+						check_pass = true;
+						temp.clear();
+
+						break;
+					}
+
+					if (s_token == temp)
+					{
+						check_token = true;
+						temp.clear();
+
+						break;
+					}
+
+					// if msg
 
 					break;
 				}
 
-				if (password == temp)
+				case wsBracketsSymbolType:
 				{
-					check_pass = true;
-					temp.clear();
+					
+					if (check_login)
+					{
+						lexer.GetNextToken(token);
+
+						if (token->mType == wsDefaultType)
+						{
+							hash_login = string(token->ps, token->pe);
+							check_login = false;
+							//check db
+						}
+					}
+
+					if (check_pass)
+					{
+						lexer.GetNextToken(token);
+
+						if (token->mType == wsDefaultType)
+						{
+							hash_pass = string(token->ps, token->pe);
+							check_pass = false;
+							//check db
+						}
+					}
+
+					if (check_token)
+					{
+						if (lexer.GetNextToken(token))
+						{
+							hash_token = string(token->ps, token->pe);
+							check_token = false;
+						}
+					}
 
 					break;
 				}
 
-				if (s_token == temp)
+				default:
 				{
-					check_token = true;
+					// unknown data
+					login.clear();
+					password.clear();
+					s_token.clear();
 					temp.clear();
 
 					break;
 				}
-
-				// if msg
-
-				break;
 			}
-			case wsBracketsSymbolType:
+		} while (dataEnd);
+		
+		if (hash_login.size() != 0 && hash_pass.size() != 0 && (hash_token.size() > 10 && hash_token.size() < 50))
+		{
+			// Check the authorization data in DB
+			authData = CD.FindAuthData(hash_login.c_str(), hash_pass.c_str(), hash_token.c_str());
+
+			if (authData)
 			{
-				if (check_login)
-				{
-					lexer.GetNextToken(token);
+				data = CD.get_file_from_db("chat.html");
 
-					if (token->mType == wsDefaultType)
-					{
-						hash_login = string(token->ps, token->pe);
-						check_login = false;
-						//check db
-					}
-				}
-
-				if (check_pass)
-				{
-					lexer.GetNextToken(token);
-
-					if (token->mType == wsDefaultType)
-					{
-						hash_pass = string(token->ps, token->pe);
-						check_pass = false;
-						//check db
-					}
-				}
-
-				if (check_token)
-				{
-					if (lexer.GetNextToken(token))
-					{
-						hash_token = string(token->ps, token->pe);
-						check_token = false;
-					}
-				}
-
-				break;
+				presence_token = true;
 			}
-			default:
+			else
 			{
-				// unknown data
-				login.clear();
-				password.clear();
-				s_token.clear();
-				temp.clear();
-
-				break;
+				data = "error";
 			}
 		}
-	} while (dataEnd);
 
-	if (hash_login.size() != 0 && hash_pass.size() != 0 && (hash_token.size() > 10 && hash_token.size() < 50))
-	{
-		// Check the authorization data in DB
-		authData = CD.FindAuthData(hash_login.c_str(), hash_pass.c_str(), hash_token.c_str());
-
-		if (authData)
+		if (!presence_token && (hash_token.size() > 10 && hash_token.size() < 50))
 		{
-			data = CD.get_file_from_db("chat.html");
+			authToken = CD.check_token(hash_token.c_str(), Name);
 
-			presence_token = true;
+			if (authToken)
+			{
+				data = Name + ": " + data.erase(0, hash_token.size() + 7);
+				presence_token = true;
+			}
 		}
-		else
+
+		if (!presence_token)
 		{
-			data = "error";
+			data = "error3";
 		}
-	}
 
-	if (!presence_token && (hash_token.size() > 10 && hash_token.size() < 50))
-	{
-		Sleep(500);
-		authToken = CD.check_token(hash_token.c_str(), Name);
+		login.clear();
+		password.clear();
+		s_token.clear();
+		temp.clear();
+		hash_login.clear();
+		hash_pass.clear();
+		hash_token.clear();
+		presence_token = false;
+		authToken = false;
 
-		if (authToken)
-		{
-			data = Name + ": " + data.erase(0, hash_token.size() + 7);
-			presence_token = true;
-		}
-	}
-	
-	if (!presence_token)
-	{
-		data = "error3";
-	}
-
-	login.clear();
-	password.clear();
-	s_token.clear();
-	temp.clear();
-	hash_login.clear();
-	hash_pass.clear();
-	hash_token.clear();
-	presence_token = false;
-	authToken = false;
-
-	delete token;
+		delete token;
 }
 
 

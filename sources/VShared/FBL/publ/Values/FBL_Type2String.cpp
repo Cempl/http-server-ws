@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Type2String.cpp                                                   					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -72,6 +72,8 @@ struct Type2String_en_US
 	{ kTypeEnum16,		"Enum16" },
 
 	{ kTypeMoney,		"Money" },
+
+	{ kTypeVariant,		"Variant" },
 
 	{ kTypeCompound,	"Compound" }
 };
@@ -166,6 +168,10 @@ VALUE_TYPE String2TypeCode( const UChar* inTypeStr, const char inLocale[] )
 			else if( vu_strcmp(inTypeStr, "VarBinary") == 0 )
 			{
 				return kTypeVarBinary;
+			}
+			else if( vu_strcmp(inTypeStr, "Variant") == 0 )
+			{
+				return kTypeVariant;
 			}
 			break;
 
@@ -369,6 +375,9 @@ const char* GetInternalTypeCodeString( FIELD_TYPE inType )
 			break;
 		case kTypeVarBinary:
 			str = "VARBINARY";
+			break;
+		case kTypeVariant:
+			str = "VARIANT";
 			break;
 
 		case kTypeBLOB:

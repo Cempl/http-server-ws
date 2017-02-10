@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_ConverterBase.h																		  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -26,7 +26,7 @@ FBL_Begin_Namespace
 	Parent class for StToUTF16 and StFromUTF16.
 	Should not be be used directly, so we protect destructor.	
 
-	It have 2 constructors: one for inEncoding and other for inConverter.
+	It has 2 constructors: one for inEncoding, another for inConverter.
 */
 class FBL_SHARED_EXP_CLASS ConverterBase : public noncopyable
 {

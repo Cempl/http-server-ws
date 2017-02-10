@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_ErrorGroups.h																	 	  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 //
@@ -49,6 +49,7 @@ DECLARE_EXCEPTION( xValueError,                   xException, ERR_VALUE_INVALID 
 DECLARE_EXCEPTION( xSSLError,                     xException, ERR_SSL_ERROR )
 DECLARE_EXCEPTION( xBonjourError,                 xException, ERR_BONJOUR_ERROR )
 DECLARE_EXCEPTION( xPictureError,                 xException, ERR_PICTURE_ERROR )
+DECLARE_EXCEPTION( xKeyValueError,                xException, ERR_KEYVALUE_ERROR )
 DECLARE_EXCEPTION( xTableError,                   xException, ERR_TABLE_ERROR )
 DECLARE_EXCEPTION( xFieldError,                   xException, ERR_FIELD_ERROR )
 DECLARE_EXCEPTION( xLinkError,                    xException, ERR_LINK_ERROR )

@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_FldBlob.h 		                                                      				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -38,7 +38,7 @@ virtual						~I_FldBlob( void );
 	// Properties:
 	
 		// <SegmentSize> [r/w]
-virtual	vuint32				get_SegmentSize( void )  const  = 0;
+virtual	vuint32				get_SegmentSize( void ) const  = 0;
 
 							/// Must be inited before the database files are created.
 virtual	void				put_SegmentSize( vuint32 inSegmentSize ) = 0;

@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_BitSet.cpp																		 	  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                       					  */
+/* Copyright Paradigma, 1998-2017                                       					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -148,11 +148,14 @@ BitSet::BitSet(
 {
 	InitSelf( inMaxValue );
 
-	vuint32 	Count = inSet->get_Count();
-	vuint32*	theRecID = inSet->begin();
-	
-	while( Count-- )
-		Append( *theRecID++ );
+	if( inSet )
+    {
+        vuint32 	Count = inSet->get_Count();
+        vuint32*	theRecID = inSet->begin();
+        
+        while( Count-- )
+            Append( *theRecID++ );
+	}
 }
 
 

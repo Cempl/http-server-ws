@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_PropertyContainer.h			                                          				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -54,7 +54,7 @@ virtual						~PropertyContainer( void );
 virtual	vuint32				get_Count	( void )				const override;
 virtual	I_Property_Ptr		get_Property( vuint32 inIndex )		const override;
 virtual I_Property_Ptr		get_Property( const UChar* inName ) const override;
-virtual I_Property_Ptr		get_Property( const String& inName )  const override;
+virtual I_Property_Ptr		get_Property( const String& inName ) const override;
 
 
 	// ---------------------

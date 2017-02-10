@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_ArraySet.cpp																			  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                       					  */
+/* Copyright Paradigma, 1998-2017                                       					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -261,7 +261,7 @@ void ArraySet::AppendSorted_321(
 	{
 
 #if 0
-	// TODO FIXME. RZ 215-03-03 I have try to add this check, but it is not such simple... Oops
+	// TODO FIXME. RZ 2015-03-03 I have try to add this FBL_CHECK(), but it is not such simple... Oops
     // PROBLEM is that we appending SORTED items, but ArraySet can be not sorted itself, so we cannot just compare.
     //
     // If we will try do this only if ArraySet is sorted it will work, but another PROBLEM.
@@ -630,7 +630,10 @@ ArraySet_Ptr ArraySet::Union( ArraySet_Ptr inListPtr )
         pA->Sort();
         pB->Sort();
         
-        ID_TYPE CountC = pA->get_Count() + pB->get_Count();
+        vuint32 countA = pA->get_Count();
+        vuint32 countB = pB->get_Count();
+        
+        ID_TYPE CountC = countA + countB;
         ArraySet_Ptr pC = new ArraySet( CountC );	
         
         if( CountC )
@@ -733,9 +736,9 @@ ArraySet_Ptr ArraySet::SymmetricDifference( ArraySet_Ptr inListPtr )
 // It make (pResList op= inListPtr), i.e it don't create additional ArraySet.
 //
 ArraySet_Ptr ArraySet::MakeOperation( 
-		ArraySet_Ptr 		inLeftSet, 
+		ArraySet_Ptr 	inLeftSet,
 		SetOperation	inOperation,
-		ArraySet_Ptr 		inRightSet ) 
+		ArraySet_Ptr 	inRightSet ) 
 {
 	FBL_CHECK( inLeftSet && inRightSet );
 
@@ -1059,7 +1062,7 @@ ArraySet_Ptr RemoveItemsExcept(
 
 
 /**********************************************************************************************/
-void SimpleUnion( ArraySet_Ptr ioSet, ArraySet_Ptr inSet )
+void Append( ArraySet_Ptr ioSet, ArraySet_Ptr inSet )
 {
 	FBL_CHECK( ioSet );
 	FBL_CHECK( inSet );

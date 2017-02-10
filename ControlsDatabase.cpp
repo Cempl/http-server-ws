@@ -87,6 +87,7 @@ bool ControlsDatabase::FindAuthData(String inLogin, String inPass, String inToke
 
 	bool res = false;
 
+	//I_Table_Ptr pTable = pVDB->get_Table("UserAuthData");
 	I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect("SELECT *FROM UserAuthData");
 	
 	if (pVdbCursor->FirstRecord())
@@ -107,15 +108,13 @@ bool ControlsDatabase::FindAuthData(String inLogin, String inPass, String inToke
 				getUserID = pField->get_Value()->get_String();
 				
 				pSqlVDB->SqlSelect("UPDATE UserAuthData SET token = '" + token + "' WHERE user_id =" + getUserID + ";");
-
+				
 				// End of cycle
 				break;
 			}
 		} 
 		while (pVdbCursor->NextRecord());
 	}
-
-	pVdbCursor->Flush();
 
 	return res;
 }
@@ -232,6 +231,7 @@ string ControlsDatabase::get_file_from_db(string nameFile)
 	nameFile = nameFile.c_str();
 
 	I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect("SELECT *FROM AllFiles");
+	//I_Table_Ptr pTable = pVDB->get_Table("AllFiles");
 	I_Field_Ptr pField;
 	
 	if (pVdbCursor->FirstRecord())
@@ -304,10 +304,11 @@ bool ControlsDatabase::check_token(String inToken, string& outName)
 
 	bool res = false;
 
-	I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect("SELECT *FROM UserAuthData");
-	I_Field_Ptr pField = pVdbCursor->get_Field("token");
+	//I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect("SELECT *FROM UserAuthData");
+	I_Table_Ptr pTable = pVDB->get_Table("UserAuthData");
+	I_Field_Ptr pField = pTable->get_Field("token");
 	
-	if (pVdbCursor->FirstRecord())
+	if (pTable->FirstRecord())
 	{
 		do
 		{
@@ -315,7 +316,7 @@ bool ControlsDatabase::check_token(String inToken, string& outName)
 
 			if (currToken == inToken)
 			{
-				pField = pVdbCursor->get_Field("user_name");
+				pField = pTable->get_Field("user_name");
 				Name = pField->get_Value()->get_String();
 				outName = string(Name.getBufferA(), Name.length());
 
@@ -323,7 +324,7 @@ bool ControlsDatabase::check_token(String inToken, string& outName)
 				// End of cycle
 				break;
 			}
-		} while (pVdbCursor->NextRecord());
+		} while (pTable->NextRecord());
 	}
 
 	return res;

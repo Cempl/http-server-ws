@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Thread_Mutex_Posix.cpp																  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -20,7 +20,7 @@
 FBL_Begin_Namespace
 
 /**********************************************************************************************/
-void Thread_Mutex_Recursive_Posix::lock( void )
+void Thread_Mutex_Recursive_Posix::lock( void ) ACQUIRE()
 {
 	// Prevent race conditions
 	
@@ -85,7 +85,7 @@ bool Thread_Mutex_Recursive_Posix::try_lock( void )
 
 
 /**********************************************************************************************/
-void Thread_Mutex_Recursive_Posix::unlock( void )
+void Thread_Mutex_Recursive_Posix::unlock( void ) RELEASE_()
 {
 //	pthread_t ID = ::pthread_self();
 	

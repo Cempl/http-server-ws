@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Type_Traits.h                                                      					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -102,6 +102,9 @@ static void					swap_bytes( T& t );
 static void					From(  	  T* outpVal, I_PacketRcv* inPacket, bool inBlock );
 static void					To( const T*  inpVal, I_PacketSnd* inPacket, bool inBlock );
 
+static void					FromBinaryRepresentation(		T* outpVal, const char* inpBuffer );
+static void					ToBinaryRepresentation(	const	T* inpVal,	char* outpBuffer );
+
 static void					increment( value_type* inValue );
 
 static const char* 			type_name_str( void );
@@ -166,15 +169,7 @@ template <class T>
 inline int 
 type_traits<T>::compare(const value_type* s1, const value_type* s2, vuint32 n)
 {
-	for (vuint32 i = 0; i < n; ++i, ++s1, ++s2)
-	{
-		if (lt(*s1, *s2))
-			return -1;
-        
-		if (lt(*s2, *s1))
-			return 1;
-	}
-	return 0;
+	return memcmp( s1, s2, n );
 }
 
 
@@ -184,7 +179,7 @@ inline vuint32 type_traits<T>::length(const value_type* s)
 {
 	vuint32 len = 0;
     
-	while (!eq(*s, T()))
+	while( !eq(*s, T()) )
 	{
 		++s;
 		++len;
@@ -1283,6 +1278,98 @@ void type_traits<double>::From( double* outpVal, I_PacketRcv* inPacket, bool inB
 
 
 #pragma mark -
+#pragma mark === SPECIALIZATION of FromBinaryRepresentation() ===
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<bool>::FromBinaryRepresentation( bool* outpVal, const char* inpBuffer )
+{
+	(*outpVal) = *( reinterpret_cast<const bool*>( inpBuffer ) );
+}
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vuint8>::FromBinaryRepresentation( vuint8* outpVal, const char* inpBuffer )
+{
+	(*outpVal) = *( reinterpret_cast<const vuint8*>( inpBuffer ) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vint16>::FromBinaryRepresentation( vint16* outpVal, const char* inpBuffer )
+{
+	(*outpVal) = *( reinterpret_cast<const vint16*>( inpBuffer ) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vuint16>::FromBinaryRepresentation( vuint16* outpVal, const char* inpBuffer )
+{
+	(*outpVal) = *( reinterpret_cast<const vuint16*>( inpBuffer ) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vint32>::FromBinaryRepresentation( vint32* outpVal, const char* inpBuffer )
+{
+	(*outpVal) = *( reinterpret_cast<const vint32*>( inpBuffer ) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vuint32>::FromBinaryRepresentation( vuint32* outpVal, const char* inpBuffer )
+{
+	(*outpVal) = *( reinterpret_cast<const vuint32*>( inpBuffer ) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vint64>::FromBinaryRepresentation( vint64* outpVal, const char* inpBuffer )
+{
+	(*outpVal) = *( reinterpret_cast<const vint64*>( inpBuffer ) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vuint64>::FromBinaryRepresentation( vuint64* outpVal, const char* inpBuffer )
+{
+	(*outpVal) = *( reinterpret_cast<const vuint64*>( inpBuffer ) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<float>::FromBinaryRepresentation( float* outpVal, const char* inpBuffer )
+{
+	(*outpVal) = *( reinterpret_cast<const float*>( inpBuffer ) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<double>::FromBinaryRepresentation( double* outpVal, const char* inpBuffer )
+{
+	(*outpVal) = *( reinterpret_cast<const double*>( inpBuffer ) );
+}
+
+
+#pragma mark -
 #pragma mark === SPECIALIZATION of To() ===
 
 /**********************************************************************************************/
@@ -1382,6 +1469,98 @@ void type_traits<double>::To( const double* inpVal, I_PacketSnd* inPacket, bool 
 {
 	argused1(inBlock);
 	inPacket->put_DoubleParam(*inpVal);
+}
+
+
+#pragma mark -
+#pragma mark === SPECIALIZATION of ToBinaryRepresentation() ===
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<bool>::ToBinaryRepresentation( const bool* inpVal, char* outpBuffer )
+{
+	memcpy( outpBuffer, inpVal, sizeof(bool) );
+}
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vuint8>::ToBinaryRepresentation( const vuint8* inpVal, char* outpBuffer )
+{
+	memcpy( outpBuffer, inpVal, sizeof(vuint8) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vint16>::ToBinaryRepresentation( const vint16* inpVal, char* outpBuffer )
+{
+	memcpy( outpBuffer, inpVal, sizeof(vint16) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vuint16>::ToBinaryRepresentation( const vuint16* inpVal, char* outpBuffer )
+{
+	memcpy( outpBuffer, inpVal, sizeof(vuint16) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vint32>::ToBinaryRepresentation( const vint32* inpVal, char* outpBuffer )
+{
+	memcpy( outpBuffer, inpVal, sizeof(vint32) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vuint32>::ToBinaryRepresentation( const vuint32* inpVal, char* outpBuffer )
+{
+	memcpy( outpBuffer, inpVal, sizeof(vuint32) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vint64>::ToBinaryRepresentation( const vint64* inpVal, char* outpBuffer )
+{
+	memcpy( outpBuffer, inpVal, sizeof(vint64) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<vuint64>::ToBinaryRepresentation( const vuint64* inpVal, char* outpBuffer )
+{
+	memcpy( outpBuffer, inpVal, sizeof(vuint64) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<float>::ToBinaryRepresentation( const float* inpVal, char* outpBuffer )
+{
+	memcpy( outpBuffer, inpVal, sizeof(float) );
+}
+
+
+/**********************************************************************************************/
+template <> 
+inline
+void type_traits<double>::ToBinaryRepresentation( const double* inpVal, char* outpBuffer )
+{
+	memcpy( outpBuffer, inpVal, sizeof(double) );
 }
 
 

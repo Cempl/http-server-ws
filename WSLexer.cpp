@@ -38,7 +38,7 @@ bool WSLexer::GetNextToken(Token* outToken)
 	{
 		if(flagBracketsOpen || flagQuotesOpen)
 		{
-			throw exception("Error WSLexer: Don't closed brackets or quotes");
+			//throw exception("Error WSLexer: Don't closed brackets or quotes");
 		}
 		return res; // end of string
 	}
@@ -54,7 +54,7 @@ bool WSLexer::GetNextToken(Token* outToken)
 				if( !flagLongWord )
 				{
 					mpCurrChar = mpCurrChar + 1; // I only work with UTF-8 char, it has a length of 1.
-
+					outToken->pe = mpCurrChar;
 					continue; // Space is not a token
 				}
 				else
@@ -161,7 +161,7 @@ bool WSLexer::GetNextToken(Token* outToken)
 		{
 			if (flagBracketsOpen || flagQuotesOpen)
 			{
-				throw exception("Error WSLexer: Don't closed brackets or quotes");
+				//throw exception("Error WSLexer: Don't closed brackets or quotes");
 			}
 
 			flagLongWord = false;

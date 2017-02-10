@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_ValueCompound.h                                                   					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -24,6 +24,7 @@ FBL_Begin_Namespace
 // forward declarations:
 //
 SMART_INTERFACE(I_Value);
+SMART_ARRAY_OF_SMART_PTRS( ArrayOfValues, I_Value_Ptr );
 
 
 /**********************************************************************************************/
@@ -59,7 +60,9 @@ virtual	I_Value_Ptr			get_SubValue( vuint16 inValueIndex ) const = 0;
 		// <SubValueCount> 
         					// Returns the count of sub-values.
 virtual vuint32				get_SubValueCount( void ) const = 0;
-																
+	
+virtual ArrayOfValues_Ptr	get_SubValues( void ) const = 0;
+	
 };
 
 

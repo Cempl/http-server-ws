@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* VSQL_I_SqliteStatement.h																	  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -37,8 +37,6 @@ SMART_CLASS(SqliteQueryResult);
 // This file forward declarations:
 //
 SMART_INTERFACE(I_SqliteStatement);
-//
-SMART_ARRAY_OF_SMART_PTRS( ArrayOfSqlStatements, I_SqliteStatement_Ptr );
 
 
 /**********************************************************************************************/

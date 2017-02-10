@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* VSQL_I_VReport.h 				                                               			  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -144,15 +144,15 @@ virtual  void                   PrintToBuffer(
 									void*						&outBuffer,
 									vuint32						&outSize,
 									ReportPrintType				inPrintType,
-									vuint32						inStartPageIndex,
-									vuint32						inEndPageIndex = 0 ) = 0;
+									vuint32						inStartPageIndex = 1,
+									vuint32						inEndPageIndex	 = 0 ) = 0;
 
 								// Prints pages from inFirst to inLast to file
 virtual  void                   PrintToDisk(
 									FBL::I_Disk_Location_Ptr	inPrintLocation,
 									ReportPrintType				inPrintType,
-									vuint32						inStartPageIndex,
-									vuint32						inEndPageIndex = 0 ) = 0;
+									vuint32						inStartPageIndex = 1,
+									vuint32						inEndPageIndex	 = 0 ) = 0;
 
 								// Free memory allocated by PrintToBuffer
 								// inBuffer - address of that buffer.
@@ -163,8 +163,8 @@ virtual	 void					ReleaseBuffer(
 virtual void					PrintToLocalPrinter(
 									const FBL::String&	inPrinter,
 									const FBL::String&	inOptions,
-									vuint32				inStartPageIndex = 0,
-									vuint32				inEndPageIndex = 0) = 0;
+									vuint32				inStartPageIndex = 1,
+									vuint32				inEndPageIndex	 = 0) = 0;
 
 								/** Sends report to printer on a server (or local printer for local projects).
 								*
@@ -173,8 +173,12 @@ virtual void					PrintToLocalPrinter(
 virtual void					PrintToServerPrinter(
 									const FBL::String&	inPrinter,
 									const FBL::String&	inOptions,
-									vuint32				inStartPageIndex = 0,
-									vuint32				inEndPageIndex = 0 ) = 0;
+									vuint32				inStartPageIndex = 1,
+									vuint32				inEndPageIndex	 = 0 ) = 0;
+
+								// Executes JavaScript script.
+								// Returns string representation of a result.
+virtual	String					RunScript( const String& script ) = 0;
 
 
 	public://///////////////////////////////////////////////////////////////////////////////////

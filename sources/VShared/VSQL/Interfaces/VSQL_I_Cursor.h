@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* VSQL_I_Cursor.h																			  */
 /*                                                                       					  */
-//* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -47,19 +47,20 @@ virtual							~I_Cursor( void );
 								// Returns read only state.
 virtual	bool					get_IsReadOnly( void ) const  = 0;	
 
-								// Returns true if this is able to perform insert.
+								// Returns TRUE if this cursor is able to perform insert.
 virtual	bool					CanInsert( void ) const  = 0;	
 
-								// Returns true if this is able to perform update.
+								// Returns TRUE if this cursor is able to perform update.
 virtual	bool					CanUpdate( void ) const  = 0;	
 
-								// Returns true if this is able to perform delete.
+								// Returns TRUE if this cursor is able to perform delete.
 virtual	bool					CanDelete( void ) const  = 0;	
 
-								// Return count of tables used by this cursor.
+								// Returns the count of tables used by this cursor.
 virtual vuint32					get_OriginalTablesCount(void) const = 0;
 
 								// Return table name used by this cursor.
+                                // If cursor is over JOIN, then returns empty string.
 virtual const String&			get_OriginalTableName(vuint32 inIndex) const = 0;
 
 								// Returns error number.

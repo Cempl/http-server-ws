@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_Link.h 		                                                      				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -28,6 +28,7 @@ FBL_Begin_Namespace
 // forward declarations: 
 //
 SMART_INTERFACE( I_ForeignPlugin );
+SMART_INTERFACE( I_KeyValue );
 
 SMART_CLASS( BitSet );
 SMART_CLASS( ArraySet );
@@ -119,15 +120,20 @@ virtual	void				put_OnDelete( EOnDeletion inValue )				= 0;
 virtual	EOnUpdate			get_OnUpdate( void ) const 						= 0;
 virtual	void				put_OnUpdate( EOnUpdate inValue )				= 0;
 
+		// <KeyValuesCount> [r/o]
+
+virtual vuint32				get_KeyValueCount( void ) const  = 0;
+
 
 	// ---------------------
-	// Tables properties:
+	// Tables Properties:
 	
 	
 		// <Table> [r/o]	
-							/**	Returns table used in link by index. 
-								Note: for ObjectPtr the first is pointed table, 
-								the second is ptr(s) table(s).*/
+							/**	Returns a table of Link by index.
+								Note: for ObjectPtr 
+                                		the first  is pointed table,
+										the second is ptr(s) table. */
 virtual	I_Table_Ptr			get_Table( vuint32 inIndex ) const  			= 0;
 
 		// <Owner>
@@ -136,18 +142,32 @@ virtual	I_Table_Ptr			get_Owner( void ) const  						= 0;
 virtual	void				put_Owner( I_Table_Ptr inOwner ) 				= 0;
 
 		// <Count>
-							/// Returns count of all associations (linked pairs)
+							/// Returns the count of all associations (linked pairs).
 virtual vuint32				get_Count( void ) 								= 0;
 
 
 	// ---------------------
-	// Search methods:
+	// KeyValue:
+
+virtual I_KeyValue_Ptr		get_KeyValue( vuint32 inIndex ) const = 0;
+virtual I_KeyValue_Ptr		get_KeyValue( const String& inName ) const = 0;
+virtual I_KeyValue_Ptr		GetKeyValueByID( vint32 inIndex ) const = 0;
+
+virtual	I_KeyValue_Ptr		CreateKeyValue(
+								const String&	inName,
+								vuint64			inOptions = fKeyValueNone ) = 0;
+								
+virtual void				DropKeyValue( I_KeyValue_Ptr inKeyValue ) = 0;
+
+
+	// ---------------------
+	// Search Methods:
 
 							/// Returns TRUE if records are linked. 
 virtual	bool				get_IsLinked( REC_ID inKeys[] ) const 			= 0;
 
 	
-							/**	Returns the count of linked recods in the direction from
+							/**	Returns the count of linked records in the direction from
 								inTableA to inTableB. */
 virtual	vuint32				CountLinked( 
 								REC_ID				inRecID,
@@ -156,7 +176,7 @@ virtual	vuint32				CountLinked(
 								ERecursionDirection inDir = kFromParentToChild ) const 	= 0;
 
 							/**	Returns the records from inTableB linked to inRecID from 
-								inTableA. If not have linked returns NULL. */
+								inTableA. Returns NULL if nothing found. */
 virtual	ArraySet_Ptr		FindLinked( 
 								REC_ID				inRecID,
 								Const_I_Table_Ptr	inTableA, 
@@ -164,7 +184,7 @@ virtual	ArraySet_Ptr		FindLinked(
 								ERecursionDirection inDir = kFromParentToChild ) const	= 0;
 
 							/**	Returns the records from inTableB linked to inRecID from
-								inTableA and only to it. If not have linked returns NULL. */
+								inTableA and only to it. Returns NULL if nothing found. */
 virtual	ArraySet_Ptr		FindExclusivelyLinked( 
 								REC_ID				inRecID,
 								Const_I_Table_Ptr	inTableA, 
@@ -172,7 +192,7 @@ virtual	ArraySet_Ptr		FindExclusivelyLinked(
 								ERecursionDirection inDir = kFromParentToChild ) const	= 0;
 
 							/**	Returns the all records from inTableB linked to inTableA.
-								If not have linked returns NULL. */
+								Returns NULL if nothing found. */
 virtual	BitSet_Ptr			FindAllLinked( 
 								Const_I_Table_Ptr	inTableA, 
 								Const_I_Table_Ptr	inTableB, 
@@ -188,17 +208,7 @@ virtual BitSet_Ptr			FindLinkedAsBitSet(
 
 
 	// ---------------------
-	// Recursive Search Methods:
-
-							/** For recursive link only. Find children for inRecID on inLevel level
-								If inOnlyThatLevel == true - the only this level records included.
-								inIncludingStartPoint - inRecID will be added to result. */
-virtual ArraySet_Ptr		FindDescendants( 
-								REC_ID				inRecID, 
-								Const_I_Table_Ptr	inTableA,
-								vuint32				inLevel = vuint32_max, 
-								bool				inOnlyThatLevel = false,
-								bool				inIncludingStartPoint = false )  const = 0;
+	// Recursive Search Methods on RecID:
 
 							/** For recursive link only. Find parents for inRecID on inLevel level
 								If inOnlyThatLevel == true - the only this level records included.
@@ -208,30 +218,33 @@ virtual ArraySet_Ptr		FindAncestors(
 								Const_I_Table_Ptr	inTableA,
 								vuint32				inLevel = vuint32_max, 
 								bool				inOnlyThatLevel = false,
-								bool				inIncludingStartPoint = false)  const = 0;
+								bool				inIncludingStartPoint = false) const = 0;
 
 							/** For recursive link only. Find brothers for inRecID on inLevel level
 								If inOnlyThatLevel == true - the only this level records included.
 								Siblings	- level 1 brothers.
 								Cousins		- level2 brothers....
-								inIncludingStartPoint - inRecID will be added to result.
-								*/
+								inIncludingStartPoint - inRecID will be added to result. */
 virtual ArraySet_Ptr		FindBrothers( 
 								REC_ID				inRecID, 
 								Const_I_Table_Ptr	inTableA,
 								vuint32				inLevel = 1, 
 								bool				inOnlyThatLevel = false,
-								bool				inIncludingStartPoint = false )  const = 0;
+								bool				inIncludingStartPoint = false ) const = 0;
 
-							/** For recursive link only. Find children for inSet on inLevel level
-							If inOnlyThatLevel == true - the only this level records included.
-							inIncludingStartPoint - inSet will be added to result. */
+							/** For recursive link only. Find children for inRecID on inLevel level
+								If inOnlyThatLevel == true - the only this level records included.
+								inIncludingStartPoint - inRecID will be added to result. */
 virtual ArraySet_Ptr		FindDescendants( 
-								Set_Ptr 			inSet,
+								REC_ID				inRecID, 
 								Const_I_Table_Ptr	inTableA,
 								vuint32				inLevel = vuint32_max, 
 								bool				inOnlyThatLevel = false,
-								bool				inIncludingStartPoint = false )  const = 0;
+								bool				inIncludingStartPoint = false ) const = 0;
+
+
+	// ---------------------
+	// Recursive Search Methods on Set:
 
 							/** For recursive link only. Find parents for inSet on inLevel level
 							If inOnlyThatLevel == true - the only this level records included.
@@ -241,35 +254,44 @@ virtual ArraySet_Ptr		FindAncestors(
 								Const_I_Table_Ptr	inTableA,
 								vuint32				inLevel = vuint32_max, 
 								bool				inOnlyThatLevel = false,
-								bool				inIncludingStartPoint = false)  const = 0;
+								bool				inIncludingStartPoint = false) const = 0;
 
 							/** For recursive link only. Find brothers for inSet on inLevel level
 							If inOnlyThatLevel == true - the only this level records included.
 							Siblings	- level 1 brothers.
 							Cousins		- level2 brothers....
-							inIncludingStartPoint - inSet will be added to result.
-							*/
+							inIncludingStartPoint - inSet will be added to result. */
 virtual ArraySet_Ptr		FindBrothers( 
 								Set_Ptr 			inSet,
 								Const_I_Table_Ptr	inTableA,
 								vuint32				inLevel = 1, 
 								bool				inOnlyThatLevel = false,
-								bool				inIncludingStartPoint = false )  const = 0;
+								bool				inIncludingStartPoint = false ) const = 0;
+
+							/** For recursive link only. Find children for inSet on inLevel level
+							If inOnlyThatLevel == true - the only this level records included.
+							inIncludingStartPoint - inSet will be added to result. */
+virtual ArraySet_Ptr		FindDescendants( 
+								Set_Ptr 			inSet,
+								Const_I_Table_Ptr	inTableA,
+								vuint32				inLevel = vuint32_max, 
+								bool				inOnlyThatLevel = false,
+								bool				inIncludingStartPoint = false ) const = 0;
 
 
 	// ---------------------
-	// Link/unlink methods:
+	// Link/Unlink Methods:
 
 							/**	Adds to the link a new record with given set of keys.
-								Array must contains right count of keys,
+								Array must contains the correctt count of keys,
 								in the order of branches. */
 virtual void				LinkRecords( REC_ID inKeys[] )							= 0;
 
-							/** Removes from the link record which contains given set of keys. 
+							/** Removes from the link record, which contains the given set of keys.
 								Existed Table records are not deleted. */
 virtual void				UnlinkRecords( REC_ID inKeys[] )						= 0;
 
-							/** Version of method for recursive link on single table. */
+							/** Version of method for recursive link on a single table. */
 virtual void				UnlinkRecords( 
 								REC_ID 				inRecID,
 								Const_I_Table_Ptr	inTableA,
@@ -277,7 +299,7 @@ virtual void				UnlinkRecords(
 
 
 	// ---------------------
-	// Link modification methods:
+	// Link Modification Methods:
 
 							/** Deletes all records linked to the inRecID of inTableA.
 								Record inRecID of inTableA is not deleted by this function.
@@ -309,19 +331,19 @@ virtual void 				DeleteLinkedRecords(
 virtual void 				DeleteAllLinkedRecords( 
 								Const_I_Table_Ptr	inTableA,
 								bool				inOnDeletion = false,
-								ERecursionDirection inDir = kFromParentToChild ) = 0;
+								ERecursionDirection inDir = kFromParentToChild ) 	= 0;
 
 							/**	This method updates the linked records depending on OnUpdateBehavior 
 								in the direction from inTableA. */
 virtual void				UpdateLinkedRecords	( 
-								REC_ID		inKey,
-								I_Table_Ptr	inTableA,
-								bool		inNoCheck = false,
+								REC_ID				inKey,
+								I_Table_Ptr			inTableA,
+								bool				inNoCheck = false,
 								ERecursionDirection inDir = kFromParentToChild )	= 0;
 
 
 	// ---------------------
-	// Check methods:
+	// Check Methods:
 
 							/**	Checks the possibility to link the current record 
 								from ptr table to key table. */
@@ -341,17 +363,17 @@ virtual	bool				IsDeletionAllowedFor(
 
 
 	// ---------------------
-	// Utility methods:
+	// Utility Methods:
 							/// Flushes files of Link from Cache to Device if needed.
 							/// If inFlushTables then linked tables will be flushed also.
-virtual void 				FlushLink( bool inFlushTables = true ) = 0;
+virtual void 				FlushLink( bool inFlushTables = true ) 			= 0;
 
-virtual void 				Compact( void ) = 0;
-virtual void 				Defragment( void ) = 0;
+virtual void 				Compact( void ) 								= 0;
+virtual void 				Defragment( void ) 								= 0;
 
 virtual bool 				Diagnose( 
-								I_OStream_Ptr inOut,
-								EVerboseLevel inLevel = kVerbose_Normal ) = 0;
+								I_OStream_Ptr 	inOut,
+								EVerboseLevel 	inLevel = kVerbose_Normal ) = 0;
 
 virtual bool 				Diagnose( 
 								I_Location_Ptr	inReportLocation,

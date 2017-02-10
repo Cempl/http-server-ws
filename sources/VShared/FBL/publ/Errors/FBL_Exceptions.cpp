@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Exceptions.cpp                                                      					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -276,6 +276,19 @@ const String& xException::get_Param( vuint32 inIndex ) const
 		default:
 			return String::sEmpty();
 	};
+}
+
+
+/**********************************************************************************************/
+void xException::FindAndReplaceParams( const String& inOldValue, const String& inNewValue )
+{
+	for( int i = 0; i < 4; ++i )
+	{
+        if( mArgs[i] && mArgs[i]->find( inOldValue.c_str() ) > -1 )
+		{
+			mArgs[i]->operator=(inNewValue);
+		}
+	}	
 }
 
 

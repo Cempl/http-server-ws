@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Starter_Win.cpp                                                 						  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -111,33 +111,44 @@ void Init_ValentinaDlls( bool inUseClientStrings )
 #else
 
 	// Kernel-dll string-factory has priority.
+	// if sFactory is not NULL and call is from VCLIENT.DLL, we do not change pointers.
+	// if sFactory is not NULL but call is from KERNEL.DLL, we will reset pointers to KERNEL strings. 
+	// 
 	if( String::sFactory && inUseClientStrings )
 		return;
 
-	HMODULE hDLL;
+	HMODULE hDLL = 0;
 	
-	// Try to load VKERNEL implementation.
-	if( inUseClientStrings || (hDLL = LoadLibrary(GetKernelDllName())) == NULL )
+    // We must choose vclient if 
+    // 	* inUseClientStrings is TRUE, i.e. call from Valentina.InitClient()
+    // OR
+    // 	* VKERNEL.dll is not found, but call was from Valentina.Init()
+    bool use_vclient_dll = inUseClientStrings
+                        || (hDLL = LoadLibrary(GetKernelDllName())) == NULL;
+
+
+	if( use_vclient_dll )
 	{
 		// Try to load VCLIENT implementation.
-		if( !(hDLL = LoadLibrary(GetClientDllName())) )
+        hDLL = LoadLibrary( GetClientDllName() );
+        
+		if( !hDLL )
 		{
 			// CRITICAL SITUATION: neither kernel nor client dll was not found!
 			// Valentina cannot continue to work.
 			// FIXME: throw exception!
-			int a = 2;
-			a += 1;
 			return;
 		}
 	}
 
-	// --------------------------------
-	// Get init callbacks function.
+	// GET init callbacks function
 	typedef void (*InitBackpointers_PTR)( void );
 	InitBackpointers_PTR pfn;
 
-	// Store reference to the function and call it:
+	// STORE reference to the function and call it:
 	pfn = (InitBackpointers_PTR) GetProcAddress( hDLL, "InitBackpointers" );
+
+    // CALL that function:
 	pfn();
 
 #endif // FBL_STATIC

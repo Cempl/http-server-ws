@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_ByteToHex.cpp                                                          				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -124,6 +124,32 @@ String DataToHexString(
 			ColumnCount = 1;
 		}	
 	} 
+	
+	str.releaseBuffer( MaxLength );
+	return str;
+}
+
+
+/**********************************************************************************************/
+String DataToHexString_Simple(
+	vuint8* 	inData, 
+	vuint32 	inBytes )
+{
+	tslen MaxLength = inBytes * 3;
+
+	String str;
+	UChar* p   = str.getBuffer(MaxLength);
+	const char* Hex;
+
+	for( vuint32 i = 1; i <= inBytes ; ++i )
+	{
+		Hex = ByteToHex( *inData++ );	
+		
+		*p++ = *Hex++;
+		*p++ = *Hex++;
+
+		*p++ = UChar(' ');
+	}
 	
 	str.releaseBuffer( MaxLength );
 	return str;

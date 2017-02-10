@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Value_Numeric.h 	                                                   					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -155,6 +155,15 @@ virtual VALUE_TYPE			get_Type( void ) const override 		{ return kFldTypeIndex; }
 virtual String				get_TypeString( const char inLocale[] = "en_US" ) const override
 								{ return TypeCode2String(kFldTypeIndex, inLocale);}
 
+virtual COMPARE_TYPE		get_CompareType( void ) const override
+							{
+								return kBinaryCompare;
+							}
+	
+virtual void				put_CompareType( COMPARE_TYPE inValue ) override
+							{
+								argused1( inValue );
+							}
 
 	public://///////////////////////////////////////////////////////////////////////////////////
 	
@@ -458,6 +467,28 @@ virtual void				put_Double( double inValue ) override
 
 virtual double				get_Double( void ) const override
 								{ return ( double )( *PS::get_ValuePtr() ); }
+
+	// ---------------------
+	// Serialization to/from char buffer (for ValueVariant):
+
+virtual vuint32 			get_BinaryRepresentationByteLength( void ) const override
+							{
+								return get_ByteLength();
+							}
+
+virtual void				FromBinaryRepresentation( const char* inpBuffer ) override
+							{
+								ps_traits::FromBinaryRepresentation(
+											PS::get_ValuePtr(), 
+											inpBuffer );
+							}
+
+virtual void				ToBinaryRepresentation( char* outpBuffer ) const override
+							{
+								ps_traits::ToBinaryRepresentation( 
+											PS::get_ValuePtr(), 
+											outpBuffer );
+							}
 
 
 	public://///////////////////////////////////////////////////////////////////////////////////

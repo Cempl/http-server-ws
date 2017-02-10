@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Value_String.cpp                                                    					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -77,6 +77,33 @@ void Convert_bin_str( const I_Value* inValue, I_Value* outValue )
 }
 
 
+/**********************************************************************************************/
+void Convert_bin_bin( const I_Value* inValue, I_Value* outValue );
+void Convert_bin_bin( const I_Value* inValue, I_Value* outValue )
+{
+	const char* ps  = inValue->begin();
+	if( ps )
+	{
+		const char* pse = inValue->end();
+
+		char* pDest = (char*) outValue->begin();
+		
+		char* pd = pDest;
+		char* pde = pd + outValue->get_Allocated();
+
+		while( *ps && ps < pse && pd < pde )
+		{
+			*pd++ = *ps++; 		
+		}
+
+		*pd = 0;
+
+		vuint32 bytes = vuint32(pd - pDest) * sizeof(char);
+		outValue->put_ByteLength( bytes );
+	}
+}
+
+
 #pragma mark -
 #pragma mark === Value_string ===
 
@@ -85,7 +112,8 @@ void Convert_bin_str( const I_Value* inValue, I_Value* outValue )
 Value_string::Value_string( void )
 :
 	mpLocalizable( GetLocalizableSys().get() ),
-	mIsRemote( false ) // factory ::CreateValue() right after this will assign it. Redo?  // RZ 21/12/07 
+	mIsRemote( false ), // factory ::CreateValue() right after this will assign it. Redo?  // RZ 21/12/07
+	mCompareType( kNatureCompare )
 {
 	Allocate( 0 ); 
 
@@ -101,11 +129,13 @@ Value_string::Value_string( void )
 //
 Value_string::Value_string( 
 	tslen 				inChars, 
-	I_Localizable_Ptr 	inLocalizable )
+	I_Localizable_Ptr 	inLocalizable,
+	COMPARE_TYPE		inCompareType )
 :
 	mpLocalizable( inLocalizable ? inLocalizable.get() : GetLocalizableSys().get() ),
-	mIsRemote( false ) // factory ::CreateValue() right after this will assign it. Redo?  // RZ 21/12/07 
-{ 
+	mIsRemote( false ), // factory ::CreateValue() right after this will assign it. Redo?  // RZ 21/12/07
+	mCompareType( inCompareType )
+{
 	m_pStartU = nullptr;
 	
 	vuint32 bytes = (inChars + 1) * sizeof(UChar); 	
@@ -129,6 +159,7 @@ Value_string::Value_string( const_reference inOther )
 	Assign( (UChar*)inOther.begin(), (UChar*)inOther.end() );
 
 	mIsRemote = inOther.mIsRemote;
+	mCompareType = inOther.mCompareType;
 	mIsSingleByte = inOther.mIsSingleByte;
 
 	mNeedConvertedIsInited = inOther.mNeedConvertedIsInited;
@@ -147,10 +178,10 @@ Value_string::~Value_string( void )
 		  
 		
 /**********************************************************************************************/
-// This method check ONCE for this value if it need convert value from storageEncoding.
+// This method check ONCE for this value if it needs to convert value from storageEncoding.
 // This is used only by CompareToIndexValue() and CompareIndexValues().
 // So this method must and will be called ONLY and ONLY for values that are used by an Index.
-// Note, that we implement LAZY call of this method, only when value need this flag.
+// Note, that we implementing LAZY call of this method, only when value needs this flag.
 //
 void Value_string::SetupConversionFlag( void ) const
 {
@@ -173,6 +204,67 @@ void Value_string::SetupConversionFlag( void ) const
 } 
 
 
+/**********************************************************************************************/
+int Value_string::BinaryCompareToIndexValue_(
+	const UChar*	inpBegin1,
+	vuint8			inLen1InBytes,
+	const UChar*	inpBegin2,
+	vuint8			inLen2InBytes,
+	vuint32			inParam ) const
+{
+	int res = 0;
+	
+	// -----------------
+	// Now we need to correct lengths if inParam presents
+	if( inParam )
+	{
+		tslen LimitLen = mIsSingleByte ? tslen( inParam ) : tslen( inParam ) * sizeof(UChar);
+
+		if( inLen2InBytes > LimitLen )
+			inLen2InBytes = (vuint8) LimitLen;
+		
+		if( (tslen)inLen1InBytes > LimitLen )
+			inLen1InBytes = (vuint8) LimitLen;
+	}
+
+	if( inLen1InBytes > inLen2InBytes )
+		res = 1;
+	else if( inLen1InBytes < inLen2InBytes )
+		res = -1;
+	else
+		res = memcmp( inpBegin1, inpBegin2, inLen1InBytes );
+	
+	return res;
+}
+
+
+/**********************************************************************************************/
+int Value_string::NaturalCompareToIndexValue_(
+	const UChar*	inpBegin1,
+	tslen			inLen1InChars,
+	const UChar*	inpBegin2,
+	tslen			inLen2InChars,
+	vuint32			inParam ) const
+{
+	// -----------------
+	// Now we need to correct lengths if inParam presents
+	if( inParam )
+	{
+		tslen LimitLen = tslen( inParam );
+
+		if( inLen2InChars > LimitLen )
+			inLen2InChars = LimitLen;
+		
+		if( inLen1InChars > LimitLen )
+			inLen1InChars = LimitLen;
+	}
+
+	return vu_strcoll( 	inpBegin1,	  inLen1InChars,
+						inpBegin2, inLen2InChars,
+						mpLocalizable->get_Collator() );
+}
+
+
 #pragma mark -
 #pragma mark === Constructors for TESTS ===
 
@@ -187,7 +279,8 @@ Value_string::Value_string(
     I_Localizable_Ptr 	inLocalizable )
 :
 	mpLocalizable( inLocalizable ? inLocalizable.get() : GetLocalizableSys().get() ),
-	mIsRemote( false )
+	mIsRemote( false ),
+	mCompareType( kNatureCompare )
 { 
 	FBL_CHECK( inEnd ? (inStart <= inEnd) : true );
 	
@@ -215,20 +308,21 @@ Value_string::Value_string(
     I_Localizable_Ptr 	inLocalizable )
 :
 	mpLocalizable( inLocalizable ? inLocalizable.get() : GetLocalizableSys().get() ),
-	mIsRemote( false )
+	mIsRemote( false ),
+	mCompareType( kNatureCompare )
 {
 	FBL_CHECK( inEnd ? (inStart <= inEnd) : true );
 
 	tslen chars;
 	if( inStart )
-		chars = inEnd   ? (tslen) (inEnd - inStart - 1) 
+		chars = inEnd   ? (tslen) (inEnd - inStart)
                         : (tslen) strlen(inStart);
 	else
 		chars = 20; // Hmm. For tests ?
 
 	m_pStartU = NULL;
 	
-	vuint32 bytes = (chars + 1) * sizeof(UChar); 
+	vuint32 bytes = (chars+1) * sizeof(UChar);
 	Allocate( bytes ); 
 
 	m_pEndU = mpLocalizable->ConvertToUnicode( 
@@ -248,7 +342,8 @@ Value_string::Value_string(
 Value_string::Value_string( tslen inChars, int dummy )
 :
 	mpLocalizable( NULL ),
-	mIsRemote( false )
+	mIsRemote( false ),
+	mCompareType( kNatureCompare )
 { 
 	argused1(dummy);
 
@@ -284,7 +379,7 @@ I_Value_Ptr Value_string::Clone( bool inCopyData ) const
 	else
 	{
 		vuint32 chars = get_MaxChars();
-		result = new this_type( (tslen)chars, mpLocalizable );
+		result = new this_type( (tslen)chars, mpLocalizable, mCompareType );
 	}
 
 	result->put_IsRemote( mIsRemote );
@@ -478,6 +573,20 @@ VALUE_TYPE Value_string::get_Type( void ) const
 }
 
 
+/**********************************************************************************************/
+COMPARE_TYPE Value_string::get_CompareType( void ) const
+{
+	return mCompareType;
+}
+
+
+/**********************************************************************************************/
+void Value_string::put_CompareType( COMPARE_TYPE inValue )
+{
+	mCompareType = inValue;
+}
+
+
 #pragma mark -
 
 
@@ -513,12 +622,14 @@ vuint32 Value_string::CopyToIndex( void* outBuffer, bool inSwapBytes ) const
 {
 	argused1(inSwapBytes);
 
+	//@ CALC length
 	vuint32 lenBytes = get_ByteLengthForIndex() - 1; // e.g. for 10 UTF-16 chars we get here 20 bytes.
+
+	//@ WRITE length into 1-byte
 	vuint8* p = (vuint8*) outBuffer;
-	
 	*p = vuint8( lenBytes );
 
-	// Copy the string without end zero.
+	//@ COPY the string without end zero.
 	memcpy( p + 1, begin(), lenBytes );
     
     return 1 + lenBytes;
@@ -540,16 +651,23 @@ void Value_string::CopyFromIndex( const void* inBuffer, bool inSwapBytes )
 {
 	argused1(inSwapBytes);
 
+	//@ First byte contains length:
 	vuint8* p = (vuint8*) inBuffer;
 
 	vuint32 lenBytes = vuint32( *p );
 	lenBytes = FBL::Min( lenBytes, this->get_Allocated() );
 
+
+	//@ COPY data from index into this value.
 	memcpy( m_pStartU, p + 1, lenBytes ); 
 
+
+	//@ CORRECT end pointer:
 	m_pEndU = (UChar*)( ((char*) m_pStartU) + lenBytes );
 
-	put_IsNull( false ); // index contains only non-NULL values.
+
+	//@ value is not null now:
+    put_IsNull( false ); // index contains only non-NULL values.
 }
 
 
@@ -562,6 +680,13 @@ int Value_string::Compare(
 	COMPARE_TYPE 	inCompareType ) const 
 {
 	FBL_CHECK( get_Type() == inOther.get_Type() ); 
+	
+	// 1. vClient has no collators, so anyway it must be binaryCompare.
+	// 2. mCompareType == kBinaryCompare is a sign that compare must be binary, no matter what
+	//	  inCompareType is.
+	//
+	if( mIsRemote || ( mCompareType == kBinaryCompare ) )
+		inCompareType = kBinaryCompare;
 	
 	vint32 res = 0;
 	switch( inCompareType  )
@@ -629,54 +754,36 @@ int Value_string::CompareToIndexValue(
 
 	if( mNeedConvertToStorageEncoding )
 	{
-		UChar indexStr[256];
+		UChar indexStr[256]; // because index keeps pascal strings with length 1..255 bytes.
 		
 		UChar* pEnd = mpLocalizable->ConvertToUnicode(
 										(char*) pStr2, 	Len2InBytes, 
 										indexStr, 		256,
 										mpLocalizable->get_StorageConverter());										
 		FBL_CHECK( *pEnd == 0 );
-		argused1( pEnd );
 
-		tslen  Len2InChars = tslen( mIsSingleByte ? Len2InBytes : (pEnd-indexStr) );
-
-		// -----------------
-		// Now we need to correct lengths if inParam presents
-		if( inParam )
+		if( mCompareType == kBinaryCompare )
 		{
-			tslen LimitLen = tslen( inParam );
-
-			if( Len2InChars > LimitLen )
-				Len2InChars = LimitLen;
-			
-			if( Len1InChars > LimitLen )
-				Len1InChars = LimitLen;
+			Len2InBytes = vuint8( mIsSingleByte ? Len2InBytes : (pEnd-indexStr)* sizeof(UChar) );
+			res = BinaryCompareToIndexValue_( pStr1, (vuint8)Len1InBytes, indexStr, (vuint8)Len2InBytes, inParam );
 		}
-
-		res = vu_strcoll( 	pStr1,	  Len1InChars, 
-							indexStr, Len2InChars, 
-							mpLocalizable->get_Collator() );
+		else
+		{
+			tslen  Len2InChars = tslen( mIsSingleByte ? Len2InBytes : (pEnd-indexStr) );
+			res = NaturalCompareToIndexValue_( pStr1, Len1InChars, indexStr, Len2InChars, inParam );
+		}
 	}
 	else // we have UTF16 in the index.
 	{
-		tslen  Len2InChars = tslen( mIsSingleByte ? Len2InBytes : Len2InBytes / sizeof(UChar) );
-	
-		// -----------------
-		// Now we need to correct lengths if inParam presents
-		if( inParam )
+		if( mCompareType == kBinaryCompare )
 		{
-			tslen LimitLen = tslen( inParam );
-
-			if( Len2InChars > LimitLen )
-				Len2InChars = LimitLen;
-			
-			if( Len1InChars > LimitLen )
-				Len1InChars = LimitLen;
+			res = BinaryCompareToIndexValue_( pStr1, (vuint8)Len1InBytes, pStr2, (vuint8)Len2InBytes, inParam );
 		}
-	
-		res = vu_strcoll( 	pStr1, Len1InChars,
-							pStr2, Len2InChars, 
-							mpLocalizable->get_Collator() );
+		else
+		{
+			tslen  Len2InChars = tslen( mIsSingleByte ? Len2InBytes : Len2InBytes / sizeof(UChar) );
+			res = NaturalCompareToIndexValue_( pStr1, Len1InChars, pStr2, Len2InChars, inParam );
+		}
 	}
 
 	return res;
@@ -689,6 +796,8 @@ int Value_string::CompareIndexValues(
 	const void* inRight,
 	bool		inSwapBytes ) const 
 {
+	int res = 0;
+	
 	argused1(inSwapBytes);
 
 	vuint8* pPascalLeft  = (vuint8*) inLeft;
@@ -700,46 +809,58 @@ int Value_string::CompareIndexValues(
 
 	const UChar* ps1 = (const UChar*)(pPascalLeft  + 1);
 	const UChar* ps2 = (const UChar*)(pPascalRight + 1);	
-	
+
 	if( mNeedConvertedIsInited == false )	// LAZY init of the mNeedConvertToStorageEncoding flag.
 		SetupConversionFlag();
 
-	if( mNeedConvertToStorageEncoding )
+	
+	if( mNeedConvertToStorageEncoding ) // from e.g. UTF8 of index to UTF16 to use in algs.
 	{
 		UChar left [256];
 		UChar right[256];
 		
+		// CONVERT UTF8 or other encoding into UTF16
 		UChar* pLeftEnd = mpLocalizable->ConvertToUnicode( 
 										(char*)ps1, Len1InBytes, 
 										left, 		256,
 										mpLocalizable->get_StorageConverter());
-										
-		FBL_CHECK( *pLeftEnd == 0 );
-		argused1( pLeftEnd );								
 
-		vuint8 Len1InChars = vuint8( mIsSingleByte ? Len1InBytes : (pLeftEnd-left) );
-								
-		UChar* pRightEnd = mpLocalizable->ConvertToUnicode( 
+		UChar* pRightEnd = mpLocalizable->ConvertToUnicode(
 										(char*)ps2, Len2InBytes, 
 										 right, 	256,
 										 mpLocalizable->get_StorageConverter());
+		
+		FBL_CHECK( *pLeftEnd == 0 );
+		FBL_CHECK( *pRightEnd == 0 );
 
-		FBL_CHECK( *pRightEnd == 0 );								
-		argused1( pRightEnd );								
-
-		vuint8 Len2InChars = vuint8( mIsSingleByte ? Len2InBytes : (pRightEnd-right) );
-
-		return vu_strcoll( left, Len1InChars, right, Len2InChars, mpLocalizable->get_Collator() );
+		if( mCompareType == kBinaryCompare )
+		{
+			Len1InBytes = vuint8( mIsSingleByte ? Len1InBytes : (pLeftEnd  - left ) * sizeof(UChar) );
+			Len2InBytes = vuint8( mIsSingleByte ? Len2InBytes : (pRightEnd - right) * sizeof(UChar) );
+			res = BinaryCompareToIndexValue_( left, Len1InBytes, right, Len2InBytes, 0 );
+		}
+		else
+		{
+			vuint8 Len1InChars = vuint8( mIsSingleByte ? Len1InBytes : (pLeftEnd-left) );
+			vuint8 Len2InChars = vuint8( mIsSingleByte ? Len2InBytes : (pRightEnd-right) );
+			res = NaturalCompareToIndexValue_( left, Len1InChars, right, Len2InChars, 0 );
+		}
 	}
 	else // we have UTF16 in the index.
 	{
-		vuint8 Len1InChars = vuint8( mIsSingleByte ? Len1InBytes : Len1InBytes / sizeof(UChar) );
-		vuint8 Len2InChars = vuint8( mIsSingleByte ? Len2InBytes : Len2InBytes / sizeof(UChar) );
-
-	
-		// compare:
-		return vu_strcoll( ps1, Len1InChars, ps2, Len2InChars, mpLocalizable->get_Collator() );
+		if( mCompareType == kBinaryCompare )
+		{
+			res = BinaryCompareToIndexValue_( ps1, Len1InBytes, ps2, Len2InBytes, 0 );
+		}
+		else
+		{
+			vuint8 Len1InChars = vuint8( mIsSingleByte ? Len1InBytes : Len1InBytes / sizeof(UChar) );
+			vuint8 Len2InChars = vuint8( mIsSingleByte ? Len2InBytes : Len2InBytes / sizeof(UChar) );
+			res = NaturalCompareToIndexValue_( ps1, Len1InChars, ps2, Len2InChars, 0 );
+		}
 	}
+	
+	return res;
 }
 
 
@@ -1307,6 +1428,58 @@ void Value_string::DoAssign(
 
 #pragma mark -
 
+/**********************************************************************************************/
+vuint32 Value_string::get_BinaryRepresentationByteLength( void ) const
+{
+	// actual data lenth + data itself. (Pascal string)
+	return sizeof(vuint32) + get_ByteLength();
+}
+
+
+/**********************************************************************************************/
+void Value_string::FromBinaryRepresentation( const char* inpBuffer )
+{
+	const char* pInBufferPtr = inpBuffer;
+
+	vuint32 len = *( reinterpret_cast<const vuint32*>( pInBufferPtr ) );
+	pInBufferPtr += sizeof(vuint32);
+	
+	if( len )
+	{
+		// Make sure value is large enough to hold the whole string.
+		vuint32 newByteLen = len + 2;
+		if( get_Allocated() < newByteLen )
+			put_Allocated(newByteLen);
+
+		memcpy( m_pStartU, pInBufferPtr, len );
+		m_pEndU = (UChar*)((char*)m_pStartU + len);		
+		*m_pEndU = 0;				
+	}
+	else
+	{
+		// Empty data.
+		put_String( "" );
+	}
+}
+
+
+/**********************************************************************************************/
+void Value_string::ToBinaryRepresentation( char* outpBuffer ) const
+{
+	char* pOutBufferPtr = outpBuffer;
+
+	// byte length - not symbol count.
+	vuint32 lenBytes = get_ByteLength();
+	
+	memcpy( pOutBufferPtr, &lenBytes, sizeof(lenBytes) );
+	pOutBufferPtr += sizeof(lenBytes);
+	
+	if( lenBytes )
+		memcpy( pOutBufferPtr, m_pStartU, lenBytes );
+}
+
+
+#pragma mark -
 
 /**********************************************************************************************/
 // This function is only used in server code and never should be called from client.
@@ -1529,7 +1702,6 @@ void Value_string::From_OnServerSide_U( I_PacketRcv* inPacket, vuint32 inByteLen
 
 
 #pragma mark -
-
 
 /**********************************************************************************************/
 void Value_string::To( I_OStream_Ptr inStream, bool inBlock ) const
@@ -1794,9 +1966,10 @@ Value_string_null::Value_string_null( void )
 /**********************************************************************************************/
 Value_string_null::Value_string_null( 
 	tslen 				inChars, 
-	I_Localizable_Ptr 	inLocalizable ) 
+	I_Localizable_Ptr 	inLocalizable,
+	COMPARE_TYPE		inCompareType )
 :
-	Value_string( inChars, inLocalizable )
+	Value_string( inChars, inLocalizable, inCompareType )
 {		  
 	mIsNull	= true;
 }
@@ -1867,7 +2040,7 @@ I_Value_Ptr Value_string_null::Clone( bool inCopyData ) const
 	else
 	{
 		vuint32 chars = get_MaxChars();
-		result = new this_type( (tslen) chars, mpLocalizable ); 
+		result = new this_type( (tslen) chars, mpLocalizable, mCompareType );
 	}
 
 	result->put_IsRemote( mIsRemote );

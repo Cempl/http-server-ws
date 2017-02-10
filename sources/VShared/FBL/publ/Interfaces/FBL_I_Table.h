@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_Table.h 		                                                      				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -30,6 +30,8 @@ FBL_Begin_Namespace
 // forward declarations:
 //
 SMART_INTERFACE(I_Link);
+SMART_INTERFACE( I_KeyValue );
+
 //
 SMART_CLASS( ArraySet );
 SMART_CLASS( BitSet );
@@ -87,7 +89,7 @@ virtual bool					get_IsTemporary( void ) const = 0;
 virtual bool                	get_RecordExists( REC_ID inRecID ) = 0;
 
 		// <Size> [r/o]
-								/// Returns the size of table in bytes.
+								/// Returns the size of table in bytes on disk.
 virtual flength					get_Size( void ) const = 0;
 
 
@@ -101,7 +103,7 @@ virtual	vuint16					get_FieldCount( void ) const = 0;
 
                                 /** Returns a field by Index.
                                     Returns NULL if the field is not found. */
-virtual I_Field_Ptr				get_Field( vuint16 inIndex )  const = 0;
+virtual I_Field_Ptr				get_Field( vuint16 inIndex ) const = 0;
 
                                 /** Returns a field by Name.
                                     Returns NULL if the field is not found. */
@@ -214,6 +216,10 @@ virtual I_Link_Ptr				get_Link( const String& inName ) const = 0;
 
     							// For C++11 'range-based for loop'.
 virtual const ArrayOfLinks&		get_Links( void ) const = 0;
+
+		// <KeyValuesCount> [r/o]
+
+virtual vuint32					get_KeyValueCount( void ) const  = 0;
 
 
 	public://///////////////////////////////////////////////////////////////////////////////////
@@ -477,6 +483,20 @@ virtual	ImportResult_Ptr		Import(
                                     I_Location_Ptr	inLocation,
                                     Const_I_PropertyContainer_Ptr inContainer = nullptr,
                                     vuint32			inRecToImport = 0 ) = 0;
+	
+	// ---------------------
+	// KeyValue:
+
+virtual I_KeyValue_Ptr			get_KeyValue( vuint32 inIndex ) const = 0;
+virtual I_KeyValue_Ptr			get_KeyValue( const String& inName ) const = 0;
+virtual I_KeyValue_Ptr			GetKeyValueByID( vint32 inIndex ) const = 0;
+
+virtual	I_KeyValue_Ptr			CreateKeyValue(
+									const String&	inName,
+									vuint64			inOptions = fKeyValueNone ) = 0;
+									
+virtual void					DropKeyValue( I_KeyValue_Ptr inKeyValue ) = 0;
+	
 };
 
 

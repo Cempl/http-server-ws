@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_Value.h	                                                      					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -55,14 +55,15 @@ typedef I_Value*(*MAKE_VALUE_FUNC_PTR)(
 
 /**********************************************************************************************/
 // Any value belongs to some of this category. 
-// Each value must be able return its category.
+// Each value must be able to return its category.
 // Values of the same category can be compared without transformation to other format.
 //
-// Each category have some value_type, which can store any other value of that category,
+// Each category have some maximal value_type, which can store any other value of that category,
 // for example: for vcInteger this is vint64.
 //
 enum VALUE_CATEGORY
 {
+	vcUndefined = 0,
 	vcInteger	= 1,		// max value:  vint64
 	vcUInteger,				// max value:  vuint64
 	vcReal,					// max value:  double
@@ -74,7 +75,7 @@ enum VALUE_CATEGORY
 	vcEnum,					// added in v5.0
     vcCompound,				// added in v5.0
     vcMoney,				// added in v6.0
-	vcUndefined
+    vcVariant				// added in v7.0
 };
 
 
@@ -180,6 +181,11 @@ virtual VALUE_TYPE			get_Type( void ) const  = 0;
 							/** Returns the type string of the value. */
 virtual String				get_TypeString( const char inLocale[] = "en_US" ) const  = 0;
 
+		// <CompareType> [r/w]
+							/** Relevant for string_value (used in KeyValue's keys). */
+virtual COMPARE_TYPE		get_CompareType( void ) const = 0;
+virtual void				put_CompareType( COMPARE_TYPE inValue ) = 0;
+
 
 	public://///////////////////////////////////////////////////////////////////////////////////
 	
@@ -207,7 +213,7 @@ virtual void 				CopyFromIndex( const void* inBuffer, bool inSwapBytes )  = 0;
 	// Value Compare Methods:
 
 							/** Compare this value with inOther value of the same type.
-								inCompareType defines the way which will be used for compare.
+								inCompareType defines the way, which will be used for compare.
 								Returns 0 if values are equal.
 								Returns >0 if this value > inOther.
 								Returns <0 if this value < inOther. */
@@ -215,19 +221,19 @@ virtual	int					Compare(
 								const I_Value& 	inOther, 
 								COMPARE_TYPE 	inCompareType = kNatureCompare ) const  = 0;
 							
-							/** This version assumes that inOther points on a value of the same type.
-								This function IGNORES NULL flag. It compare only value itself.
-								It is used for comparing of values stored in the indexes.
-								Result is the same as in above function. 
+							/** This version assumes that inIndexValue points on a value of the same type.
+								This function IGNORES NULL flag. It compares only value itself.
+								It is used for comparing of values stored in the index files.
+								Result is the same as in the above Compare() function.
 								
-								Important is that THIS value play role only of style-holder.
+								Important is that THIS value plays role only of a style-holder.
 								For example if index is on a string field then THIS value will have
-								all locale settings as field. This is importnat because inTestValue
-								most probably will not have these settings.
+								all locale settings as field. This is important because inTestValue,
+								most probably, will not have these settings.
 								
-								@param inTestValue this is value which we search.
+								@param inTestValue this is value, which we search.
 								@param inIndexValue direct void pointer to the place where value
-									is stored on index page. This value is casted by this value
+									is stored on index page. This buffer is casted by this value
 									oject to be the same type.
 								@param inParam any additional info can be passed here or ignored. 
 							*/
@@ -358,6 +364,16 @@ virtual void				SwapBytes( void* inValue ) const					= 0;
 							/// Swaps bytes of value at address pointed by @inSrc,
 							/// swapped value will be then copied to the @inDest address.
 virtual void				SwapBytes( const void* inSrc, void* inDest )		= 0;
+
+
+	// ---------------------
+	// Serialization to/from char buffer (for ValueVariant):
+
+virtual vuint32 			get_BinaryRepresentationByteLength( void ) const = 0;
+
+virtual void				FromBinaryRepresentation( const char* inpBuffer ) = 0;
+
+virtual void				ToBinaryRepresentation( char* outpBuffer ) const = 0;
 
 
 	public://///////////////////////////////////////////////////////////////////////////////////

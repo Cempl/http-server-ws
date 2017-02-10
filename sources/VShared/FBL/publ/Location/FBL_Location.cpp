@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Location.cpp                    		                                  				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -252,11 +252,16 @@ I_Disk_Location_Ptr	I_Disk_Location::GetTempFile( const char* inBaseName )
 	#if FBL_SUPPORT_FSSPEC
 
 		const char* p = tmpName.getBufferA();
-		vuint8 l = (vuint8) tmpName.length();
-
+		//
+		// Attention! 62 symbols available in sysTmpSpec.name only!!!
+		// Actually it is char[64], but first symbol we uses for length (Pascal string) and last
+		// symbol is '\0'.
+		//
+		vuint8 l = (vuint8)STD::min( tmpName.length(), (tslen)62 );
+	
 		// we make pascal string for FSSpec:
 		FSSpec sysTmpSpec;
-		
+	
 		memcpy( (char*)sysTmpSpec.name + 1, p, l );
 		sysTmpSpec.name[0] = l;
 		
@@ -304,6 +309,17 @@ I_Disk_Location_Ptr	I_Disk_Location::GetTempFile( const char* inBaseName )
 #endif // FBL_MAC
 
 	return tempLoc;
+}
+
+
+#pragma mark -
+
+/**********************************************************************************************/
+void CheckLocationExists( I_Disk_Location_Ptr inpLocation )
+{
+	FBL_CHECK( inpLocation );
+	if( inpLocation->get_Exists() == false  )
+		FBL_Throw( xOSFileError( ERR_OS_FILE_NOT_FOUND, inpLocation->get_Path().c_str() ) );
 }
 
 

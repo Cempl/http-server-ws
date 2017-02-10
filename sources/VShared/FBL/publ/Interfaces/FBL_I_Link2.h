@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_Link_2.h		                                 	                   				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -59,9 +59,15 @@ virtual						~I_Link2( void );
 virtual	LinkType			get_LeftType( void ) const 									= 0;
 
 		// <RightType> [r/o]
-							/** Returns the relation type for the left branch. 
+							/** Returns the relation type for the right branch.
 								Can be 1 (kOne) or M (kMany). */
 virtual	LinkType			get_RightType( void ) const 								= 0;
+
+
+		// <IsRecursive> [r/o]
+                            /** Returns TRUE if this link between 2 tables is recursive,
+                            	i.e. in fact it is made on the single table.  */
+virtual bool				get_IsRecursive( void ) const 								= 0;
 
 
 	// ---------------------
@@ -75,24 +81,22 @@ virtual void				UnlinkRecords2( REC_ID inLeft, REC_ID inRight ) = 0; //KEEPAS: I
 
 
 	// ---------------------
-	// Methods to work with non-recursive link.
+	// Not-Recursive Link Methods:
 
-							/**	Returns the count of linked recods in the direction 
+							/**	Returns the count of linked records in the direction
 								1 -> Many. */
 virtual	vuint32				CountLinkedFrom1ToMany( REC_ID inRecID ) const				= 0;
 
-							/**	Returns the count of linked recods in the direction 
+							/**	Returns the count of linked records in the direction 
 								Many -> 1. */
 virtual vuint32				CountLinkedFromManyTo1( REC_ID inRecID ) const				= 0;
 
 							/**	Returns the records from "One"-table linked to 
-								inRecID from "Many"-table. If not have linked 
-								returns NULL. */
+								inRecID from "Many"-table. */
 virtual ArraySet_Ptr		FindLinkedFrom1ToMany( REC_ID inRecID ) const				= 0;
 
 							/**	Returns the records from "Many"-table linked to 
-								inRecID from "One"-table. If not have linked 
-								returns NULL. */
+								inRecID from "One"-table. If not have linked eturns NULL. */
 virtual ArraySet_Ptr		FindLinkedFromManyTo1( REC_ID inRecID ) const				= 0;
 
 							/**	Returns all the linked records from "Many"-table. */
@@ -103,28 +107,7 @@ virtual BitSet_Ptr			FindAllLinkedIn1Table( void ) const							= 0;
 
 
 	// ---------------------
-	// Methods to work with recursive link.
-
-virtual	vuint32				CountLinkedChildren( REC_ID inRecID ) const					= 0;
-virtual vuint32				CountLinkedParents ( REC_ID inRecID ) const					= 0;
-
-virtual ArraySet_Ptr		FindLinkedChildren( REC_ID inRecID ) const					= 0;
-virtual ArraySet_Ptr		FindLinkedParents ( REC_ID inRecID ) const					= 0;
-
-virtual BitSet_Ptr			FindAllLinkedChildren( void ) const							= 0;
-virtual BitSet_Ptr			FindAllLinkedParents ( void ) const							= 0;
-
-
-	// ---------------------
-	// Recursive Search Methods:
-
-							/** For recursive link only. Find children for inRecID on inLevel level
-								If inOnlyThatLevel == true - the only this level records included.*/
-virtual ArraySet_Ptr		FindDescendants( 
-								REC_ID				inRecID, 
-								vuint32				inLevel = vuint32_max, 
-								bool				inOnlyThatLevel = false,
-								bool				inIncludingStartPoint = false )  const = 0;
+	// Recursive Search Methods on RecID:
 
 							/** For recursive link only. Find parents for inRecID on inLevel level
 								If inOnlyThatLevel == true - the only this level records included.*/
@@ -132,7 +115,7 @@ virtual ArraySet_Ptr		FindAncestors(
 								REC_ID				inRecID, 
 								vuint32				inLevel = vuint32_max, 
 								bool				inOnlyThatLevel = false,
-								bool				inIncludingStartPoint = false )  const = 0;
+								bool				inIncludingStartPoint = false ) const = 0;
 
 							/** For recursive link only. Find brothers for inRecID on inLevel level
                                 If inOnlyThatLevel == true - the only this level records included.
@@ -142,7 +125,19 @@ virtual ArraySet_Ptr		FindBrothers(
 								REC_ID				inRecID, 
 								vuint32				inLevel = 1, 
 								bool				inOnlyThatLevel = false,
-								bool				inIncludingStartPoint = false )  const = 0;
+								bool				inIncludingStartPoint = false ) const = 0;
+
+							/** For recursive link only. Find children for inRecID on inLevel level
+								If inOnlyThatLevel == true - the only this level records included.*/
+virtual ArraySet_Ptr		FindDescendants( 
+								REC_ID				inRecID, 
+								vuint32				inLevel = vuint32_max, 
+								bool				inOnlyThatLevel = false,
+								bool				inIncludingStartPoint = false ) const = 0;
+
+
+	// ---------------------
+	// Recursive Search Methods on Set:
 
 							/** For recursive link only. Find children for inRecID on inLevel level
 								If inOnlyThatLevel == true - the only this level records included. */
@@ -150,7 +145,7 @@ virtual ArraySet_Ptr		FindDescendants(
 								Set_Ptr 			inSet,
 								vuint32				inLevel = vuint32_max, 
 								bool				inOnlyThatLevel = false,
-								bool				inIncludingStartPoint = false )  const = 0;
+								bool				inIncludingStartPoint = false ) const = 0;
 
 							/** For recursive link only. Find parents for inRecID on inLevel level
 								If inOnlyThatLevel == true - the only this level records included. */
@@ -158,7 +153,7 @@ virtual ArraySet_Ptr		FindAncestors(
 								Set_Ptr 			inSet,
 								vuint32				inLevel = vuint32_max, 
 								bool				inOnlyThatLevel = false,
-								bool				inIncludingStartPoint = false )  const = 0;
+								bool				inIncludingStartPoint = false ) const = 0;
 
 							/** For recursive link only. Find brothers for inRecID on inLevel level
                                 If inOnlyThatLevel == true - the only this level records included.
@@ -168,24 +163,19 @@ virtual ArraySet_Ptr		FindBrothers(
 								Set_Ptr 			inSet,
 								vuint32				inLevel = 1, 
 								bool				inOnlyThatLevel = false,
-								bool				inIncludingStartPoint = false )  const = 0;
+								bool				inIncludingStartPoint = false ) const = 0;
+
 
 	// ---------------------
-	// Helper methods.
-
-							/**	Determines the type of link between two tables.
-								Both tables must belong to this link otherwise
-								result will be kInvalidLinkDirection. */
-virtual ELinkDirection		DetectLinkDirection(
-								Const_I_Table_Ptr inTableA, 
-								Const_I_Table_Ptr inTableB ) const 				= 0;
-
-							/**	Returns "One"-table if @inTable points to "Many"-table or
-								returns "Many"-table if @inTable points to "One"-table or
-								returns NULL otherwise. */
-virtual	I_Table_Ptr			get_OppositeTable( Const_I_Table_Ptr inTable ) const  = 0;
-
-
+	// Copy Links Methods:
+    //
+    // These methods allow to do REFACTORING of a link from one kind to another WHEN they have RECORDS!
+    // i.e. You can convert RDB-link into ObjectPtr or BinaryLink.
+	// Read details:
+    //	http://www.valentina-db.com/dokuwiki/doku.php?id=valentina:vcomponents:vkernel:vlink:refactoring:refactoring
+	// Note, that exists SQL analogs of these API commands:
+    //	https://www.valentina-db.com/dokuwiki/doku.php?id=valentina:vcomponents:vsql:reference:copy_links
+    
 							/** Copy "links" from source link to this one. */
 virtual	void				CopyLinksFrom( 
                                 I_Link2_Ptr inpSourceLink ) = 0;
@@ -201,7 +191,24 @@ virtual	void				CopyLinksFrom(
 virtual	void				CopyLinksTo( 
 								I_Link2_Ptr inDestinationLink1,
 								I_Link2_Ptr inDestinationLink2 ) = 0;
-}; 
+
+	// ---------------------
+	// Helper Methods:
+
+							/**	Determines the type of link between two tables.
+								Both tables must belong to this link otherwise
+								result will be kInvalidLinkDirection. */
+virtual ELinkDirection		DetectLinkDirection(
+								Const_I_Table_Ptr inTableA, 
+								Const_I_Table_Ptr inTableB ) const = 0;
+
+							/**	Returns "One"-table if @inTable points to "Many"-table or
+								returns "Many"-table if @inTable points to "One"-table or
+								returns NULL otherwise. */
+virtual	I_Table_Ptr			get_OppositeTable( Const_I_Table_Ptr inTable ) const  = 0;
+
+
+};
 
 
 /**********************************************************************************************/

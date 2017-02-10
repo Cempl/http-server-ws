@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_StringConversion.h																	  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -49,14 +49,12 @@ class FBL_SHARED_EXP_CLASS StFromUTF16 : public ConverterBase
 	 						StFromUTF16( 
 	 							const UChar* 	inUStr, 
 	 							tslen 			inLen,
-	 							I_Converter* 	inConverter,
-                                vuint32			inExtraBytes = 0 );
+	 							I_Converter* 	inConverter );
 
 	 						StFromUTF16( 
 	 							const UChar* 	inUStr, 
 	 							const UChar* 	inEnd, 
-	 							I_Converter* 	inConverter,
-                                vuint32			inExtraBytes = 0 );
+	 							I_Converter* 	inConverter );
 
 							StFromUTF16( 
 								const String& 	inStr,
@@ -98,8 +96,7 @@ class FBL_SHARED_EXP_CLASS StFromUTF16 : public ConverterBase
 								result, so truncation will never occurred. */
 		void				ConvertUsingInternalBuffer( 
 								const UChar*	inUStr, 
-								tslen			inLen,
-                                vuint32			inExtraBytes = 0 );
+								tslen			inLen );
 
 
 	private:////////////////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Version.h																			  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                       					  */
+/* Copyright Paradigma, 1998-2017                                       					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -13,15 +13,15 @@
 
 
 /**********************************************************************************************/
-#define kKernelVersionMajor					6	// 0x04
-#define kKernelVersionMinor					5	// 0x00
-#define kKernelVersionRevision				9	// 0x00
+#define kKernelVersionMajor					7	// 0x04
+#define kKernelVersionMinor					0	// 0x00
+#define kKernelVersionRevision				0	// 0x00
 
-#define kKernelVersionMajorStr				"6"
-#define kKernelVersionMinorStr				"5"
-#define kKernelVersionRevisionStr			"9"
+#define kKernelVersionMajorStr				"7"
+#define kKernelVersionMinorStr				"0"
+#define kKernelVersionRevisionStr			"0"
 
-#define kSpecialBuildString					""
+#define kSpecialBuildString					"b10"
  
 
 /**********************************************************************************************/
@@ -31,7 +31,7 @@
 // This constant must be changed manually (!!!) at least for RELEASE builds.
 // Its format "YYYY/MM/DD".
 //
-#define kBuildDate							"2016/07/27"
+#define kBuildDate							"2017/01/25"
 
 
 /**********************************************************************************************/
@@ -41,7 +41,7 @@
 
 
 /**********************************************************************************************/
-#define kLegalCopyright						"Copyright (C) Paradigma Software, Inc., 1998-2016"
+#define kLegalCopyright						"Copyright (C) Paradigma Software, Inc., 1998-2017"
 
 
 /**********************************************************************************************/
@@ -84,7 +84,7 @@
 
 
 /**********************************************************************************************/
-// AUTO: This macro produces NON-string, but list of coma separated values.
+// AUTO: This macro produces NON-string, but list of comma separated values.
 //		 It is used on Windows by V4MD Visual project for example.
 //
 #define kKernelVersion_List_WIN  kKernelVersionMajor, kKernelVersionMinor, kKernelVersionRevision, 0

@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* VSDK2.h				                                                      				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 //
@@ -53,6 +53,8 @@
 
 #include <VShared/FBL/publ/Util_classes/FBL_NotificationQueue.h>
 #include <VShared/FBL/publ/Util_classes/FBL_Notification.h>
+
+#include <VShared/FBL/publ/Util_Strings/FBL_ParseEnumType.h>
 
 
 // -----------------------------

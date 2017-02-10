@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* VSQL_I_SqlDatabase.h                                                       				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -25,6 +25,7 @@ VSQL_Begin_Namespace
 
 /**********************************************************************************************/
 SMART_INTERFACE(I_SqlDatabase);
+SMART_INTERFACE(I_SqlStatement);
 SMART_INTERFACE(I_Cursor);
 
 SMART_CLASS(QueryResult);
@@ -46,8 +47,27 @@ interface FBL_SHARED_EXP_CLASS I_SqlDatabase : public I_Unknown
 	 	
 virtual 					~I_SqlDatabase( void );
 
+
 	// ---------------------
-	// SQL methods:
+    // Statement Methods: (new in v7.0)
+    //
+    // The best way to work with SQL command that have SQL binding and batch execution.
+    // It can be x3-x4 times faster than below methods, which use pool of SQL commands with binding.
+
+virtual I_SqlStatement_Ptr	CreateStatement( const String& inQuery ) = 0;
+
+virtual	void				RemoveStatement( I_SqlStatement& inStatement ) = 0;
+
+virtual I_SqlStatement*		get_Statement( vuint32 inStatementIndex ) = 0;
+virtual vuint32				get_StatementCount( void ) const = 0;
+
+
+	// ---------------------
+	// SQL Methods:
+    //
+    // Historically they are older than above methods with SqlStatement.
+    // These methods also can work with SQL commands that has SQL binding.
+    // Such commands are stored in the special internal pool.
 
 							/** Executes SQL SELECT or SHOW commands for database.
 								Returns I_Cursor as result of the query.
@@ -85,7 +105,10 @@ virtual	QueryResult_Ptr		 SqlQuery(
 							/** Executes any SQL command.
 								Returns the object contained cursor or affected records'
 								count depends on query matter.
-								inFlags (see QueryOptions) extends SqlQuery() functionality.
+								
+                                inFlags (see QueryOptions) extends SqlQuery() functionality.
+                             	You can specify if produce warning, tune info, output info, etc.
+                             
 								Throws VSQL::xException on error. */
 virtual	QueryResult_Ptr		 SqlQueryEx(	
 								const String& 			inQuery,								
@@ -95,13 +118,14 @@ virtual	QueryResult_Ptr		 SqlQueryEx(
 								ECursorDirection 		inCursorDirection = kForwardOnly,
 								const ArrayOfValues_Ptr inBindings = nullptr ) = 0;
 
+
 	// ---------------------
-	// Cursor methods:
+	// Cursor Methods:
 
 							// returns the count of cursors for this db.
-virtual vuint32				get_CursorCount( void ) const  = 0;
+virtual vuint32				get_CursorCount( void ) const = 0;
 								
-virtual I_Cursor*			get_Cursor( vuint32 inIndex ) const  = 0;
+virtual I_Cursor*			get_Cursor( vuint32 inIndex ) const = 0;
 
 							// Unregister the specified cursor.
 							// Technically need to be here (Because VC_Cursor use it).

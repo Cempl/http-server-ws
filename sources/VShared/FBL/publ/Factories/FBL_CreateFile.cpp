@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_CreateFile.cpp 	                                                   					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -150,7 +150,8 @@ I_Location_Ptr CreateFolder( I_Location_Ptr inParentLoc,  const UChar* inFolderN
 
 		#endif // FBL_SUPPORT_FSREF
 	#elif FBL_UNIX
-		int err = mkdir( pLoc->get_Path().getBufferA(), S_IRWXU | S_IRGRP | S_IXGRP | S_IXOTH );
+        const char* pPath = pLoc->get_Path().getBufferA();
+		int err = mkdir( pPath, S_IRWXU | S_IRGRP | S_IXGRP | S_IXOTH );
 		FBL_CHECK( err == 0 );
 		// Do it once more to set correct mIsDirectory flag and mFullPath.
 		// Because Location::get_IsDirectory() called from Location::get_ChildLocation

@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_TypeUtilities.cpp 						                                  			  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -21,6 +21,192 @@ Std_Using_Namespace
 /**********************************************************************************************/
 FBL_Begin_Namespace
 
+
+/**********************************************************************************************/
+String Type2String( FIELD_TYPE inType )
+{
+	switch( inType )
+	{
+		case kTypeEmpty:
+			return "Empty";
+		case kTypeEnum:
+			return "Enum";
+		case kTypeBoolean:
+			return "Boolean";
+		case kTypeByte:
+			return "Byte";
+		case kTypeShort:
+			return "Short";
+		case kTypeUShort:
+			return "UShort";
+		case kTypeMedium:
+			return "Medium";
+		case kTypeUMedium:
+			return "UMedium";
+		case kTypeLong:
+			return "Long";
+		case kTypeULong:
+			return "ULong";
+		case kTypeLLong:
+			return "LLong";
+		case kTypeULLong:
+			return "ULLong";
+		case kTypeFloat:
+			return "Float";
+		case kTypeDouble:
+			return "Double";
+		case kTypeLDouble:
+			return "LDouble";
+		case kTypeDecimal:
+			return "Decimal";
+		case kTypeDate:
+			return "Date";
+		case kTypeTime:
+			return "Time";
+		case kTypeDateTime:
+			return "DateTime";
+		case kTypeString:
+			return "String";
+		case kTypeVarChar:
+			return "VarChar";
+		case kTypeFixedBinary:
+			return "FixedBinary";
+		case kTypeVarBinary:
+			return "VarBinary";
+		case kTypeBLOB:
+			return "BLOB";
+		case kTypeText:
+			return "Text";
+		case kTypePicture:
+			return "Picture";
+		case kTypeSound:
+			return "Sound";
+		case kTypeMovie:
+			return "Movie";
+		case kTypeRecID:
+			return "RecID";
+		case kTypeOID:
+			return "OID";
+		case kTypeObjectPtr:
+			return "ObjectPtr";
+		case kTypeObjectsPtr:
+			return "ObjectsPtr";
+		case kTypeTimeStamp:
+			return "TimeStamp";
+		case kTypeEnum8:
+			return "Enum8";
+		case kTypeEnum16:
+			return "Enum16";
+		case kTypeSerial32:
+			return "Serial32";
+		case kTypeSerial64:
+			return "Serial64";
+		case kTypeMoney:
+			return "Money";
+		case kTypeVariant:
+			return "Variant";
+		case kTypeCompound:
+			return "Compound";
+		case kTypeUserDefined:
+			return "UserDefined";
+
+		default:
+			return String::sEmpty();
+	};
+}
+
+
+/**********************************************************************************************/
+FIELD_TYPE String2Type( const String& inStr )
+{
+	if( inStr.caseCompare( "Empty", 5 ) == 0 )
+		return kTypeEmpty;
+	else if( inStr.caseCompare( "Enum", 4 ) == 0 )
+		return kTypeEnum;
+	else if( inStr.caseCompare( "Boolean", 7 ) == 0 )
+		return kTypeBoolean;
+	else if( inStr.caseCompare( "Byte", 4 ) == 0 )
+		return kTypeByte;
+	else if( inStr.caseCompare( "Short", 5 ) == 0 )
+		return kTypeShort;
+	else if( inStr.caseCompare( "UShort", 6 ) == 0 )
+		return kTypeUShort;
+	else if( inStr.caseCompare( "Medium", 6 ) == 0 )
+		return kTypeMedium;
+	else if( inStr.caseCompare( "UMedium", 7 ) == 0 )
+		return kTypeUMedium;
+	else if( inStr.caseCompare( "Long", 4 ) == 0 )
+		return kTypeLong;
+	else if( inStr.caseCompare( "ULong", 5 ) == 0 )
+		return kTypeULong;
+	else if( inStr.caseCompare( "LLong", 5 ) == 0 )
+		return kTypeLLong;
+	else if( inStr.caseCompare( "ULLong", 6 ) == 0 )
+		return kTypeULLong;
+	else if( inStr.caseCompare( "Float", 5 ) == 0 )
+		return kTypeFloat;
+	else if( inStr.caseCompare( "Double", 6 ) == 0 )
+		return kTypeDouble;
+	else if( inStr.caseCompare( "LDouble", 7 ) == 0 )
+		return kTypeLDouble;
+	else if( inStr.caseCompare( "Decimal", 7 ) == 0 )
+		return kTypeDecimal;
+	else if( inStr.caseCompare( "Date", 4 ) == 0 )
+		return kTypeDate;
+	else if( inStr.caseCompare( "Time", 4 ) == 0 )
+		return kTypeTime;
+	else if( inStr.caseCompare( "DateTime", 8 ) == 0 )
+		return kTypeDateTime;
+	else if( inStr.caseCompare( "String", 6 ) == 0 )
+		return kTypeString;
+	else if( inStr.caseCompare( "VarChar", 7 ) == 0 )
+		return kTypeVarChar;
+	else if( inStr.caseCompare( "FixedBinary", 11 ) == 0 )
+		return kTypeFixedBinary;
+	else if( inStr.caseCompare( "VarBinary", 9 ) == 0 )
+		return kTypeVarBinary;
+	else if( inStr.caseCompare( "BLOB", 4 ) == 0 )
+		return kTypeBLOB;
+	else if( inStr.caseCompare( "Text", 4 ) == 0 )
+		return kTypeText;
+	else if( inStr.caseCompare( "Picture", 7 ) == 0 )
+		return kTypePicture;
+	else if( inStr.caseCompare( "Sound", 5 ) == 0 )
+		return kTypeSound;
+	else if( inStr.caseCompare( "Movie", 5 ) == 0 )
+		return kTypeMovie;
+	else if( inStr.caseCompare( "RecID", 5 ) == 0 )
+		return kTypeRecID;
+	else if( inStr.caseCompare( "OID", 3 ) == 0 )
+		return kTypeOID;
+	else if( inStr.caseCompare( "ObjectPtr", 9 ) == 0 )
+		return kTypeObjectPtr;
+	else if( inStr.caseCompare( "ObjectsPtr", 10 ) == 0 )
+		return kTypeObjectsPtr;
+	else if( inStr.caseCompare( "TimeStamp", 9 ) == 0 )
+		return kTypeTimeStamp;
+	else if( inStr.caseCompare( "Enum8", 5 ) == 0 )
+		return kTypeEnum8;
+	else if( inStr.caseCompare( "Enum16", 6 ) == 0 )
+		return kTypeEnum16;
+	else if( inStr.caseCompare( "Serial32", 8 ) == 0 )
+		return kTypeSerial32;
+	else if( inStr.caseCompare( "Serial64", 8 ) == 0 )
+		return kTypeSerial64;
+	else if( inStr.caseCompare( "Money", 5 ) == 0 )
+		return kTypeMoney;
+	else if( inStr.caseCompare( "Variant", 7 ) == 0 )
+		return kTypeVariant;
+	else if( inStr.caseCompare( "Compound", 8 ) == 0 )
+		return kTypeCompound;
+	else if( inStr.caseCompare( "UserDefined", 11 ) == 0 )
+		return kTypeUserDefined;
+
+	return 	kTypeEmpty;
+}
+
+
+#pragma mark -
 
 /**********************************************************************************************/
 // HELPER function. Find appropriate ident in inpEnumType

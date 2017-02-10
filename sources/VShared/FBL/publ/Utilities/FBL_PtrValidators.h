@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_PtrValidators.h																		  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -15,6 +15,7 @@
 #include <VShared/FBL/publ/Interfaces/FBL_I_Database.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_Table.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_Link.h>
+#include <VShared/FBL/publ/Interfaces/FBL_I_KeyValue.h>
 
 
 /**********************************************************************************************/
@@ -26,6 +27,7 @@ FBL_SHARED_EXP bool IsValidDbPointer( I_Database* inPointer );
 FBL_SHARED_EXP bool IsValidTypePointer( I_Type* inPointer );
 FBL_SHARED_EXP bool IsValidTablePointer( I_Table* inPointer );
 FBL_SHARED_EXP bool IsValidLinkPointer( I_Link* inPointer );
+FBL_SHARED_EXP bool IsValidKeyValuePointer( I_KeyValue* inPointer );
 FBL_SHARED_EXP bool IsValidIndexStylePointer( I_IndexStyle* inPointer );
 
 /**********************************************************************************************/

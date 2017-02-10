@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_EnumToString.h																		  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -38,12 +38,12 @@ FBL_SHARED_EXP const char* LinkKind2String( ELinkKind inValue );
 
 
 /**********************************************************************************************/
-FBL_SHARED_EXP TYPE_CATEGORY String2TypeCategory( const char* inStr );
-FBL_SHARED_EXP DbMode String2DatabaseMode( const char* inStr );
-FBL_SHARED_EXP EDateFormat String2DateFormat( const char* inStr );
-FBL_SHARED_EXP EDumpSortOrder String2DumpSortOrder( const char* inStr );
-FBL_SHARED_EXP UColAttributeValue String2ColAttribValue( const char* inStr );
-FBL_SHARED_EXP EStorageType String2StorageType( const char* inStr );
+FBL_SHARED_EXP TYPE_CATEGORY		String2TypeCategory	 ( const char* inStr );
+FBL_SHARED_EXP DbMode				String2DatabaseMode	 ( const char* inStr );
+FBL_SHARED_EXP EDateFormat			String2DateFormat	 ( const char* inStr );
+FBL_SHARED_EXP EDumpSortOrder		String2DumpSortOrder ( const char* inStr );
+FBL_SHARED_EXP UColAttributeValue	String2ColAttribValue( const char* inStr );
+FBL_SHARED_EXP EStorageType			String2StorageType	 ( const char* inStr );
 
 
 /**********************************************************************************************/

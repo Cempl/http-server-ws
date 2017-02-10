@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_StringConversion.cpp                                                      			  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -159,15 +159,14 @@ StFromUTF16::StFromUTF16(
 StFromUTF16::StFromUTF16( 
 	const UChar* 	inUStr, 
 	tslen 			inLen,
-	I_Converter* 	inConverter,
-    vuint32			inExtraBytes )
+	I_Converter* 	inConverter )
 :
 	ConverterBase( inConverter ),
 	mAStr(nullptr),
 	mLen(0)
 {
 	Init();
-	ConvertUsingInternalBuffer( inUStr, inLen, inExtraBytes );
+	ConvertUsingInternalBuffer( inUStr, inLen );
 }
 
 
@@ -175,15 +174,14 @@ StFromUTF16::StFromUTF16(
 StFromUTF16::StFromUTF16( 
 	const UChar* 	inUStr, 
 	const UChar* 	inEnd,
-	I_Converter* 	inConverter,
-    vuint32			inExtraBytes )
+	I_Converter* 	inConverter )
 :
 	ConverterBase( inConverter ),
 	mAStr(nullptr),
 	mLen(0)
 {
 	Init();
-	ConvertUsingInternalBuffer( inUStr,  tslen(inEnd - inUStr), inExtraBytes );
+	ConvertUsingInternalBuffer( inUStr,  tslen(inEnd - inUStr) );
 }
 
 
@@ -249,8 +247,7 @@ void StFromUTF16::Convert(
 /**********************************************************************************************/
 void StFromUTF16::ConvertUsingInternalBuffer( 
 	const UChar* 	inUStr, 
-	tslen 			inLen,
-    vuint32			inExtraBytes )
+	tslen 			inLen )
 {
 	if( !inUStr )
 		return;
@@ -264,7 +261,7 @@ void StFromUTF16::ConvertUsingInternalBuffer(
 	{
 		// Set buffer pointer.
         vint32 TargetLen = SrcLen * mMaxCharSize;
-        vint32 BuffSize  = TargetLen + 1 * mMaxCharSize + inExtraBytes;
+        vint32 BuffSize  = TargetLen + 1 * mMaxCharSize;
 
 		mAStr = (BuffSize > LOCAL_LEN) ? new char[BuffSize] : mLocal;
 		UErrorCode Error = U_ZERO_ERROR;
@@ -272,7 +269,7 @@ void StFromUTF16::ConvertUsingInternalBuffer(
 		// Try in the loop to convert the string.
 		while( 1 )
 		{
-			NewLen = mConverter->fromUChars( mAStr, BuffSize - inExtraBytes,
+			NewLen = mConverter->fromUChars( mAStr, BuffSize,
 										inUStr, SrcLen, &Error );
 			if( U_SUCCESS(Error) )
 			{
@@ -291,7 +288,7 @@ void StFromUTF16::ConvertUsingInternalBuffer(
 					}
 					
 					TargetLen = NewLen;
-					BuffSize  = TargetLen + 1 * mMaxCharSize + inExtraBytes;
+					BuffSize  = TargetLen + 1 * mMaxCharSize;
 
 					mAStr = (BuffSize > LOCAL_LEN) ? new char[BuffSize] : mLocal;
 					Error = U_ZERO_ERROR;
@@ -315,14 +312,7 @@ void StFromUTF16::ConvertUsingInternalBuffer(
 		throw;
 	}
 
-	// RZ at 2016-02-03 have added support of Extra Bytes. We need set them to zero also.
-    // This was made for C-FLEX. It want 2 zero bytes after buffer with string.
-    // It is better for us do this right here, to avoid copy of the whole string
-    // inside of FLEX's scanner_init().
-	if( inExtraBytes )
-	    memset( mAStr + mLen, 0, 1 + inExtraBytes );
-	else
-	    mAStr[mLen] = '\0';
+    mAStr[mLen] = '\0';
 }
 
 

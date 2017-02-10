@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_File_OS.h																		 	  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                       					  */
+/* Copyright Paradigma, 1998-2017                                       					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 // Master file to include when using platform-independent files.

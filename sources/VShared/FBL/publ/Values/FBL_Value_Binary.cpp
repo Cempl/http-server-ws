@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Value_Binary.cpp                                                    					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -13,37 +13,58 @@
 #include <VShared/FBL/publ/Values/FBL_Value_Binary.h>
 #include <VShared/FBL/publ/Utilities/FBL_ByteToHex.h>
 
+#include <VShared/FBL/publ/Algorithms/FBL_Algs_VarInt_Positive.h>
+
 
 /**********************************************************************************************/
 FBL_Begin_Namespace
 
 
 /**********************************************************************************************/
-Value_Raw::Value_Raw( void )  
+Value_Raw_imp::Value_Raw_imp( void )
 : 
-	mDeltaPlus( 0 ),
-	mIsRemote( false )
-{ 
+	mIsNullable(false),
+	mIsNull(false),
+	mIsRemote(false),
+	mDeltaPlus( 0 )
+{
 	InitSelf(); 
 }
 
 
 /**********************************************************************************************/
-Value_Raw::Value_Raw( vuint32 inSize, vuint32 inDeltaPlus )  
+Value_Raw_imp::Value_Raw_imp( vuint32 inSize, vuint32 inDeltaPlus )
 : 
-	mDeltaPlus( (vuint8) inDeltaPlus ),
-	mIsRemote( false )
-{ 
+	mIsNullable(false),
+	mIsNull(false),
+	mIsRemote(false),
+	mDeltaPlus( (vuint8) inDeltaPlus )
+{
 	Alloc( inSize ); 
 }
 
  
 /**********************************************************************************************/
-Value_Raw::Value_Raw( const Value_Raw& inOther )  
+Value_Raw_imp::Value_Raw_imp( const char* inValue, const char* inEnd )
+: 
+	mIsNullable(false),
+	mIsNull(false),
+	mIsRemote(false),
+	mDeltaPlus( 0 )
+{
+	InitSelf(); 
+	AllocCopy( inValue, inEnd );
+}
+
+ 
+/**********************************************************************************************/
+Value_Raw_imp::Value_Raw_imp( const Value_Raw_imp& inOther )
 :
-	mDeltaPlus( inOther.mDeltaPlus ),
-	mIsRemote( false )
-{ 
+	mIsNullable(inOther.mIsNullable),
+	mIsNull(inOther.mIsNull),
+	mIsRemote(inOther.mIsRemote),
+	mDeltaPlus( inOther.mDeltaPlus )
+{
 	InitSelf();
 
 	Alloc( inOther.get_Allocated() );
@@ -58,7 +79,7 @@ Value_Raw::Value_Raw( const Value_Raw& inOther )
 
 
 /**********************************************************************************************/
-Value_Raw::~Value_Raw( void )  
+Value_Raw_imp::~Value_Raw_imp( void )
 {
 	if( m_pStart )
 		delete [] m_pStart;	
@@ -69,7 +90,7 @@ Value_Raw::~Value_Raw( void )
  
 
 /**********************************************************************************************/
-void Value_Raw::put_ByteLength( vuint32 inNewLength )
+void Value_Raw_imp::put_ByteLength( vuint32 inNewLength )
 {
 	char* ps = m_pStart;
 	char* pe = ps + inNewLength;
@@ -88,19 +109,16 @@ void Value_Raw::put_ByteLength( vuint32 inNewLength )
 
 
 /**********************************************************************************************/
-vuint32 Value_Raw::get_ByteLengthForIndex( void ) const 
+vuint32 Value_Raw_imp::get_ByteLengthForIndex( void ) const
 {
 	vuint32 len = get_ByteLength();
 	
-	if( len > 255 )
-		len = 255;
-
-	return len;
+	return VarIntLen64(len) + len;
 }
 
 
 /**********************************************************************************************/
-void Value_Raw::Assign( const I_Value& inValue )  
+void Value_Raw_imp::Assign( const I_Value& inValue )
 {
 	if( inValue.get_IsNull() )
 	{
@@ -108,6 +126,8 @@ void Value_Raw::Assign( const I_Value& inValue )
 	}
 	else
 	{
+    	mIsNull = false;
+        
 		if( get_Type() == inValue.get_Type() )
 		{
 			vuint32 Len = static_cast<vuint32>(inValue.end() - inValue.begin());
@@ -120,9 +140,204 @@ void Value_Raw::Assign( const I_Value& inValue )
 	}
 }
 
+/**********************************************************************************************/
+vuint32 Value_Raw_imp::CopyToIndex( void* outBuffer, bool inSwapBytes ) const
+{
+	argused1(inSwapBytes);
+    
+	//@ CALC length
+    vuint32 lenBytes = get_ByteLength();
+    
+	//@ WRITE length:
+	vuint8* p = (vuint8*) outBuffer;
+   	int writtenBytes = PutVarInt32( p, lenBytes );
+
+	//@ COPY the string without end zero.
+	memcpy( p + writtenBytes, begin(), lenBytes );
+    
+    return writtenBytes + lenBytes;
+}
+
 
 /**********************************************************************************************/
-bool Value_Raw::put_Allocated( vuint32 inSize ) 
+void Value_Raw_imp::CopyFromIndex( const void* inBuffer, bool inSwapBytes )
+{
+	argused1(inSwapBytes);
+
+	//@ First byte contains length:
+	vuint8* p = (vuint8*) inBuffer;
+
+	vuint32 lenBytes;
+    int readBytes = GetVarInt32( p, &lenBytes );
+    
+	lenBytes = FBL::Min( lenBytes, this->get_Allocated() );
+
+
+	//@ COPY data from index into this value.
+	memcpy( m_pStart, p + readBytes, lenBytes );
+
+
+	//@ CORRECT end pointer:
+	m_pEnd = m_pStart + lenBytes;
+
+
+	//@ value is not null now:
+    put_IsNull( false ); // index contains only non-NULL values.
+}
+
+
+#pragma mark -
+
+
+/**********************************************************************************************/
+int Value_Raw_imp::Compare(
+    const I_Value& 	inOther,
+    COMPARE_TYPE 	inCompareType ) const
+{
+	int res = 0;
+	bool doData = true;
+
+    argused1( inCompareType );
+    
+    FBL_CHECK( get_Type() == inOther.get_Type() );
+
+	//@ compare NULL flags:
+	if( mIsNullable )
+    {
+        bool otherIsNull = inOther.get_IsNull();
+
+        /// If one of values (this or inOther) have null...
+        if( mIsNull || otherIsNull )
+        {
+            /// ... we check only isNull flags.
+            res = (mIsNull == otherIsNull)			// i.e. both are NULLs
+                ? 0
+                : (mIsNull == true ? -1 : 1 );		// NULL < value : value > NULL. Hmm, we have param NullsFirst or Last. Here always first.
+      
+      		doData = false;
+        }
+	}
+
+
+	//@ compare data bytes:
+    if( doData )
+    {
+        vuint32 len1 = get_Length();
+        vuint32 len2 = inOther.get_Length();
+
+		if( len1 == 0 && len2 > 0 )
+        	res = -1;
+        else if( len2 == 0 && len1 > 0 )
+        	res = +1;
+		else
+        {
+            vuint32 len	 = FBL::Min( len1, len2 );
+            res = blob_traits::compare(
+                    (blob_traits::value_type*) begin(),
+                    (blob_traits::value_type*) inOther.begin(),
+                    len );
+		}
+	}
+    
+
+	return res;
+}
+
+
+/**********************************************************************************************/
+/*
+	v1 (empty)   	v2 (empty)			res = 0
+	v1 (empty)   	v2 					res = -1
+	v1 		  		v2 (empty)			res = +1
+ 
+ When we have 2 not empty values, we at first compare minimal len bytes,
+ if we get -1/+1 we done, ELSE we compare lengths to choose who is less.
+ 
+ 	v1 (aaa)		v2 (aaa)			0
+ 	v1 (aaa)		v2 (baaaa)			-1
+ 	v1 (aaa)		v2 (aaacc)			-1
+ 	v1 (aaacc)		v2 (aaa)			+1
+ 
+*/
+int Value_Raw_imp::CompareToIndexValue(
+    Const_I_Value_Ptr 	inTestValue,
+    const void* 		inIndexValue,
+    vuint32				inParam,
+    bool				inSwapBytes) const
+{
+    argused2( inParam, inSwapBytes );
+
+    int res = 0;
+    
+    vuint32 len1 = inTestValue->get_Length();
+
+    vuint32 len2;
+    int readBytes = GetVarInt32( (vuint8*) inIndexValue, &len2 );
+    
+    
+    if( len1 == 0 && len2 > 0 )
+        res = -1;
+    else if( len2 == 0 && len1 > 0 )
+        res = +1;
+    else
+    {
+        vuint32 len	 = FBL::Min( len1, len2 );
+
+        res = blob_traits::compare(
+                (blob_traits::value_type*) inTestValue->begin(),
+                (blob_traits::value_type*) inIndexValue + readBytes,
+                len );
+        
+        if( res == 0 && len1 != len2 )
+        	res = (len1 < len2) ? -1 : +1;
+    }
+    
+	return res;
+}
+
+
+/**********************************************************************************************/
+int Value_Raw_imp::CompareIndexValues(
+    const void* 		inLeft,
+    const void* 		inRight,
+    bool				inSwapBytes ) const
+{
+    argused1(inSwapBytes);
+
+	int res = 0;
+
+    vuint32 len1;
+    int readBytes1 = GetVarInt32( (vuint8*) inLeft, &len1 );
+
+    vuint32 len2;
+    int readBytes2 = GetVarInt32( (vuint8*) inRight, &len2 );
+
+    if( len1 == 0 && len2 > 0 )
+        res = -1;
+    else if( len2 == 0 && len1 > 0 )
+        res = +1;
+	else
+	{
+    	vuint32 len	 = FBL::Min( len1, len2 );
+
+    	res = blob_traits::compare(
+                (blob_traits::value_type*) inLeft  + readBytes1,
+                (blob_traits::value_type*) inRight + readBytes2,
+                len );
+
+        if( res == 0 && len1 != len2 )
+        	res = (len1 < len2) ? -1 : +1;
+	}
+    
+    return res;
+}
+
+
+#pragma mark -
+
+
+/**********************************************************************************************/
+bool Value_Raw_imp::put_Allocated( vuint32 inSize )
 {
 	vuint32 ByteSize = get_Allocated();
 
@@ -151,15 +366,9 @@ bool Value_Raw::put_Allocated( vuint32 inSize )
 
 
 /**********************************************************************************************/
-bool Value_Raw::get_IsNull( void ) const 
-{ 
-	return false; 
-}
-
-
-/**********************************************************************************************/
-void Value_Raw::put_IsNull( bool inValue ) 
-{ 
+void Value_Raw_imp::put_IsNull( bool inValue )
+{
+	mIsNull = inValue;
 	if( inValue )
 	{
 		m_pEnd = m_pStart;
@@ -175,7 +384,7 @@ void Value_Raw::put_IsNull( bool inValue )
 
 
 /**********************************************************************************************/
-void Value_Raw::Init( void )  
+void Value_Raw_imp::Init( void )
 {
 	if( vuint32 Len = get_Allocated() )
 	{
@@ -193,7 +402,7 @@ void Value_Raw::Init( void )
 
 
 /**********************************************************************************************/
-void Value_Raw::Increment( void )  		
+void Value_Raw_imp::Increment( void )
 { 
 	if( m_pStart )
 	{ 
@@ -206,7 +415,7 @@ void Value_Raw::Increment( void )
 
 
 /**********************************************************************************************/
-void Value_Raw::InitSelf( void )  
+void Value_Raw_imp::InitSelf( void )
 {
 	m_pStart 	 = nullptr;
 	m_pBufferEnd = nullptr;
@@ -215,7 +424,7 @@ void Value_Raw::InitSelf( void )
 
 
 /**********************************************************************************************/
-void Value_Raw::Clear( void ) 
+void Value_Raw_imp::Clear( void )
 {
 	if( m_pStart )
 	{
@@ -226,7 +435,7 @@ void Value_Raw::Clear( void )
 
 
 /**********************************************************************************************/
-void Value_Raw::Alloc( vuint32 inSize ) 
+void Value_Raw_imp::Alloc( vuint32 inSize )
 {
 	if( inSize )
 	{
@@ -241,7 +450,7 @@ void Value_Raw::Alloc( vuint32 inSize )
 
 
 /**********************************************************************************************/
-const char*	Value_Raw::AllocCopy( const char* inStart, const char* inEnd ) 
+const char*	Value_Raw_imp::AllocCopy( const char* inStart, const char* inEnd )
 {
 	FBL_CHECK( inStart <= inEnd ); 
 	vuint32 size = vuint32(inEnd - inStart);
@@ -258,7 +467,7 @@ const char*	Value_Raw::AllocCopy( const char* inStart, const char* inEnd )
 
 
 /**********************************************************************************************/
-vuint32 Value_Raw::TruncateTo( vuint32 inNewSize )
+vuint32 Value_Raw_imp::TruncateTo( vuint32 inNewSize )
 {
 	// For speed consideration this method does not perform any checking.
 	vuint32 OldLen = get_Length();
@@ -288,7 +497,7 @@ vuint32 Value_Raw::TruncateTo( vuint32 inNewSize )
 
 
 /**********************************************************************************************/
-vuint32 Value_Raw::GrowBy( vuint32 inBySize )
+vuint32 Value_Raw_imp::GrowBy( vuint32 inBySize )
 {
 	// For speed consideration this method does not perform 
 	// any checking of input parameters.
@@ -327,7 +536,7 @@ vuint32 Value_Raw::GrowBy( vuint32 inBySize )
 
 
 /**********************************************************************************************/
-void Value_Raw::put_String( const UChar* inBegin, const UChar* inEnd )
+void Value_Raw_imp::put_String( const UChar* inBegin, const UChar* inEnd )
 {
 	// There is no sence to work with Binary data as with zero terminated and probably
 	// multibyte string.
@@ -338,7 +547,7 @@ void Value_Raw::put_String( const UChar* inBegin, const UChar* inEnd )
 
 
 /**********************************************************************************************/
-void Value_Raw::put_String( const char* inBegin, const char* inEnd )
+void Value_Raw_imp::put_String( const char* inBegin, const char* inEnd )
 {
 	if ( !inEnd )
 		inEnd = inBegin + strlen( inBegin );
@@ -349,7 +558,7 @@ void Value_Raw::put_String( const char* inBegin, const char* inEnd )
 
 
 /**********************************************************************************************/
-char* Value_Raw::get_String( char* outString, tslen inBufferChars ) const
+char* Value_Raw_imp::get_String( char* outString, tslen inBufferChars ) const
 {
 	// The size of input buffer (inBufferChars) cannot be -1 !
 	// Because this is unsafe then to write to  the memory 
@@ -368,7 +577,7 @@ char* Value_Raw::get_String( char* outString, tslen inBufferChars ) const
 
 
 /**********************************************************************************************/
-String Value_Raw::get_String( tslen inLimit ) const
+String Value_Raw_imp::get_String( tslen inLimit ) const
 {
 	// There is no sense to work with Binary data as with zero terminated and probably
 	// multi byte string.
@@ -384,7 +593,7 @@ String Value_Raw::get_String( tslen inLimit ) const
 
 
 /**********************************************************************************************/
-void Value_Raw::put_String( const String& inStr )
+void Value_Raw_imp::put_String( const String& inStr )
 {
 	if( inStr.isSingleByte() )
 		put_String( inStr.getBufferA() );
@@ -394,7 +603,7 @@ void Value_Raw::put_String( const String& inStr )
 
 
 /**********************************************************************************************/
-UChar* Value_Raw::get_String( UChar* outString, tslen inBufferChars ) const
+UChar* Value_Raw_imp::get_String( UChar* outString, tslen inBufferChars ) const
 {
 	// There is no sence to work with Binary data as with zero terminated and probably
 	// multibyte string.
@@ -404,7 +613,7 @@ UChar* Value_Raw::get_String( UChar* outString, tslen inBufferChars ) const
 
 
 /**********************************************************************************************/
-vuint32 Value_Raw::put_Length( vuint32 inNewLen )
+vuint32 Value_Raw_imp::put_Length( vuint32 inNewLen )
 {
 	vuint32 Size = vuint32(m_pBufferEnd - m_pStart);
 	
@@ -420,7 +629,57 @@ vuint32 Value_Raw::put_Length( vuint32 inNewLen )
 
 
 /**********************************************************************************************/
-void Value_Raw::From( I_IStream_Ptr inStream, bool inBlock )
+vuint32 Value_Raw_imp::get_BinaryRepresentationByteLength( void ) const
+{
+	// actual data lenth + data itself. (Pascal string)
+	return sizeof(vuint32) + get_ByteLength();
+}
+
+
+/**********************************************************************************************/
+void Value_Raw_imp::FromBinaryRepresentation( const char* inpBuffer )
+{
+	const char* pInBufferPtr = inpBuffer;
+
+	Clear();
+
+	put_IsNull(false);
+
+	vuint32 Len = *( reinterpret_cast<const vuint32*>( pInBufferPtr ) );
+	pInBufferPtr += sizeof(vuint32);
+	
+	Alloc(Len);
+
+	if( Len > 0 )
+	{
+		vuint32 Available = get_Allocated();
+		Available = Len > Available ? Available : Len;
+
+		memcpy( m_pStart, pInBufferPtr, Available );
+
+		m_pEnd = m_pStart + Len;
+	}
+}
+
+
+/**********************************************************************************************/
+void Value_Raw_imp::ToBinaryRepresentation( char* outpBuffer ) const
+{
+	char* pOutBufferPtr = outpBuffer;
+	
+	bool IsNull = bool( m_pStart == nullptr );
+	vuint32 Len = (IsNull) ? 0 : vuint32(m_pEnd - m_pStart);
+		
+	memcpy( pOutBufferPtr, &Len, sizeof(Len) );
+	pOutBufferPtr += sizeof(Len);
+	
+	if( Len )
+		memcpy( pOutBufferPtr, m_pStart, Len );
+}
+
+
+/**********************************************************************************************/
+void Value_Raw_imp::From( I_IStream_Ptr inStream, bool inBlock )
 {
 	argused1(inBlock);
 
@@ -453,7 +712,7 @@ void Value_Raw::From( I_IStream_Ptr inStream, bool inBlock )
 
 
 /**********************************************************************************************/
-void Value_Raw::From( I_PacketRcv* inPacket, bool inBlock )
+void Value_Raw_imp::From( I_PacketRcv* inPacket, bool inBlock )
 {
 	argused1(inBlock);
 
@@ -484,7 +743,7 @@ void Value_Raw::From( I_PacketRcv* inPacket, bool inBlock )
 
 
 /**********************************************************************************************/
-void Value_Raw::To( I_OStream_Ptr inStream, bool inBlock ) const
+void Value_Raw_imp::To( I_OStream_Ptr inStream, bool inBlock ) const
 {
 	argused1(inBlock);
 
@@ -504,7 +763,7 @@ void Value_Raw::To( I_OStream_Ptr inStream, bool inBlock ) const
 
 
 /**********************************************************************************************/
-void Value_Raw::To( I_PacketSnd* inPacket, bool inBlock ) const
+void Value_Raw_imp::To( I_PacketSnd* inPacket, bool inBlock ) const
 {
 	argused1(inBlock);
 
@@ -526,22 +785,18 @@ void Value_Raw::To( I_PacketSnd* inPacket, bool inBlock ) const
 
 
 /**********************************************************************************************/
-vuint32 Value_Raw::get_Data( vuint8* outDataBuffer, vuint32 inBufferSize ) const 
+vuint32 Value_Raw_imp::get_Data( vuint8* outDataBuffer, vuint32 inBufferSize ) const
 {
 	FBL_CHECK(outDataBuffer);
 	if( !outDataBuffer || inBufferSize == 0 )
-	{
 		return 0;
-	}
 
 	vuint32 MyLen = get_Length();
 	if( MyLen == 0 )
-	{
 		return 0;
-	}
 
-	vuint32 ToCopy = inBufferSize > MyLen ? MyLen : inBufferSize;
-	memcpy(outDataBuffer, m_pStart, ToCopy);
+	vuint32 ToCopy = (inBufferSize > MyLen) ? MyLen : inBufferSize;
+	memcpy( outDataBuffer, m_pStart, ToCopy );
 
 	// Return the count of copied bytes.
 	return ToCopy;
@@ -549,7 +804,7 @@ vuint32 Value_Raw::get_Data( vuint8* outDataBuffer, vuint32 inBufferSize ) const
 
 
 /**********************************************************************************************/
-void Value_Raw::put_Data( vuint8* inDataBuffer, vuint32 inBufferSize ) 
+void Value_Raw_imp::put_Data( vuint8* inDataBuffer, vuint32 inBufferSize )
 {
 	vuint8* pBegin = inDataBuffer;
 	vuint8* pEnd = inDataBuffer + inBufferSize;
@@ -563,8 +818,9 @@ void Value_Raw::put_Data( vuint8* inDataBuffer, vuint32 inBufferSize )
 		put_IsNull( false );
 		vuint32 OldLen = get_Length();
 		vuint32 Available = get_Allocated();
+        
 		vuint32 Assigned = vuint32(pEnd - pBegin);
-		Assigned = Assigned > Available ? Available : Assigned;
+		Assigned = (Assigned > Available) ? Available : Assigned;
 
 		if( Assigned > 0)
 		{

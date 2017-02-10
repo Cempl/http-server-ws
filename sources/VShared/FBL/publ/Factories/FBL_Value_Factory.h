@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Value_Factory.h																		  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -44,9 +44,9 @@ namespace internal
 // Factories to create custom-type values:
 //
 FBL_SHARED_EXP	I_Value*	CreateValue_Enum( 
-	I_Type_Enumerated_Ptr	inpType,
-	vuint16 				inFlags = fNone,	
-	bool					inIsRemote = false );
+                                I_Type_Enumerated_Ptr	inpType,
+                                vuint16 				inFlags = fNone,	
+                                bool					inIsRemote = false );
 
 
 /**********************************************************************************************/

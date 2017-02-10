@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_Database.h 	                                                      				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -9,8 +9,9 @@
 	#define _FBL_I_Database_h
 #pragma once
 
-// FBL:
+// VSHARED
 #include <VShared/FBL/publ/Interfaces/FBL_I_Connection.h>
+#include <VShared/FBL/publ/Interfaces/FBL_I_KeyValue.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_Type.h>
 
 #include <VShared/FBL/publ/Util_classes/FBL_DTFormat.h>
@@ -37,9 +38,10 @@ SMART_INTERFACE(I_PropertyContainer);
 SMART_INTERFACE(I_Table);
 SMART_INTERFACE(I_Value);
 //
-SMART_ARRAY_OF_SMART_PTRS( ArrayOfTables, I_Table_Ptr );
-SMART_ARRAY_OF_SMART_PTRS( ArrayOfLinks, I_Link_Ptr );
-SMART_ARRAY_OF_SMART_PTRS( ArrayOfTypes, I_Type_Ptr );
+SMART_ARRAY_OF_SMART_PTRS( ArrayOfKeyValues, 	I_KeyValue_Ptr );
+SMART_ARRAY_OF_SMART_PTRS( ArrayOfLinks, 		I_Link_Ptr );
+SMART_ARRAY_OF_SMART_PTRS( ArrayOfTables, 		I_Table_Ptr );
+SMART_ARRAY_OF_SMART_PTRS( ArrayOfTypes, 		I_Type_Ptr );
 
 
 /**********************************************************************************************/
@@ -68,21 +70,33 @@ virtual	const I_Error*			get_Error( void ) const = 0;
 
 
 	// ---------------------
-	// Database Schema properties:
+	// Database Schema Properties:
 
-		// <IndexCount>
-								/// Returns the count of indexes in the database.
-virtual vuint32					get_IndexCount( void ) const  = 0;
-
-		// <LinkCount> [r/o]
-								/// Returns the count of links in the database.
-virtual	vuint32					get_LinkCount( void ) const = 0;
-
-		// <SchemaVersion> 	
+		// <SchemaVersion>
 								/** Schema version of database. 1, 2, 3...
                             		It is stored in the header of DB. */
 virtual	vuint16					get_SchemaVersion( void ) const = 0;
 virtual	void					put_SchemaVersion( vuint16 inVersion ) = 0;
+
+
+	// ---------------------
+	// Database Schema - Element Counters:
+
+		// <IndexCount> [r/o]
+								/// Returns the count of indexes in the database.
+virtual vuint32					get_IndexCount( void ) const  = 0;
+
+		// <IndexStyleCount> [r/o]
+								/// Returns the count of user-defined index-styles in the database.
+virtual vuint32					get_IndexStyleCount( void ) const  = 0;
+
+		// <KeyValuesCount> [r/o]
+
+virtual vuint32					get_KeyValueCount( void ) const  = 0;
+
+		// <LinkCount> [r/o]
+								/// Returns the count of links in the database.
+virtual	vuint32					get_LinkCount( void ) const = 0;
 
 		// <TableCount> [r/o]
 								/// Returns the count of tables in the database.
@@ -92,9 +106,14 @@ virtual	vuint32					get_TableCount( void ) const = 0;
 								/// Returns the count of types in the database.
 virtual	vuint32					get_TypeCount( void ) const = 0;
 
-	
 	// ---------------------
-	// DateTime properties:
+	// KeyValue Properties:
+
+virtual UChar					get_KeyDelimiter( void ) const = 0;
+virtual void					put_KeyDelimiter( UChar inValue ) = 0;
+
+	// ---------------------
+	// DateTime Properties:
 
 		// <DateFormat> [r/w]
 virtual	EDateFormat				get_DateFormat( void ) const = 0;
@@ -166,6 +185,15 @@ virtual	I_Location_Ptr			get_Location( void ) const  = 0;
 								/** Assign location for this db storage. */
 virtual void					put_Location( I_Location_Ptr inLocation ) = 0;
 
+		// <Mode>						
+								/// Returns the Mode for this db.
+virtual	DbMode					get_Mode( void ) const  = 0;
+
+                                /** Assign the Mode for db volumes.
+                                    Can be used only before Create().
+                                    Cannot change mode of existed db (at least now). */
+virtual void					put_Mode( DbMode inMode )  = 0;
+
 		// <Name> [r/o]
                                 /** Returns the name of database. In fact this is the name of db file.
                                     This is not the same as Path of db file.
@@ -178,15 +206,6 @@ virtual	const String&			get_Name( void ) const = 0;	//OLDKEEPAS: mName
 virtual I_Location_Ptr			get_RBJournalFolder( void ) const = 0;
 
 virtual void					put_RBJournalFolder( I_Location_Ptr inpFolder ) = 0;
-
-		// <Mode>						
-								/// Returns the Mode for this db.
-virtual	DbMode					get_Mode( void ) const  = 0;
-
-                                /** Assign the Mode for db volumes.
-                                    Can be used only before Create().
-                                    Cannot change mode of existed db (at least now). */
-virtual void					put_Mode( DbMode inMode )  = 0;
 
 		// <SegmentSize>
 								/// Returns the segment size of Volume(s) for this db in bytes.
@@ -211,14 +230,17 @@ virtual	bool	 				get_Journaled( void ) const  = 0;
 								/// On/Off rollback journal to the database.
 virtual void					put_Journaled( bool inValue ) = 0;
 
-	
+
+	public://///////////////////////////////////////////////////////////////////////////////////
+
 	// ---------------------
 	// Rollback Journal Methods:
 
-								/// Returns true if closed db will be rolled back on the db.Open() call.
-								/// In the rest of cases returns false.
+								/// Returns TRUE if a closed db will be rolled back on the db.Open() call.
+                                /// This happens when there was a crash of system and db was not closed in the correct way.
+								/// This function allows your app to display a warning dialog for user,
+                                /// that it can be a good idea to copy db + journal before try to open db.
 virtual bool					CheckRollback( void )  = 0;
-
 
 
 	// ---------------------
@@ -228,6 +250,7 @@ virtual bool					CheckRollback( void )  = 0;
 virtual	void					Create( void ) = 0;
 		
 								/// Opens files of this object on Device.
+                                /// You may want do CheckRollback() before open() to show warn dialog.
 virtual void 					Open( void ) = 0;
 
 								/// Closes files of this object.
@@ -249,9 +272,49 @@ virtual void 					CloneDB(
 									bool 			inLoadRecords ) = 0;
 
 
+	public://///////////////////////////////////////////////////////////////////////////////////
+
+// -------------------------
+// DB Schema Review Methods:
+// -------------------------
 
 	// ---------------------
-	// Table Methods:
+	// IndexStyle:
+
+virtual IndStyle_ID 			GetNextIndStyleID( bool inTemporary )  = 0;
+
+virtual I_IndexStyle_Ptr		get_IndexStyle_ByIndex( vuint32 inIndex ) const  = 0;
+
+                                /** Returns an object of IndexStyle with the specified name.
+                                    If not found then returns NULL.	*/
+virtual I_IndexStyle_Ptr		get_IndexStyle( IndStyle_ID inIndStyleID ) const  = 0;
+virtual I_IndexStyle_Ptr		get_IndexStyle( const String& inName ) const  = 0;
+
+
+	// ---------------------
+	// KeyValue:
+
+virtual I_KeyValue_Ptr			get_KeyValue( vuint32 inIndex ) const = 0;
+virtual I_KeyValue_Ptr			get_KeyValue( const String& inName ) const = 0;
+virtual I_KeyValue_Ptr			GetKeyValueByID( vint32 inIndex ) const = 0;
+
+
+	// ---------------------
+	// Link:
+
+virtual I_Link_Ptr				get_Link( vuint32 inIndex ) const  = 0;
+virtual I_Link_Ptr				get_Link( const String& inTableName ) const  = 0;
+
+								/** Returns a link using its unique ID.
+									Returns NULL if link is not found. */
+virtual I_Link_Ptr				GetLinkByID( vint32 inIndex ) const  = 0;
+
+    							// For C++11 'range-based for loop'.
+virtual const ArrayOfLinks&		get_Links( void ) const = 0;
+
+
+	// ---------------------
+	// Table:
 								/// Returns a table by index (1 - based) or by name.
 								/// Returns NULL if table not found.
 virtual I_Table_Ptr				get_Table( vuint32 inIndex ) const  = 0;
@@ -267,21 +330,7 @@ virtual const ArrayOfTables& 	get_Tables( void ) const = 0;
 
 
 	// ---------------------
-	// Link Methods:
-
-virtual I_Link_Ptr				get_Link( vuint32 inIndex ) const  = 0;
-virtual I_Link_Ptr				get_Link( const String& inTableName ) const  = 0;
-
-								/** Returns a link using its unique ID.
-									Returns NULL if link is not found. */
-virtual I_Link_Ptr				GetLinkByID( vint32 inIndex ) const  = 0;
-
-    							// For C++11 'range-based for loop'.
-virtual const ArrayOfLinks&		get_Links( void ) const = 0;
-
-
-	// ---------------------
-	// Type Methods:
+	// Type:
 
 virtual I_Type_Ptr				get_Type( vuint32 inIndex ) const = 0;
 virtual I_Type_Ptr				get_Type( const String& inTypeName ) const = 0;
@@ -294,19 +343,64 @@ virtual I_Type_Ptr				GetTypeByID( Type_ID inTypeID ) const = 0;
 virtual const ArrayOfTypes&		get_Types( void ) const = 0;
 
 
-	// ---------------------
-	// Value Methods:
 
-                                /**	This is a virtual factory of Values.
-                                    This allows to create values, which know if they are from
-                                    VKernel or from VClient DLL. */
-virtual I_Value_Ptr 			CreateValue(
-                                    VALUE_TYPE 	inType,
-                                    vuint16		inFlags,
-                                    void*		inData = nullptr) = 0;
 
-	// ---------------------
-	// DB Schema Methods:
+	public://///////////////////////////////////////////////////////////////////////////////////
+
+// -------------------------
+// DB Schema Modification Methods:
+// -------------------------
+
+	// IndexStyle:
+								/** Returns a new object of IndexStrPeefs.
+									@error: ErrNameNotUnique. */
+virtual	I_IndexStyle_Ptr		CreateIndexStyle(
+									const String& 		inName,
+									bool				inTmp = false ) = 0;
+
+								/** Remove from database the specified Prefs */
+virtual void					DropIndexStyle( I_IndexStyle_Ptr inPrefs ) = 0;
+
+
+	// KeyValue:
+
+								/** Creates a new kKeyValueDefault KeyValue in the Database.*/
+virtual	I_KeyValue_Ptr			CreateKeyValue(
+                                    const String& 		inName,
+									vuint64				inOptions = fKeyValueNone ) = 0;
+	
+								/** Creates a new kKeyValueWithKey KeyValue in the Database.*/
+virtual	I_KeyValue_Ptr			CreateKeyValueWithKey(
+                                    const String& 		inName,
+                                    KeyStructure_Ptr 	inKeyStructure,
+									vuint64				inOptions = fKeyValueNone ) = 0;
+	
+								/** Creates a new kKeyValueWithKey KeyValue in the Database.
+                                	inKeyStructure is a string, that describe structure of a KEY. */
+virtual	I_KeyValue_Ptr			CreateKeyValueWithKey(
+                                    const String& 		inName,
+                                    const String&		inKeyStructure,
+									vuint64				inOptions = fKeyValueNone ) = 0;
+
+virtual void					DropKeyValue( I_KeyValue_Ptr inKeyValue ) = 0;
+
+
+	// Link:
+
+                                /** Creates a new Link in the Database.
+                                    Errors:
+                                        xLinkError{ ERR_LINK_BAD_NAME, ERR_LINK_NAME_NOT_UNIQUE } */
+virtual	I_Link_Ptr				CreateLink(
+                                    const String&					inName,
+                                    ELinkKind						inKind,
+                                    Const_I_PropertyContainer_Ptr	inProperties,
+                                    bool							inTemporary = false, 
+                                    bool							inRegisterInTable = true) = 0;
+
+								/// Removes link from database.
+virtual	void					DropLink( I_Link_Ptr inLink ) = 0;
+
+	// Table:
 	
                                 /** Creates a new Table in the Database.
                                     You can ask for tmp table. Such Table will be automatically
@@ -327,19 +421,8 @@ virtual	I_Table_Ptr				CreateTable(
 										xConstraintError{ ERR_CONSTRAINT_PRIMARY_KEY_HAVE_FOREIGN_KEY } */
 virtual	void					DropTable( I_Table_Ptr inTable ) = 0;
 
-                                /** Creates a new Link in the Database.
-                                    Errors:
-                                        xLinkError{ ERR_LINK_BAD_NAME, ERR_LINK_NAME_NOT_UNIQUE } */
-virtual	I_Link_Ptr				CreateLink(
-                                    const String&					inName,
-                                    ELinkKind						inKind,
-                                    Const_I_PropertyContainer_Ptr	inProperties,
-                                    bool							inTemporary = false, 
-                                    bool							inRegisterInTable = true) = 0;
 
-								/// Remove link from database.
-virtual	void					DropLink( I_Link_Ptr inLink ) = 0;
-
+	// Type:
                                 /** Creates a new Type in the Database.
                                     Errors:
                                         xTypeError{ ERR_TYPE_BAD_NAME, 
@@ -352,31 +435,20 @@ virtual I_Type_Ptr				CreateType(
 
 								/// Remove type from database.
 virtual void	 				DropType( I_Type_Ptr inType ) = 0;
-
+	
+    
+	public://///////////////////////////////////////////////////////////////////////////////////
 
 	// ---------------------
-	// IndexStyle API methods:
+	// Value Methods:
 
-virtual IndStyle_ID 			GetNextIndStyleID( bool inTemporary )  = 0;
-
-virtual I_IndexStyle_Ptr		get_IndexStyle_ByIndex( vuint32 inIndex ) const  = 0;
-
-                                /** Returns an object of IndexStyle with the specified name.
-                                    If not found then returns NULL.	*/
-virtual I_IndexStyle_Ptr		get_IndexStyle( IndStyle_ID inIndStyleID ) const  = 0;
-virtual I_IndexStyle_Ptr		get_IndexStyle( const String& inName ) const  = 0;
-
-virtual vuint32					get_IndexStyleCount( void ) const  = 0;
-
-								/** Returns a new object of IndexStrPeefs.
-									@error: ErrNameNotUnique. */
-virtual	I_IndexStyle_Ptr		CreateIndexStyle(
-									const String& 	inName,
-									bool			inTmp = false ) = 0;
-
-								/** Remove from database the specified Prefs */
-virtual void					DropIndexStyle( I_IndexStyle_Ptr inPrefs ) = 0;
-	
+                                /**	This is a virtual factory of Values.
+                                    This allows to create values, which know if they are from
+                                    VKernel or from VClient DLL. */
+virtual I_Value_Ptr 			CreateValue(
+                                    VALUE_TYPE 	inType,
+                                    vuint16		inFlags,
+                                    void*		inData = nullptr) = 0;
 	// ---------------------
 	// Utility methods:
 
@@ -420,6 +492,7 @@ virtual void					SetMacTypes(
                                     OSType inBlbType, 
                                     OSType inIndType ) = 0; 
 
+
 	// ---------------------
 	// Dump/LoadDump:
 
@@ -462,6 +535,7 @@ virtual DumpResult_Ptr			LoadDump(
                                     I_Location_Ptr	inNewDbLocation,
                                     DUMP_TYPE		inDumpType,
                                     const char*		inEncoding = "UTF-16") = 0;
+
 
 	// ---------------------
 	// Last inserted RecID:
