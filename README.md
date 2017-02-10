@@ -4,19 +4,19 @@
 
 #Dependencies
 
-	• openSSL C++ libraries (for WebSocket) 
+	• openSSL C++ libraries (for WebSocket, https) 
 
 #Features
 
 	• only for Windows x64    
-	• HTTP (1.1) persistent connection    
+	• HTTPS (1.1) persistent connection    
 	• implemented protocol support WebSocket (RFC 6455)    
 	• independent and parallel processing of all requests				
-	• integrated data base SQlite				
+	• integrated Valentina DB, Valentina Server (Paradigma Software)				
 	• server logs
 
 #Compile and run
 
 	• compile in Microsoft Visual Studio 2015    
-	• direct your favorite browser to for instance http://localhost:27015/
+	• direct your favorite browser to for instance httpS://localhost/
 
