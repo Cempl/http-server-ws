@@ -356,5 +356,5 @@ void Response::GenerateResponse(
 					string& inWebSocketKey,
 					bool isWebSocket)
 {
-	
+	// this is start
 }

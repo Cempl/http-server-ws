@@ -24,7 +24,12 @@ class Response
 
 
 	protected:///////////////////////////////////////////////////////////////////
-		void				GenerateResponse(SSL* inSSL);
+		void				GenerateResponse(
+								SSL* inSSL,
+								string& inFileName,
+								string& inFileType,
+								string& inWebSocketKey,
+								bool isWebSocket);
 
 };
 
