@@ -61,6 +61,7 @@ class WSLexer
 	public:////////////////////////////////////////////////////////////////////
 
 							WSLexer();
+							WSLexer(const WSLexer& inOther) = delete;
 							~WSLexer();
 
 							// This method resets Lexer to a new string

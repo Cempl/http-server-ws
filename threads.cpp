@@ -1,6 +1,7 @@
 /*******************************************************************************/
 #include "Interrupt.h"
 #include "OtherExceptions.h"
+#include "Parser.h"
 #include "ResponseRequest.h"
 #include "Server.h"
 
@@ -52,7 +53,9 @@ void Server::Processing_a_connection_request()
 		
 		//unlock thread thr(ParseHttpHEAD, mySSL); this code and lock thread thr(&ResponseRequest::Request, &RR, mySSL); for using new parser
 		thread thr(&ResponseRequest::Request, &RR, mySSL);
-		//thread thr(ParseHttpHEAD, mySSL);
+
+		//Parser mParser;
+		//thread thr(&Parser::ParseHttpHEAD, &mParser, mySSL);
 		thr.detach();
 	}
 }
