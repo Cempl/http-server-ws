@@ -1,3 +1,5 @@
+#ifndef _ControlsDatabase_H
+	#define _ControlsDatabase_H
 #pragma once
 
 
@@ -20,19 +22,23 @@ class ControlsDatabase
 {
 	public://////////////////////////////////////////////////////////////////////
 
-		void InitValentina(int inCacheSize = 10 * 1024 * 1024);
-		void ShutdownValentina(void);
-		void OpenDB();
-		void Flag_online();
-		void AddAllFiles();
+							ControlsDatabase() {};
+							ControlsDatabase(const ControlsDatabase& inOther) = delete;
+							~ControlsDatabase() {};
 
-		bool FindAuthData(String inEmail, String inPass, String inToken);
-		bool AddNewUser(String inName, String inEmail, String inPass);
-		bool check_token(String inToken, string& outName);
+		void				AddAllFiles();
+		void				Flag_online();
+		void				InitValentina(int inCacheSize = 10 * 1024 * 1024);
+		void				OpenDB();
+		void				ShutdownValentina(void);
 
-		string Path_folder();
-		string get_file_from_drive(string path);
-		string get_file_from_db(string nameFile);
+		bool				AddNewUser(String inName, String inEmail, String inPass);
+		bool				check_token(String inToken, string& outName);
+		bool				FindAuthData(String inEmail, String inPass, String inToken);
+
+		string				get_file_from_db(string nameFile);
+		string				get_file_from_drive(string path);
+		string				Path_folder();
 
 	protected:///////////////////////////////////////////////////////////////////
 
@@ -48,3 +54,5 @@ class ControlsDatabase
 };
 
 extern ControlsDatabase CD;
+
+#endif // _ControlsDatabase_H

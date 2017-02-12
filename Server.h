@@ -1,3 +1,5 @@
+#ifndef _Server_H
+	#define _Server_H
 #pragma once
 
 
@@ -95,3 +97,5 @@ class Server
 		void init_openssl();
 		SSL_CTX *create_openssl_context();
 };
+
+#endif // _Server_H
