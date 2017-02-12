@@ -8,7 +8,7 @@
 
 
 /*******************************************************************************/
-int Parser::ParseHttpHEAD( SSL* inSSL )
+int Response::ParseHttpHEAD( SSL* inSSL )
 {
 	string buf;
 
@@ -28,6 +28,7 @@ int Parser::ParseHttpHEAD( SSL* inSSL )
 		bool isWebSocket = false;
 		bool isWebSocketVersion_13 = false;
 		string FileName;
+		string FileType;
 		string WebSocketKey;
 
 
@@ -51,9 +52,14 @@ int Parser::ParseHttpHEAD( SSL* inSSL )
 				strToken = string(currToken.ps, currToken.mLen);
 
 				if( currToken.mType == wsDefaultType && currToken.mLine == 1 )
-					FileName = string(prevToken.ps, prevToken.mLen) + "." + string(currToken.ps, currToken.mLen);
+				{
+					FileName = string(currToken.ps, currToken.mLen);
+					FileType = string(prevToken.ps, prevToken.mLen);
+				}	
 				else
+				{
 					continue; // we have to go to the next iteration of the loop without using function GetNextToken
+				}
 			}
 
 			// Check version of HTTP
@@ -151,7 +157,7 @@ int Parser::ParseHttpHEAD( SSL* inSSL )
 
 
 /*******************************************************************************/
-void Parser::ParseDataFromWebSocket(string& data)
+void Response::ParseDataFromWebSocket(string& data)
 {
 	if (data.size() <= 5000)
 	{
@@ -339,4 +345,16 @@ void Parser::ParseDataFromWebSocket(string& data)
 	{
 		data = "error data length";
 	}
+}
+
+
+/*******************************************************************************/
+void Response::GenerateResponse(
+					SSL* inSSL,
+					string& inFileName,
+					string& inFileType,
+					string& inWebSocketKey,
+					bool isWebSocket)
+{
+	
 }

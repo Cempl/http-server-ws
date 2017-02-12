@@ -8,19 +8,23 @@
 
 
 /*******************************************************************************/
-class Parser
+class Response
 {
 	public://////////////////////////////////////////////////////////////////////
 
-		Parser() {};
-		Parser(const Parser& inOther) = delete;
-		~Parser() {};
+		Response() {};
+		Response(const Response& inOther) = delete;
+		~Response() {};
 
 
 	public://////////////////////////////////////////////////////////////////////
 
 		int					ParseHttpHEAD( SSL* inSSL );
 		void				ParseDataFromWebSocket(string& data);
+
+
+	protected:///////////////////////////////////////////////////////////////////
+		void				GenerateResponse(SSL* inSSL);
 
 };
 

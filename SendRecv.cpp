@@ -262,8 +262,8 @@ int SendRecv::recv_data(string& data)
 	}
 	
 	{
-		Parser mParser;
-		mParser.ParseDataFromWebSocket(data);
+		Response mResponse;
+		mResponse.ParseDataFromWebSocket(data);
 	}
 
 	// recoded data
