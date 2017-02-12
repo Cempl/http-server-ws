@@ -75,14 +75,17 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 	auto j = 0;
 	auto length_code = 0;
 
-	u_char check_value;
+	const u_char* u_data = reinterpret_cast<const unsigned char*>(data.c_str());
+	u_char temp_value;
 	string temp_str = string();
 
 	auto index_first_mask = 0;
 	auto index_first_data_byte = 0;
 	auto index_first_trash = 0;
 
-	if((u_char)data[0] == 136)
+	int a = u_data[0];
+
+	if(u_data[0] == 136)
 	{
 		delete[] mask;
 
@@ -90,7 +93,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 		return 1;
 	}
 
-	if ((u_char)data[0] == 130)
+	if (u_data[0] == 130)
 	{
 		delete[] mask;
 
@@ -98,7 +101,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 		return 2;
 	}
 
-	length_code = (u_char) data[1] & 127;
+	length_code = u_data[1] & 127;
 
 	if(length_code <= 125)
 	{
@@ -106,7 +109,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 
 		for(int i =0; i < 4; ++i)
 		{
-			mask[i] = data[i+index_first_mask];
+			mask[i] = u_data[i+index_first_mask];
 		}
 	}
 	else
@@ -116,7 +119,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 
 			for(int i =0; i < 4; ++i)
 			{
-				mask[i] = data[i+index_first_mask];
+				mask[i] = u_data[i+index_first_mask];
 			}
 		}
 		else
@@ -126,7 +129,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 
 				for(int i =0; i < 4; ++i)
 				{
-					mask[i] = data[i+index_first_mask];
+					mask[i] = u_data[i+index_first_mask];
 				}
 			}
 			else
@@ -140,11 +143,9 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 
 	for(i = index_first_data_byte; i < data_length; ++i)
 	{
-		check_value = (u_char)data[i] ^ mask[j % 4];
-		if(data[j] != check_value)
-		{
-			temp_str.push_back(check_value);
-		}
+		temp_value = u_data[i] ^ mask[j % 4];
+		temp_str.push_back(reinterpret_cast<char&>(temp_value));
+
 		++j;
 	}
 
