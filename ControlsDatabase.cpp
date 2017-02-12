@@ -76,7 +76,7 @@ void ControlsDatabase::OpenDB()
 
 
 /*******************************************************************************/
-bool ControlsDatabase::FindAuthData(String inLogin, String inPass, String inToken)
+bool ControlsDatabase::AcceptAuthData(String inLogin, String inPass, String inToken)
 {
 	bool res = false;
 

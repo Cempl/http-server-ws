@@ -22,11 +22,11 @@ class SendRecv : protected MyCover
 
 		void	websocket_handshake(SSL* inSSL, string key);
 		void	send_data(SSL* inSSL);
-		void	incoming_data_processing(string& data);
+
 
 	protected:///////////////////////////////////////////////////////////////////
 
-		void	generate(string& key);
+		void	generate_key(string& key);
 		int		websocket_get_content(string& data, int data_length);
 		void	websocket_set_content(string& data, int64_t data_length, int data_type);
 		int		recv_data(string& data);

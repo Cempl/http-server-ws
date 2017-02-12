@@ -34,7 +34,7 @@ class ControlsDatabase
 
 		bool				AddNewUser(String inName, String inEmail, String inPass);
 		bool				check_token(String inToken, string& outName);
-		bool				FindAuthData(String inEmail, String inPass, String inToken);
+		bool				AcceptAuthData(String inEmail, String inPass, String inToken);
 
 		string				get_file_from_db(string nameFile);
 		string				get_file_from_drive(string path);

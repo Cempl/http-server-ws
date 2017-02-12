@@ -153,12 +153,16 @@ int Parser::ParseHttpHEAD( SSL* inSSL )
 /*******************************************************************************/
 void Parser::ParseDataFromWebSocket(string& data)
 {
+	if (data.size() <= 5000)
+	{
 		string hash_login = string();
 		string hash_pass = string();
 		string hash_token = string();
+		string current_message = data;
 		string login = "Login";
 		string password = "Password";
-		string s_token = "Token";
+		string session_token = "Token";
+		string message = "Message";
 		string temp = string();
 		string Name = string();
 
@@ -166,6 +170,10 @@ void Parser::ParseDataFromWebSocket(string& data)
 		bool check_login = false;
 		bool check_pass = false;
 		bool check_token = false;
+		bool check_message = false;
+		bool valid_login = false;
+		bool valid_pass = false;
+		bool valid_token = false;
 		bool presence_token = false;
 		bool authToken = false;
 		bool authData = false;
@@ -184,27 +192,27 @@ void Parser::ParseDataFromWebSocket(string& data)
 			{
 				case wsDefaultType:
 				{
-					temp = string(token.ps, token.pe);
+					temp = string(token.ps, token.mLen);
 
 					if (login == temp)
 					{
-						
+
 						check_login = true;
 						temp.clear();
 
 						break;
 					}
-					
+
 					if (password == temp)
 					{
-						
+
 						check_pass = true;
 						temp.clear();
 
 						break;
 					}
 
-					if (s_token == temp)
+					if (session_token == temp)
 					{
 						check_token = true;
 						temp.clear();
@@ -212,23 +220,30 @@ void Parser::ParseDataFromWebSocket(string& data)
 						break;
 					}
 
-					// if msg
+					if (message == temp)
+					{
+						check_message = true;
+						temp.clear();
+					}
 
 					break;
 				}
 
 				case wsBracketsSymbolType:
 				{
-					
+
 					if (check_login)
 					{
 						lexer.GetNextToken(&token);
 
 						if (token.mType == wsDefaultType)
 						{
-							hash_login = string(token.ps, token.pe);
-							check_login = false;
-							//check db
+							if (token.mLen > 100 && token.mLen < 150)
+							{
+								hash_login = string(token.ps, token.pe);
+								check_login = false;
+								valid_login = true;
+							}
 						}
 					}
 
@@ -238,9 +253,12 @@ void Parser::ParseDataFromWebSocket(string& data)
 
 						if (token.mType == wsDefaultType)
 						{
-							hash_pass = string(token.ps, token.pe);
-							check_pass = false;
-							//check db
+							if (token.mLen > 100 && token.mLen < 150)
+							{
+								hash_pass = string(token.ps, token.pe);
+								check_pass = false;
+								valid_pass = true;
+							}
 						}
 					}
 
@@ -248,8 +266,30 @@ void Parser::ParseDataFromWebSocket(string& data)
 					{
 						if (lexer.GetNextToken(&token))
 						{
-							hash_token = string(token.ps, token.pe);
-							check_token = false;
+							if (token.mLen > 30 && token.mLen < 50)
+							{
+								hash_token = string(token.ps, token.pe);
+
+								// erase current token and mark "Token[]" of data
+								current_message.erase(0, token.mLen + 7);
+
+								check_token = false;
+								valid_token = true;
+							}
+						}
+					}
+
+					if (check_message)
+					{
+						if (lexer.GetNextToken(&token))
+						{	
+							// erase mark "Message[" of data
+							current_message.erase(0, 8);
+
+							// erase mark "]" of data
+							current_message.erase(current_message.end() - 1);
+
+							check_message = false;
 						}
 					}
 
@@ -261,7 +301,7 @@ void Parser::ParseDataFromWebSocket(string& data)
 					// unknown data
 					login.clear();
 					password.clear();
-					s_token.clear();
+					session_token.clear();
 					temp.clear();
 
 					break;
@@ -269,10 +309,10 @@ void Parser::ParseDataFromWebSocket(string& data)
 			}
 		} while (dataEnd);
 
-		if (hash_login.size() > 100 && hash_pass.size() > 100 && (hash_token.size() > 10 && hash_token.size() < 50))
+		if (valid_login && valid_pass && valid_token)
 		{
 			// Check the authorization data in DB
-			authData = CD.FindAuthData(hash_login.c_str(), hash_pass.c_str(), hash_token.c_str());
+			authData = CD.AcceptAuthData(hash_login.c_str(), hash_pass.c_str(), hash_token.c_str());
 
 			if (authData)
 			{
@@ -280,13 +320,13 @@ void Parser::ParseDataFromWebSocket(string& data)
 			}
 		}
 
-		if (!authData && (hash_token.size() > 10 && hash_token.size() < 50))
+		if (!authData && valid_token && !valid_login && !valid_pass)
 		{
 			authToken = CD.check_token(hash_token.c_str(), Name);
 
 			if (authToken)
 			{
-				data = Name + ": " + data.erase(0, hash_token.size() + 7);
+				data = Name + ": " + current_message;
 			}
 		}
 
@@ -294,4 +334,9 @@ void Parser::ParseDataFromWebSocket(string& data)
 		{
 			data = "error";
 		}
+	}
+	else
+	{
+		data = "error data length";
+	}
 }

@@ -104,11 +104,11 @@ function sendAuthData(data, curr_event)
         var Token = 'Token[' + t_token + ']';
         
         // save token
-        sessionStorage.setItem("session_token", "Token[1234567891011]");
+        sessionStorage.setItem("session_token", Token);
 
         if(flagSignin == false)
         {
-            beta_socket.send(gLogin + gPassword + "Token[1234567891011]");
+            beta_socket.send(gLogin + gPassword + Token);
             beta_socket.onmessage = function(event)
             {
                 if(event.data != "error")
@@ -141,6 +141,7 @@ function sendAuthData(data, curr_event)
 
 function validProc()
 {
+    // get Token
     var currToken = sessionStorage.getItem("session_token");
 
     document.getElementById('connection').innerHTML = "Connect: Yes";
@@ -161,7 +162,7 @@ function validProc()
             }
             else
             {
-                beta_socket.send(currToken + outgoingMessage);
+                beta_socket.send(currToken + "Message[" + outgoingMessage + "]");
                 
                 document.forms.message_test.reset();
                 

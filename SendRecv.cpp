@@ -19,7 +19,7 @@ void SendRecv::websocket_handshake(SSL* inSSL, string key)
 {
 	string response;
 
-	generate(key);
+	generate_key(key);
 
 	response += "HTTP/1.1 101 Switching Protocols\r\n";
 	response += "Upgrade: websocket\r\n";
@@ -42,7 +42,7 @@ void SendRecv::websocket_handshake(SSL* inSSL, string key)
 
 
 /*******************************************************************************/
-void SendRecv::generate(string& key)
+void SendRecv::generate_key(string& key)
 {
 	unsigned char hash[SHA_DIGEST_LENGTH];
 
