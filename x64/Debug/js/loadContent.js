@@ -104,11 +104,11 @@ function sendAuthData(data, curr_event)
         var Token = 'Token[' + t_token + ']';
         
         // save token
-        sessionStorage.setItem("session_token", Token);
+        sessionStorage.setItem("session_token", "Token[1234567891011]");
 
         if(flagSignin == false)
         {
-            beta_socket.send(gLogin + gPassword + Token);
+            beta_socket.send(gLogin + gPassword + "Token[1234567891011]");
             beta_socket.onmessage = function(event)
             {
                 if(event.data != "error")
