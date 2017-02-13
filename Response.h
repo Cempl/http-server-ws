@@ -48,7 +48,7 @@ class Response
 
 	protected:///////////////////////////////////////////////////////////////////
 
-	SendRecv SR;
+		SendRecv			SR;
 };
 
 #endif // _Response_H
