@@ -18,7 +18,7 @@ int ResponseRequest::Request(SSL* inSSL)
 
 			vector<string>		entire_query;
 	const	vector<string>		additional_type_list = { ".css" };
-	const	vector<string>		image_type_list = { ".jpg", ".tiff", ".png", ".jpeg", ".gif", ".ico" };
+	const	vector<string>		image_type_list = { ".jpg", ".tiff", ".png", ".jpeg", ".gif", ".ico", ".svg" };
 	const	vector<string>		web_type_list = { ".html" };
 	const	vector<string>		js_type_list = { ".js" };
 	

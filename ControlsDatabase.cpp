@@ -89,7 +89,7 @@ bool ControlsDatabase::AcceptAuthData(String inLogin, String inPass, String inTo
 		I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect(Query);
 		getLogin = pVdbCursor->get_Field("user_email")->get_Value()->get_String();
 
-		if (getLogin == inLogin)
+		if (getLogin == inLogin && getLogin.length() != 0)
 		{
 			Query = "SELECT *FROM UserAuthData WHERE user_password = '" + inPass + "';";
 
@@ -97,7 +97,7 @@ bool ControlsDatabase::AcceptAuthData(String inLogin, String inPass, String inTo
 
 			getPass = pVdbCursor->get_Field("user_password")->get_Value()->get_String();
 
-			if (getPass == inPass)
+			if (getPass == inPass && getPass.length() != 0)
 			{
 				pVdbCursor = pSqlVDB->SqlSelect("UPDATE UserAuthData SET token = '" + inToken + "' WHERE user_email = '" + inLogin + "';");
 				
@@ -240,7 +240,7 @@ string ControlsDatabase::get_file_from_db(string nameFile)
 			pField = pVdbCursor->get_Field("fileName");
 			getName = pField->get_Value()->get_String();
 
-			if (tNameFile == getName)
+			if (tNameFile == getName && getName.length() != 0)
 			{
 				pField = pVdbCursor->get_Field("html/css/js");
 
@@ -309,12 +309,16 @@ bool ControlsDatabase::check_token(String inToken, string& outName)
 		I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect(Query);
 		getToken = pVdbCursor->get_Field("token")->get_Value()->get_String();
 
-		if (getToken == inToken)
+		if (getToken == inToken && getToken.length() != 0)
 		{
 			Name = pVdbCursor->get_Field("user_name")->get_Value()->get_String();
-			outName = string(Name.getBufferA(), Name.length());
 
-			res = true;
+			if (Name.length() != 0)
+			{
+				outName = string(Name.getBufferA(), Name.length());
+
+				res = true;
+			}
 		}
 	}
 	catch (xException&)
