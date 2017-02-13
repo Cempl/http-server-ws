@@ -75,6 +75,8 @@ int Response::ParseHttpHEAD( SSL* inSSL )
 		MyCover mySendRecv;
 		mySendRecv.my_recv(inSSL, buf);
 
+		cout << buf; 
+
 		WSLexer mLexer;
 		const char* buff_s = buf.c_str();
 		mLexer.Put_HttpRequest( buff_s,  buff_s + buf.size() );
