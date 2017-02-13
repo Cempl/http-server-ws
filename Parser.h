@@ -5,6 +5,7 @@
 
 /*******************************************************************************/
 #include "Server.h"
+#include "SendRecv.h"
 
 
 /*******************************************************************************/
@@ -37,11 +38,17 @@ class Response
 
 		void				GenerateResponse(
 								SSL* inSSL,
+								bool isGET,
+								bool isProtocolVersion_1_1,
+								bool isWebSocket,
+								bool isWebSocketVersion_13,
 								string& inFileName,
 								string& inFileType,
-								string& inWebSocketKey,
-								bool isWebSocket);
+								string& inWebSocketKey);
 
+	protected:///////////////////////////////////////////////////////////////////
+
+	SendRecv SR;
 };
 
 #endif // _Parser_H

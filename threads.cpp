@@ -52,10 +52,10 @@ void Server::Processing_a_connection_request()
 		}
 		
 		//unlock thread thr(ParseHttpHEAD, mySSL); this code and lock thread thr(&ResponseRequest::Request, &RR, mySSL); for using new parser
-		thread thr(&ResponseRequest::Request, &RR, mySSL);
+		//thread thr(&ResponseRequest::Request, &RR, mySSL);
 
-		//Parser mParser;
-		//thread thr(&Parser::ParseHttpHEAD, &mParser, mySSL);
+		Response mParser;
+		thread thr(&Response::ParseHttpHEAD, &mParser, mySSL);
 		thr.detach();
 	}
 }

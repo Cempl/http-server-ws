@@ -29,7 +29,7 @@ void SendRecv::websocket_handshake(SSL* inSSL, string key)
 	
 	try
 	{
-		my_send(inSSL, response);
+		my_send(inSSL, response, false);
 	}
 	catch(exception& e)
 	{
@@ -226,7 +226,7 @@ void SendRecv::send_data(SSL* inSSL)
 			}
 
 			interruptible_wait(gdata_cond, u_mutex, [&index]{return (index < my_gList.size());});
-			my_send(inSSL, my_gList[index]);
+			my_send(inSSL, my_gList[index], false);
 			++index;
 
 			// Max length of the queue
@@ -293,7 +293,7 @@ int SendRecv::recv_data(string& data, SSL* inSSL)
 			websocket_set_content(data, data.size(), result);
 
 			// send data
-			my_send(inSSL, data);
+			my_send(inSSL, data, false);
 
 			break;
 		}

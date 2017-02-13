@@ -8,9 +8,65 @@
 
 
 /*******************************************************************************/
+//Helping methods
+
+
+/*******************************************************************************/
+enum FileTypeList
+{
+	fErrorType = 0,
+
+	fHtmlType,
+	fCssType,
+	fJSType,
+	fImageType
+};
+
+
+/*******************************************************************************/
+FileTypeList getFileType(string& inFileType, string& inFileName)
+{
+	FileTypeList res = fErrorType;
+
+	// I think this is bad design. But I do not know how to do it differently
+	if( inFileType == "html" || (inFileName == "" && inFileType == ""))
+		res = fHtmlType;
+
+	if( inFileType == "css" )
+		res = fCssType;
+
+	if( inFileType == "js" )
+		res = fJSType;
+
+	if( inFileType == "jpg"		||
+		inFileType == "tiff"	||
+		inFileType == "png"		||
+		inFileType == "jpeg"	||
+		inFileType == "gif"		||
+		inFileType == "ico"		||
+		inFileType == "svg")
+		res = fImageType;
+
+	return res;
+}
+
+
+/*******************************************************************************/
+//Class methods
+
+
+/*******************************************************************************/
 int Response::ParseHttpHEAD( SSL* inSSL )
 {
 	string buf;
+
+	bool isGET = false;
+	bool isProtocolVersion_1_1 = false;
+	bool isWebSocket = false;
+	bool isWebSocketVersion_13 = false;
+	string FileName;
+	string FileType;
+	string WebSocketKey;
 
 	try
 	{
@@ -22,15 +78,6 @@ int Response::ParseHttpHEAD( SSL* inSSL )
 		WSLexer mLexer;
 		const char* buff_s = buf.c_str();
 		mLexer.Put_HttpRequest( buff_s,  buff_s + buf.size() );
-
-		bool isGET = false;
-		bool isProtocolVersion_1_1 = false;
-		bool isWebSocket = false;
-		bool isWebSocketVersion_13 = false;
-		string FileName;
-		string FileType;
-		string WebSocketKey;
-
 
 		bool ContinueToCycle = false;
 		WSLexer::Token currToken;
@@ -53,8 +100,8 @@ int Response::ParseHttpHEAD( SSL* inSSL )
 
 				if( currToken.mType == wsDefaultType && currToken.mLine == 1 )
 				{
-					FileName = string(currToken.ps, currToken.mLen);
-					FileType = string(prevToken.ps, prevToken.mLen);
+					FileType = string(currToken.ps, currToken.mLen);
+					FileName = string(prevToken.ps, prevToken.mLen);
 				}	
 				else
 				{
@@ -117,8 +164,15 @@ int Response::ParseHttpHEAD( SSL* inSSL )
 				ContinueToCycle = mLexer.GetNextToken(&currToken, true);
 				if( string(currToken.ps, currToken.mLen) == ":" )
 				{
-					ContinueToCycle = mLexer.GetNextToken(&currToken, true);
-					WebSocketKey = string(currToken.ps, currToken.mLen);
+					string PartOfKey;
+
+					do
+					{
+						WebSocketKey += PartOfKey;
+						ContinueToCycle = mLexer.GetNextToken(&currToken, true);
+						PartOfKey = string(currToken.ps, currToken.mLen);
+					}
+					while(PartOfKey != "\n" && PartOfKey != "\r");
 				}
 				else
 				{
@@ -145,6 +199,16 @@ int Response::ParseHttpHEAD( SSL* inSSL )
 			prevToken = currToken;
 			ContinueToCycle = mLexer.GetNextToken(&currToken, true);
 		}
+
+		GenerateResponse(
+			inSSL, 
+			isGET, 
+			isProtocolVersion_1_1,
+			isWebSocket,
+			isWebSocketVersion_13,
+			FileName,
+			FileType,
+			WebSocketKey);
 	}
 	catch(exception& e)
 	{
@@ -360,10 +424,82 @@ int Response::ParseDataFromWebSocket(string& data)
 /*******************************************************************************/
 void Response::GenerateResponse(
 					SSL* inSSL,
+					bool isGET,
+					bool isProtocolVersion_1_1,
+					bool isWebSocket,
+					bool isWebSocketVersion_13,
 					string& inFileName,
 					string& inFileType,
-					string& inWebSocketKey,
-					bool isWebSocket)
+					string& inWebSocketKey)
 {
-	// this is start
+	string HTTPResponse;
+
+	if(isGET && isProtocolVersion_1_1)
+		HTTPResponse = "HTTP/1.1 200 OK\n";
+	else
+		throw exception("Error: Unknow type of request or protocol version");
+
+	if(!isWebSocket)
+	{
+		HTTPResponse += "Server: VaV/V2\n";
+
+		switch(getFileType(inFileType, inFileName))
+		{
+			case fHtmlType:
+			{
+				HTTPResponse += "Content-Type: text/html;\n";
+				HTTPResponse += "Connection: keep-alive\n";
+				HTTPResponse += "X-Powered-By: c++\r\n\r\n";
+
+			}break;
+
+			case fCssType:
+			{
+				HTTPResponse += "Content-Type: text/css;\r\n\r\n";
+
+			}break;
+
+			case fJSType:
+			{
+				HTTPResponse += "Content-Type: application/javascript;\r\n\r\n";
+			
+			}break;
+
+			case fImageType:
+			{
+				HTTPResponse += "Content-Type: image/png;\r\n\r\n";
+		
+			}break;
+
+			case fErrorType:
+			default:
+			{
+				throw exception("Error: Unknow type of file");
+		
+			}break;
+		}
+
+		if(inFileName == "" && inFileType == "")
+			HTTPResponse += CD.get_file_from_db("index.html");
+		else
+			HTTPResponse += CD.get_file_from_db(inFileName + "." + inFileType);
+
+		MyCover mySend;
+		mySend.my_send(inSSL, HTTPResponse, true);
+	}
+	else
+	{
+		if(isWebSocketVersion_13)
+		{
+			SR.websocket_handshake(inSSL, inWebSocketKey);
+
+			MyCover myCleanUp;
+			myCleanUp.my_Cleanup_OpenSSL(inSSL);
+		}
+		else
+		{
+			throw exception("Error: Unknow WebSocket version");
+		}
+	}
+
 }
