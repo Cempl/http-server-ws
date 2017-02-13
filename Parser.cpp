@@ -157,8 +157,11 @@ int Response::ParseHttpHEAD( SSL* inSSL )
 
 
 /*******************************************************************************/
-void Response::ParseDataFromWebSocket(string& data)
+int Response::ParseDataFromWebSocket(string& data)
 {
+	int res = 0;
+
+	// restrict data length
 	if (data.size() <= 5000)
 	{
 		string hash_login = string();
@@ -323,6 +326,8 @@ void Response::ParseDataFromWebSocket(string& data)
 			if (authData)
 			{
 				data = CD.get_file_from_db("chat.html");
+
+				res = 2;
 			}
 		}
 
@@ -332,7 +337,9 @@ void Response::ParseDataFromWebSocket(string& data)
 
 			if (authToken)
 			{
-				data = Name + ": " + current_message;
+				data = Name + "  " + current_message;
+
+				res = 1;
 			}
 		}
 
@@ -345,6 +352,8 @@ void Response::ParseDataFromWebSocket(string& data)
 	{
 		data = "error data length";
 	}
+
+	return res;
 }
 
 

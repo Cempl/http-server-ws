@@ -34,15 +34,17 @@ li {
     margin-right: 2%;
     border: 1px solid #1E90FF;
     padding-bottom: 0;
-    font-family: Century Gothic;
-    font-size: 18px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 16px;
+    font-weight: lighter;
     border-bottom: none;
     padding-left: 10px;
     padding-right: 10px;
     padding-top: 10px;
     padding-bottom: 10px;
     background-color: ghostwhite;
-    color: #1E90FF;
+    color: black;
+    overflow: auto;
 }
 
 .input-message:focus {
@@ -60,7 +62,7 @@ li {
 }
 
 .first-legend {
-    font-size: 22px;
+    font-size: 18px;
     font-family: Century Gothic;
     padding-top: 10px;
     color: #1E90FF;

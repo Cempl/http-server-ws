@@ -161,7 +161,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 /*******************************************************************************/
 void SendRecv::websocket_set_content(string& data, int64_t data_length, int data_type)
 {
-	string message;
+	string message = string();
 
 	if (data_type == 2)
 	{
@@ -251,8 +251,10 @@ void SendRecv::send_data(SSL* inSSL)
 
 
 /*******************************************************************************/
-int SendRecv::recv_data(string& data)
+int SendRecv::recv_data(string& data, SSL* inSSL)
 {
+	int res_code = int();
+
 	// Decode data
 	auto result = websocket_get_content(data, static_cast<int>(data.size()));
 
@@ -263,19 +265,70 @@ int SendRecv::recv_data(string& data)
 	
 	{
 		Response mResponse;
-		mResponse.ParseDataFromWebSocket(data);
+		res_code = mResponse.ParseDataFromWebSocket(data);
 	}
 
-	// recoded data
-	websocket_set_content(data, data.size(), result);
+	switch (res_code)
+	{
+		case 1:
+		{
+			// recoded data
+			websocket_set_content(data, data.size(), result);
 
-	lock_guard<mutex> guard(glist_mutex); 
+			lock_guard<mutex> guard(glist_mutex);
 
-	// Added data in queue
-	my_gList.push_back(data);
+			// Added data in queue
+			my_gList.push_back(data);
 
-	// Wake up streams to send a data
-	gdata_cond.notify_all();
+			// Wake up streams to send a data
+			gdata_cond.notify_all();
+
+			break;
+		}
+
+		case 0:
+		case 2:
+		{
+			// recoded data
+			websocket_set_content(data, data.size(), result);
+
+			// send data
+			my_send(inSSL, data);
+
+			break;
+		}
+
+		case 3:
+		{
+			break;
+		}
+
+		case 4:
+		{
+			break;
+		}
+
+		case 5:
+		{
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+	}
+
+	//// recoded data
+	//websocket_set_content(data, data.size(), result);
+
+	//lock_guard<mutex> guard(glist_mutex); 
+
+	//// Added data in queue
+	//my_gList.push_back(data);
+
+	//// Wake up streams to send a data
+	//gdata_cond.notify_all();
 	
 	return 0;
 }
@@ -295,7 +348,7 @@ int SendRecv::Thread_recv(SSL* inSSL)
 			// Accept data from client
 			my_recv(inSSL, message);
 
-			int result = recv_data(message);
+			int result = recv_data(message, inSSL);
 
 			if(result == 1)
 			{		

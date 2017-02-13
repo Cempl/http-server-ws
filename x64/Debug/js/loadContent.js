@@ -141,8 +141,21 @@ function sendAuthData(data, curr_event)
 
 function validProc()
 {
+    // get Date
+    var nowTime = new Date();
+
     // get Token
     var currToken = sessionStorage.getItem("session_token");
+
+    var style_message = '<p style = "color:dimgrey; \
+                        font-weight: normal; \
+                        font-size: 18px; \
+                        font-family: "Times New Roman", Times, serif; \
+                        margin-bottom: 10px;">';
+
+    var style_time = '<span style = "color:black; \
+                       font-weight: lighter; \
+                       font-size: 12px;">';
 
     document.getElementById('connection').innerHTML = "Connect: Yes";
 
@@ -162,7 +175,7 @@ function validProc()
             }
             else
             {
-                beta_socket.send(currToken + "Message[" + outgoingMessage + "]");
+                beta_socket.send(currToken + "Message[" + style_time + (new Date().getHours() + ":" + new Date().getMinutes()) + '</span>' + style_message + outgoingMessage + '</p>' + "]");
                 
                 document.forms.message_test.reset();
                 

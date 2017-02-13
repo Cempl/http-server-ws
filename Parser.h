@@ -20,10 +20,21 @@ class Response
 	public://////////////////////////////////////////////////////////////////////
 
 		int					ParseHttpHEAD( SSL* inSSL );
-		void				ParseDataFromWebSocket(string& data);
+
+							/*
+							Return code:
+							0 - incoming data error
+							1 - successful processing of incoming data
+							2 - authorization successful
+							3 - 
+							4 -
+							5 -
+							*/
+		int					ParseDataFromWebSocket( string& data );
 
 
 	protected:///////////////////////////////////////////////////////////////////
+
 		void				GenerateResponse(
 								SSL* inSSL,
 								string& inFileName,
