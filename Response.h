@@ -1,5 +1,5 @@
-#ifndef _Parser_H
-	#define _Parser_H
+#ifndef _Response_H
+	#define _Response_H
 #pragma once
 
 
@@ -51,4 +51,4 @@ class Response
 	SendRecv SR;
 };
 
-#endif // _Parser_H
+#endif // _Response_H

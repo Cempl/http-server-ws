@@ -1,8 +1,7 @@
 /*******************************************************************************/
 #include "SendRecv.h"
 #include "LogFile.h"
-#include "Parser.h"
-#include "ResponseRequest.h"
+#include "Response.h"
 #include "ControlsDatabase.h"
 
 

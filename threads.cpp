@@ -1,16 +1,13 @@
 /*******************************************************************************/
 #include "Interrupt.h"
 #include "OtherExceptions.h"
-#include "Parser.h"
-#include "ResponseRequest.h"
+#include "Response.h"
 #include "Server.h"
 
 
 /*******************************************************************************/
 void Server::Processing_a_connection_request()
 {
-	ResponseRequest RR;
-
 	while (client_socket = accept(server_socket, (struct sockaddr*)&addr, &addrLen))
 	{
 		if (client_socket == INVALID_SOCKET)
@@ -50,9 +47,6 @@ void Server::Processing_a_connection_request()
 		{
 			get_ssl_error(mySSL, ret_code);
 		}
-		
-		//unlock thread thr(ParseHttpHEAD, mySSL); this code and lock thread thr(&ResponseRequest::Request, &RR, mySSL); for using new parser
-		//thread thr(&ResponseRequest::Request, &RR, mySSL);
 
 		Response mParser;
 		thread thr(&Response::ParseHttpHEAD, &mParser, mySSL);
