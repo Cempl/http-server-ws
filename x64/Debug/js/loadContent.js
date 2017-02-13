@@ -147,7 +147,7 @@ function validProc()
     // get Token
     var currToken = sessionStorage.getItem("session_token");
 
-    var style_message = '<p style = "color:dimgrey; \
+    var style_message = '<pre><p style = "color:dimgrey; \
                         font-weight: normal; \
                         font-size: 18px; \
                         font-family: "Times New Roman", Times, serif; \
@@ -175,7 +175,10 @@ function validProc()
             }
             else
             {
-                beta_socket.send(currToken + "Message[" + style_time + (new Date().getHours() + ":" + new Date().getMinutes()) + '</span>' + style_message + outgoingMessage + '</p>' + "]");
+                beta_socket.send(
+                    currToken + "Message[" + 
+                    style_time + (new Date().getHours() + ":" + new Date().getMinutes()) + '</span>' + 
+                    style_message + outgoingMessage + '</p></pre>' + "]" );
                 
                 document.forms.message_test.reset();
                 
