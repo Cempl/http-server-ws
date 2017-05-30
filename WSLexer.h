@@ -78,12 +78,6 @@ class WSLexer
 		const char*			mpHttpStrEnd		= nullptr;
 
 		const char*			mpCurrChar			= nullptr;
-
-		int					mLine 				= 1; 		// the current line in command.
-
-		// Flags
-		bool				flagBracketsOpen	= false;
-		bool				flagQuotesOpen		= false;
 };
 
 #endif // _WSLexer_H

@@ -21,8 +21,6 @@ void WSLexer::Put_HttpRequest(const char* inHttpStr, const char* inHttpStrEnd)
 	mpHttpStrEnd	= inHttpStrEnd  ? inHttpStrEnd 
 									: inHttpStr + strlen(inHttpStr);
 	mpCurrChar		= mpHttpStr;
-
-	mLine			= 1;
 }
 
 
@@ -35,14 +33,8 @@ bool WSLexer::GetNextToken(Token* outToken, bool WithoutSpace)
 	bool flagLongWord = false;
 	bool flagThisTokenIsSpace = false;
 
-	if( mpCurrChar == mpHttpStrEnd )
-	{
-		if(flagBracketsOpen || flagQuotesOpen)
-		{
-			//throw exception("Error WSLexer: Don't closed brackets or quotes");
-		}
+	if( mpCurrChar == mpHttpStrEnd )	
 		return res; // end of string
-	}
 
 	outToken->ps = mpCurrChar;
 
@@ -64,7 +56,7 @@ bool WSLexer::GetNextToken(Token* outToken, bool WithoutSpace)
 					}
 					else
 					{
-						mpCurrChar = mpCurrChar + 1; // I only work with UTF-8 char, it has a length of 1.
+						mpCurrChar = mpCurrChar + 1; // I only work with ASCII char, it has a length of 1.
 						outToken->mType = wsSpaceType;
 						outToken->pe = mpCurrChar;
 					}

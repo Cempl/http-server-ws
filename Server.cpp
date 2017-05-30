@@ -100,12 +100,12 @@ void Server::create_socket()
 {
 	server_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-		if (server_socket == INVALID_SOCKET)
-		{
-			WSACleanup();
-			
-			throw exception("Error at socket(): " + WSAGetLastError());
-		}
+	if (server_socket == INVALID_SOCKET)
+	{
+		WSACleanup();
+		
+		throw exception("Error at socket(): " + WSAGetLastError());
+	}
 }
 
 

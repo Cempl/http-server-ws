@@ -14,7 +14,7 @@ bool queueClear = false;
 
 
 /*******************************************************************************/
-void SendRecv::websocket_handshake(SSL* inSSL, string key)
+void SendRecv::websocket_handshake(SSL* inSSL, string& key)
 {
 	string response;
 
@@ -52,15 +52,9 @@ void SendRecv::generate_key(string& key)
 	key = (const char*)hash;
 
 	if (key.size() > 20)
-	{
 		key = key.erase(20, key.length());
 
-		key = base64_encode(reinterpret_cast<const unsigned char*>(key.c_str()), static_cast<unsigned int>(key.length()));
-	}
-	else
-	{
-		key = base64_encode(reinterpret_cast<const unsigned char*>(key.c_str()), static_cast<unsigned int>(key.length()));
-	}
+	key = base64_encode(reinterpret_cast<const unsigned char*>(key.c_str()), static_cast<unsigned int>(key.length()));
 }
 
 

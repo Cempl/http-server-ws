@@ -434,15 +434,15 @@ void Response::GenerateResponse(
 					string& inFileType,
 					string& inWebSocketKey)
 {
-	string HTTPResponse;
-
-	if(isGET && isProtocolVersion_1_1)
-		HTTPResponse = "HTTP/1.1 200 OK\n";
-	else
-		throw exception("Error: Unknow type of request or protocol version");
-
 	if(!isWebSocket)
 	{
+		string HTTPResponse;
+
+		if(isGET && isProtocolVersion_1_1)
+			HTTPResponse = "HTTP/1.1 200 OK\n";
+		else
+			throw exception("Error: Unknow type of request or protocol version");
+
 		HTTPResponse += "Server: VaV/V2\n";
 
 		switch(getFileType(inFileType, inFileName))

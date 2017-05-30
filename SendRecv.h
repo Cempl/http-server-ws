@@ -20,7 +20,7 @@ class SendRecv : protected MyCover
 				SendRecv(const SendRecv& InOther) = delete;
 				~SendRecv() {};
 
-		void	websocket_handshake(SSL* inSSL, string key);
+		void	websocket_handshake(SSL* inSSL, string& key);
 		void	send_data(SSL* inSSL);
 
 
