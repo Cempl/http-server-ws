@@ -8,7 +8,7 @@
 
 
 /*******************************************************************************/
-#include <ctime>
+#include <time.h>
 #include <Shlwapi.h>
 
 
@@ -20,7 +20,7 @@ class LogFile
 				LogFile()
 				:
 					local_time(),
-					struct_local_time()	
+					struct_local_time()
 				{};
 
 				LogFile(const LogFile& InOther) = delete;
@@ -38,7 +38,7 @@ class LogFile
 	protected:///////////////////////////////////////////////////////////////////
 
 		time_t	local_time = time_t();
-		tm*		struct_local_time;	
+		struct tm struct_local_time;
 		string path = string();
 };
 

@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Interfaces.h		                  		                               				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -34,6 +34,7 @@
 #include <VShared/FBL/publ/Interfaces/FBL_I_Field.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_File.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_FldBlob.h>
+#include <VShared/FBL/publ/Interfaces/FBL_I_FldVariant.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_FldObjectPtr.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_FldObjectsPtr.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_FldPicture.h>
@@ -43,8 +44,14 @@
 #include <VShared/FBL/publ/Interfaces/FBL_I_ForeignPlugin.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_IndexStyle.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_IStream.h>
+
+#include <VShared/FBL/publ/Interfaces/FBL_I_KeyValue.h>
+#include <VShared/FBL/publ/Interfaces/FBL_I_KeyValue_ForTable.h>
+#include <VShared/FBL/publ/Interfaces/FBL_I_KeyValue_ForLink.h>
+
 #include <VShared/FBL/publ/Interfaces/FBL_I_Link.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_Link2.h>
+#include <VShared/FBL/publ/Interfaces/FBL_I_Link2_WithOrder.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_LinkOnValues.h>
 
 #include <VShared/FBL/publ/Interfaces/FBL_I_Localizable.h>
@@ -80,6 +87,7 @@
 #include <VShared/FBL/publ/Interfaces/FBL_I_ValueDateTime.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_ValueTime.h>
 #include <VShared/FBL/publ/Interfaces/FBL_I_ValueApproximate.h>
+#include <VShared/FBL/publ/Interfaces/FBL_I_ValueVariant.h>
 #include <VShared/FBL/publ/Interfaces/fbl_i_valueformater.h> // KP In the SVN this file in the LOWER CASE. It is important for linux.
 
 

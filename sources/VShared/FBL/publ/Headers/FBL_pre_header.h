@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_pre_header.h																		 	  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 // Contains prefix that must have EACH header file of FBL

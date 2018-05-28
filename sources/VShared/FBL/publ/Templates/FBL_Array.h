@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Array.h                                                     					  		  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -131,7 +131,7 @@ template
 	class elem_traits = PtrItems<T>,
 	class remove_policy = RPNothing<T>
 > 
-class Array : 
+class Array :
 	protected elem_traits, 
 	protected remove_policy, 
 	public I_Unknown
@@ -242,6 +242,10 @@ virtual 					~Array( void )
 							}		
 
 		void				RemoveItemAt( vuint32 inPos, bool inDontDestroy = false );	
+
+		void				RemoveLastItem( bool inDontDestroy = false )
+        						{ RemoveItemAt(mItems, inDontDestroy); }
+
 
 		const T&			get_ItemAt( vuint32 inPos ) const 
 							{ 

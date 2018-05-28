@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Errors.h										    									  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 //
@@ -135,6 +135,14 @@ DECLARE_ERROR( ERR_DB_ERROR                                                , 0x5
 
 //Sequence error.
 DECLARE_ERROR( ERR_SEQUENCE_ERROR                                          , 0x52000);
+
+
+/**********************************************************************************************/
+// GROUP:  KeyValue errors
+// 
+
+//KeyValue error.
+DECLARE_ERROR( ERR_KEYVALUE_ERROR                                          , 0x69000);
 
 
 /**********************************************************************************************/
@@ -746,6 +754,31 @@ DECLARE_ERROR( ERR_PICTURE_UNKNOWN_TYPE                                    , 0x6
 DECLARE_ERROR( ERR_PICTURE_UNKNOWN_ERROR                                   , 0x65502);
 
 
+#pragma mark KeyValue error
+
+/**********************************************************************************************/
+// CLASS:  69               KeyValue error
+// 
+
+//"%S" is bad KeyValue name.
+DECLARE_ERROR( ERR_KEYVALUE_BAD_NAME                                       , 0x69501);
+
+//KeyValue "%S" not found.
+DECLARE_ERROR( ERR_KEYVALUE_NOT_FOUND                                      , 0x69503);
+
+//KeyValue "%S" is not unique.
+DECLARE_ERROR( ERR_KEYVALUE_NAME_NOT_UNIQUE                                , 0x69506);
+
+//KeyValue "%S" - unappropriated key "%S" (%S).
+DECLARE_ERROR( ERR_KEYVALUE_BAD_KEY                                        , 0x69507);
+
+//KeyValue "%S" - key "%S" not found.
+DECLARE_ERROR( ERR_KEYVALUE_KEY_NOT_FOUND                                  , 0x69508);
+
+//KeyValue "%S" - not unique key "%S".
+DECLARE_ERROR( ERR_KEYVALUE_NOT_UNIQUE_KEY                                 , 0x69509);
+
+
 #pragma mark Table error
 
 /**********************************************************************************************/
@@ -995,6 +1028,9 @@ DECLARE_ERROR( ERR_LINK_INCONSISTENT_STORAGE_KIND                          , 0x8
 
 //The link "%S" must be recursive.
 DECLARE_ERROR( ERR_LINK_MUST_BE_RECURSIVE                                  , 0x81539);
+
+//The link "%S" with order can not be of 1:1 type.
+DECLARE_ERROR( ERR_LINK_WITH_ORDER_CANNOT_BE_11                            , 0x81540);
 
 
 #pragma mark Connection errors.

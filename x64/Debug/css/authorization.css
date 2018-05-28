@@ -86,8 +86,9 @@
     width: 200px;
     height: 40px;
     z-index: 0;
-    margin-left: 5px;
-    margin-right: 5px;
+    margin-left: 40%;
+    margin-right: 40%;
+    margin-bottom: 18%;
 }
 
 .form-auth-reg {

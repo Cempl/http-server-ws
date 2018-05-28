@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Instantenation.cpp                  		                               				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 /*
@@ -41,6 +41,7 @@ I_Field::~I_Field( void )									{}
 I_File::~I_File( void )										{}
 
 I_FldBlob::~I_FldBlob( void )								{}
+I_FldVariant::~I_FldVariant( void )							{}
 I_FldObjectPtr::~I_FldObjectPtr( void )						{}
 I_FldObjectsPtr::~I_FldObjectsPtr( void )					{}
 I_FldPicture::~I_FldPicture( void )							{}
@@ -52,8 +53,13 @@ I_ForeignPlugin::~I_ForeignPlugin( void )					{}
 I_IndexStyle::~I_IndexStyle( void )							{}
 I_IStream::~I_IStream( void )								{}
 
+I_KeyValue::~I_KeyValue( void )								{}
+I_KeyValue_ForTable::~I_KeyValue_ForTable( void )			{}
+I_KeyValue_ForLink::~I_KeyValue_ForLink( void )				{}
+
 I_Link::~I_Link( void )										{}
 I_Link2::~I_Link2( void )									{}
+I_Link2_WithOrder::~I_Link2_WithOrder( void )				{}
 I_LinkOnValues::~I_LinkOnValues( void )						{}
 I_Location::~I_Location( void )								{}
 
@@ -97,6 +103,7 @@ I_ValueDate::~I_ValueDate( void )							{}
 I_ValueDateTime::~I_ValueDateTime( void )					{}
 I_ValueTime::~I_ValueTime( void )							{}
 I_ValueApproximate::~I_ValueApproximate( void )				{}
+I_ValueVariant::~I_ValueVariant( void )						{}
 I_ValueFormater::~I_ValueFormater( void )					{}
 
 

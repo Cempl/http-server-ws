@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Value_Compound.h 	                                                   				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -31,7 +31,7 @@ SMART_CLASS(Value_Compound);
 /**********************************************************************************************/
 // Implements Compound Value (initial 12/30/11 for v5.x)
 // 
-// This is a value, which is made as set of few other simple values.
+// This is a value, which is made as a set of few other simple values.
 // Intended first of all for Compound Indexes, based on few fields.
 // 
 // This value can be considered IsNullable, if all its sub-values are such.
@@ -46,13 +46,14 @@ SMART_CLASS(Value_Compound);
 class FBL_SHARED_EXP_CLASS Value_Compound 
 : 
     public I_Value,
-    public I_ValueCompound
-//  public I_Serializable	// Compound value only for internal use to build Compound indexes.
+    public I_ValueCompound,
+	public I_Serializable
 {
 		IMPLEMENT_UNKNOWN(Value_Compound)											
 		BEGIN_INTERFACE_TABLE(Value_Compound)										
 			IMPLEMENT_INTERFACE(I_Value)										
-			IMPLEMENT_INTERFACE(I_ValueCompound)										
+			IMPLEMENT_INTERFACE(I_ValueCompound)
+			IMPLEMENT_INTERFACE(I_Serializable)
 		END_INTERFACE_TABLE()
 
 	public://///////////////////////////////////////////////////////////////////////////////////
@@ -99,6 +100,15 @@ virtual vuint32				get_StorageSize( void ) const override;
 virtual VALUE_TYPE			get_Type( void ) const override;
 virtual String				get_TypeString( const char inLocale[] = "en_US" ) const override;
 
+virtual COMPARE_TYPE		get_CompareType( void ) const override
+							{
+								return kBinaryCompare;
+							}
+	
+virtual void				put_CompareType( COMPARE_TYPE inValue ) override
+							{
+								argused1( inValue );
+							}
 
 	// ---------------------
 	// Value Access Methods:
@@ -203,6 +213,82 @@ virtual void				SwapBytes( void* inValue ) const override;
 virtual void				SwapBytes( const void* inSrc, void* inDest ) override;
 
 
+	public://///////////////////////////////////////////////////////////////////////////////////
+
+// interface I_Serializable:
+
+virtual void				From( I_IStream_Ptr inStream, bool inBlock = true ) override
+							{
+								vuint32 count = mpValues->get_Count();
+								for( vuint32 i = 1; i <= count; ++i )
+								{
+									I_Serializable_Ptr pVal = QI(mpValues->get_ItemAt(i), I_Serializable);
+									pVal->From( inStream, inBlock );
+								}
+							}
+
+virtual void				From( 
+                                I_PacketRcv* 	inPacket,
+								bool 			inBlock = true ) override
+							{
+								vuint32 count = mpValues->get_Count();
+								for( vuint32 i = 1; i <= count; ++i )
+								{
+									I_Serializable_Ptr pVal = QI(mpValues->get_ItemAt(i), I_Serializable);
+									pVal->From( inPacket, inBlock );
+								}
+							}
+
+
+virtual void				To( I_OStream_Ptr inStream, bool inBlock = true ) const override
+							{
+								vuint32 count = mpValues->get_Count();
+								for( vuint32 i = 1; i <= count; ++i )
+								{
+									I_Serializable_Ptr pVal = QI(mpValues->get_ItemAt(i), I_Serializable);
+									pVal->To( inStream, inBlock );
+								}
+							}
+
+virtual void				To( 
+                                I_PacketSnd*	inPacket,
+								bool 			inBlock = true ) const override
+							{
+								vuint32 count = mpValues->get_Count();
+								for( vuint32 i = 1; i <= count; ++i )
+								{
+									I_Serializable_Ptr pVal = QI(mpValues->get_ItemAt(i), I_Serializable);
+									pVal->To( inPacket, inBlock );
+								}
+							}
+
+
+	public://///////////////////////////////////////////////////////////////////////////////////
+
+	// ---------------------
+	// Serialization to/from char buffer (for ValueVariant):
+
+virtual vuint32 			get_BinaryRepresentationByteLength( void ) const override
+							{
+								return 0;
+							}
+
+virtual void				FromBinaryRepresentation( const char* inpBuffer ) override
+							{
+								argused1( inpBuffer );
+								FBL_Throw( xFeatureError(
+												ERR_FEATURE_NOT_SUPPORTED,
+												"FromBinaryRepresentation() for Compound-type value" ) );
+							}
+
+virtual void				ToBinaryRepresentation( char* outpBuffer ) const override
+							{
+								argused1( outpBuffer );
+								FBL_Throw( xFeatureError(
+												ERR_FEATURE_NOT_SUPPORTED,
+												"ToBinaryRepresentation() for Compound-type value" ) );
+							}
+
 //#if FBL_TEST_CODE
 virtual void				Init( void ) override;
 virtual void 				Increment( void ) override; 
@@ -221,6 +307,9 @@ virtovr vuint32				get_SubValueCount( void ) const override
 								
 virtovr I_Value_Ptr			get_SubValue( vuint16 inValueIndex ) const override
 								{ return mpValues->get_ItemAt( inValueIndex ); }
+
+virtovr ArrayOfValues_Ptr	get_SubValues( void ) const override
+								{ return mpValues; }
 
 
 	protected:////////////////////////////////////////////////////////////////////////////////// 
@@ -244,12 +333,12 @@ virtovr I_Value_Ptr			get_SubValue( vuint16 inValueIndex ) const override
                                         // These values are clones of original Field's values,
                                         // so they know info about e.g. Field Locale settings.
                                         
-		ArrayOfULongs_Ptr	mpSizes;	// To implement storage of compund value into index.
-                                        // For numeric types contains sizeof type
+		ArrayOfULongs_Ptr	mpSizes;	// To implement storage of compound value into index.
+                                        // For numeric types contains the sizeof(type).
                                         // For strings/VarChar contains ZERO, so we must 
-                                        // at runtime ask actual length from sub-value.
+                                        // at runtime ask the actual length from sub-value.
                                         
-    	bool				mIsVariable; // TRUE if at least on subValue is string or such.		
+    	bool				mIsVariable; // TRUE if at least one subValue is string or such.
                                         // Thanks to this info we can do optimisations.
 };
 

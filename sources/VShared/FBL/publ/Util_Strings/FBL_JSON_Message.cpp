@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_JSON_Message.cpp 								                    				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -46,6 +46,7 @@ String CreateMessage(
 		case kConstraintObjectType:	{ res << "\"kConstraintObjectType\", ";	} break;
 		case kSPObjectType:			{ res << "\"kSPObjectType\", ";			} break;
 		case kFieldObjectType:		{ res << "\"kFieldObjectType\", ";		} break;
+		case kKeyValueObjectType:	{ res << "\"kKeyValueObjectType\", ";	} break;
 
 		default:
 			FBL_CHECK(false);

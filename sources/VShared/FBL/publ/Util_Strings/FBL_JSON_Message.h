@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_JSON_Message.h																		  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -17,6 +17,7 @@
 
 /**********************************************************************************************/
 FBL_Begin_Namespace
+
 
 /**********************************************************************************************/
 enum ActionType
@@ -37,7 +38,8 @@ enum ObjectType
 	kTriggerObjectType				= 5,
 	kConstraintObjectType			= 6,
 	kSPObjectType		 			= 7,
-	kFieldObjectType	 			= 8
+	kFieldObjectType	 			= 8,
+	kKeyValueObjectType				= 9
 };
 
 
@@ -46,6 +48,7 @@ FBL_SHARED_EXP String CreateMessage(
 	ActionType		inAction, 
 	ObjectType		inObjectType, 
 	const String&	inObjectName );
+
 
 /**********************************************************************************************/
 FBL_End_Namespace

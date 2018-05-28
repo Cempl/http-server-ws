@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Constants.h 	                                                      					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -243,11 +243,18 @@ const VALUE_TYPE	kTypeSerial64	= 36;	// 8 bytes. Pseudo-type for VSQL. DO NOT US
 
 const VALUE_TYPE	kTypeMoney		= 37;	// 8 bytes. Stored as kTypeLLong. Added in v6.0.
 
+const VALUE_TYPE	kTypeVariant	= 38;	// variant type. Added in v.7.0
+
 const VALUE_TYPE	kTypeCompound	 = 99;	// Used for Compound Values. Added in v5.0.
 	
 const VALUE_TYPE	kTypeUserDefined = 100;	// Marks a User Defined Type. 
 											// It is clear that DB ENGINE nothing knows about 
 											// these possible types.
+
+const VALUE_TYPE	kPseudoTypeSegmentNumber = 101;	// There is NO value for this pseudo-type
+											// We use it in Variant varchar-storage to differ real
+											// variant-value and segment number (where real
+											// variant-value stored in segment file).
 
 
 
@@ -400,9 +407,10 @@ const TMETHOD_LANGUAGE kMethod_Python 		= 3;	// NOT IMPLEMENTED
 //----------------------------------------------------------------------------------------------
 /// This enum is used in the Create_Binary_Link_Properties() method.
 /// Specifies the type of link.
-/// Permanent link is stored on the .dat volume. This is regular link of user.
-/// Temporary link is stored on .tmp volume.
-/// System link is stored on .vdb volume. For internal use.
+/// * System link is stored on .vdb volume. For internal use.
+/// * Permanent link is stored:
+/// 	* on the .dat volume. This is a regular link of user.
+/// 	* on the .tmp volume. This is a temporary link created by user.
 //
 enum ELinkStorageKind
 {
@@ -412,11 +420,12 @@ enum ELinkStorageKind
 
 enum ELinkKind
 {
-	kObjectPtr,			///< ObjectPtr field.
-	kObjectsPtr,		///< ObjectsPtr field.
-	kBinaryRelation,	///< Valentina specific Binary Link between 2 tables.
-	kRdbRelation,		///< RDB-link between 2 Tables, FOREIGN KEY. 
-	kPredicateRelation	///< Predicate-link between 2 Tables. 
+	kObjectPtr,					///< ObjectPtr field.
+	kObjectsPtr,				///< ObjectsPtr field.
+	kBinaryRelation,			///< Valentina specific Binary Link between 2 tables.
+	kRdbRelation,				///< RDB-link between 2 Tables, FOREIGN KEY.
+	kPredicateRelation,			///< Predicate-link between 2 Tables.
+	kBinaryWithOrderRelation	///< Valentina specific Binary Link With Order between 2 tables.
 };
 
 
@@ -482,6 +491,20 @@ enum EOnUpdate
 //
 const LinkType kMany	= 0;	
 const LinkType kOne		= 1;
+
+//----------------------------------------------------------------------------------------------
+// KeyValue CONSTANTS:
+//----------------------------------------------------------------------------------------------
+enum EKeyValueKind
+{
+	kKeyValueUnknown,
+	kKeyValueDefault,			///< KeyValue for database.
+    kKeyValueWithKey,			///< KeyValue WITH KEY.
+	kKeyValueForTables,			///< KeyValue for tables.
+	kKeyValueForTable,			///< KeyValue for table.
+	kKeyValueForLink			///< KeyValue for link.
+};
+
 
 
 //----------------------------------------------------------------------------------------------

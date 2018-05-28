@@ -15,30 +15,9 @@ body {
     height: 6vh;
 }
 
-a.li_top_menu {
-    text-decoration: none;
-    position:relative;
-	color: #1E90FF;
-	padding:0px 15px 0px 15px;
-	font-size:32px;
-    font-family: Century Gothic;
-    transition: 1.6s;
-}
-
-a.li_top_menu:hover {
-    color:orangered;
-    transition: 1.6s;
-}
-
 li {
     list-style-type:none; 
 	display:inline;
-}
-
-.ul_top_menu {
-    position: absolute;
-    top: 7%;
-    left: 75%;
 }
 
 .left {
@@ -47,21 +26,25 @@ li {
 }
 
 .input-message {
-    width: 98%;
+    width: 1000px;
     height: 280px;
     resize: none;
     margin-top: 20px;
+    margin-left: 2%;
+    margin-right: 2%;
     border: 1px solid #1E90FF;
     padding-bottom: 0;
-    font-family: Century Gothic;
-    font-size: 18px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 16px;
+    font-weight: lighter;
     border-bottom: none;
     padding-left: 10px;
     padding-right: 10px;
     padding-top: 10px;
     padding-bottom: 10px;
     background-color: ghostwhite;
-    color: #1E90FF;
+    color: black;
+    overflow: auto;
 }
 
 .input-message:focus {
@@ -75,17 +58,19 @@ li {
 	padding-right: 4%;
 	margin-left: 0%;
 	margin-right: 0%;
+	position: relative;
 }
 
 .first-legend {
-    font-size: 22px;
+    font-size: 18px;
     font-family: Century Gothic;
     padding-top: 10px;
     color: #1E90FF;
+    margin-left: 2%;
 }
 
 .form-write-massage {
-    width: 98%;
+    width: 1000px;
     height: 80px;
     border: 1px solid #1E90FF;
     margin-top: -4px;
@@ -117,9 +102,17 @@ li {
     font-family: Century Gothic;
     font-size: 18px;
     transition: 1.0s;
+    margin-left: 2%;
+    margin-bottom: 1%;
 }
 
 .button-send-message:hover {
     border: 2px solid orangered;
     transition: 1.0s;
+}
+
+.form-send {
+    margin-bottom: 1px;
+    margin-left: 2%;
+    margin-right: 2%;
 }

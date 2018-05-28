@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* VSQL_Interfaces.h															 			  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015 															  */
+/* Copyright Paradigma, 1998-2017 															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -21,17 +21,22 @@
 #include <VShared/VSQL/Interfaces/VSQL_I_Cursor.h>
 
 #include <VShared/VSQL/Interfaces/VSQL_I_DatabaseInfo.h>
+#include <VShared/VSQL/Interfaces/VSQL_I_DataSource.h>
+#include <VShared/VSQL/Interfaces/VSQL_I_DataSourceCursor.h>
 
 #include <VShared/VSQL/Interfaces/VSQL_I_Server.h>
 #include <VShared/VSQL/Interfaces/VSQL_I_SqlConnection.h>
 #include <VShared/VSQL/Interfaces/VSQL_I_SqlDatabase.h>
 
-#include <VShared/VSQL/Interfaces/VSQL_I_VProject.h>
-#include <VShared/VSQL/Interfaces/VSQL_I_VReport.h>
-
 #include <VShared/VSQL/Interfaces/VSQL_I_SqliteDatabase.h>
 #include <VShared/VSQL/Interfaces/VSQL_I_SqliteStatement.h>
 #include <VShared/VSQL/Interfaces/VSQL_I_SqliteCursor.h>
+
+#include <VShared/VSQL/Interfaces/VSQL_I_SqlStatement.h>
+
+#include <VShared/VSQL/Interfaces/VSQL_I_VProject.h>
+#include <VShared/VSQL/Interfaces/VSQL_I_VReport.h>
+
 
 
 /**********************************************************************************************/

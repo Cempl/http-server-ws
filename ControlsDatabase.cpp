@@ -31,7 +31,7 @@ void ControlsDatabase::InitValentina(int inCacheSize)
 		{
 			gConn->Open();
 		}
-		catch (xException& e)
+		catch (xException&)
 		{
 			std::cout	<< "You running Examples in gClient = true mode." << std::endl
 						<< "Make sure that you have install Valentina Server." << std::endl;
@@ -63,7 +63,7 @@ void ControlsDatabase::ShutdownValentina(void)
 void ControlsDatabase::OpenDB()
 {
 	pSqlVDB = CreateSqlDatabase(gConn);
-	I_Database_Ptr pVDB = pSqlVDB->get_BaseDatabase();
+	pVDB = pSqlVDB->get_BaseDatabase();
 
 	const char* inDbName = "userAuthData";
 	const char* pDbNameOnly = ExtractNameFromFullPath(inDbName);
@@ -76,42 +76,38 @@ void ControlsDatabase::OpenDB()
 
 
 /*******************************************************************************/
-bool ControlsDatabase::FindAuthData(String inLogin, String inPass)
+bool ControlsDatabase::AcceptAuthData(String inLogin, String inPass, String inToken)
 {
-	I_Cursor_Ptr pVdbCursor;
-
-	I_Field_Ptr nameField;
-
-	String getEmail = String();
-	String getName = String();
-	String getPass = String();
-
 	bool res = false;
 
-	pVdbCursor = pSqlVDB->SqlSelect("SELECT *FROM UserAuthData");
+	String getLogin;
+	String getPass;
+	String Query = "SELECT *FROM UserAuthData WHERE user_email = '" + inLogin + "';";
 
-	if (pVdbCursor->FirstRecord())
+	try
 	{
-		do
+		I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect(Query);
+		getLogin = pVdbCursor->get_Field("user_email")->get_Value()->get_String();
+
+		if (getLogin == inLogin && getLogin.length() != 0)
 		{
-			nameField = pVdbCursor->get_Field("user_email");
-			getEmail = nameField->get_Value()->get_String();
+			Query = "SELECT *FROM UserAuthData WHERE user_password = '" + inPass + "';";
 
-			nameField = pVdbCursor->get_Field("user_name");
-			getName = nameField->get_Value()->get_String();
+			pVdbCursor = pSqlVDB->SqlSelect(Query);
 
-			if (inLogin == getEmail || inLogin == getName)
+			getPass = pVdbCursor->get_Field("user_password")->get_Value()->get_String();
+
+			if (getPass == inPass && getPass.length() != 0)
 			{
-				nameField = pVdbCursor->get_Field("user_password");
-				getPass = nameField->get_Value()->get_String();
-
-				res = (inPass == getPass);
-
-				// End of cycle
-				break;
+				pVdbCursor = pSqlVDB->SqlSelect("UPDATE UserAuthData SET token = '" + inToken + "' WHERE user_email = '" + inLogin + "';");
+				
+				res = true;
 			}
-		} 
-		while (pVdbCursor->NextRecord());
+		}
+	}
+	catch (xException&)
+	{
+		// not found
 	}
 
 	return res;
@@ -136,10 +132,199 @@ bool ControlsDatabase::AddNewUser(String inName, String inEmail, String inPass)
 			+ inEmail + "', '" 
 			+ inPass + "');");
 	}
-	catch (exception& e)
+	catch (xException&)
 	{
 		return false;
 	}
 
 	return true;
+}
+
+
+/*******************************************************************************/
+void ControlsDatabase::AddAllFiles()
+{
+	vector<string> files;
+	vector<string> names;
+
+	// html
+	files.push_back("\\html\\authorization.html");
+	names.push_back("authorization.html");
+	files.push_back("\\html\\chat.html");
+	names.push_back("chat.html");
+	files.push_back("\\html\\fullhome.html");
+	names.push_back("fullhome.html");
+	files.push_back("\\html\\home.html");
+	names.push_back("home.html");
+	files.push_back("\\html\\index.html");
+	names.push_back("index.html");
+	files.push_back("\\html\\deviceidentity.html");
+	names.push_back("deviceidentity.html");
+
+	// js
+	files.push_back("\\js\\chat.js");
+	names.push_back("chat.js");
+	files.push_back("\\js\\index.js");
+	names.push_back("index.js");
+	files.push_back("\\js\\jquery_min.js");
+	names.push_back("jquery_min.js");
+	files.push_back("\\js\\loadContent.js");
+	names.push_back("loadContent.js");
+	files.push_back("\\js\\sha512min.js");
+	names.push_back("sha512min.js");
+	files.push_back("\\js\\deviceidentity.js");
+	names.push_back("deviceidentity.js");
+
+	// css
+	files.push_back("\\css\\authorization.css");
+	names.push_back("authorization.css");
+	files.push_back("\\css\\chat.css");
+	names.push_back("chat.css");
+	files.push_back("\\css\\index.css");
+	names.push_back("index.css");
+	files.push_back("\\css\\deviceidentity.css");
+	names.push_back("deviceidentity.css");
+
+	// picture
+	files.push_back("\\image\\favicon.ico");
+	names.push_back("favicon.ico");
+
+	string path_to_file = Path_folder();
+
+	I_Table_Ptr pTable = pVDB->get_Table("AllFiles");
+	
+	I_Field_Ptr pField_1 = pTable->get_Field("html/css/js");
+	I_Field_Ptr pField_2 = pTable->get_Field("fileName");
+
+	I_FldBlob_Ptr pBlob = fbl_dynamic_cast<I_FldBlob>(pField_1);
+	
+	int i = 0;
+	pTable->SetBlank(forUpdate);
+
+	if (pTable->FirstRecord())
+	{
+		do
+		{
+			pTable->SetBlank(forUpdate);
+
+			string str(get_file_from_drive(path_to_file + files[i]));
+
+			pBlob->WriteData(str.c_str(), (vuint32)str.size());
+			pField_2->get_Value(forUpdate)->put_String(names[i].c_str());
+
+			pTable->UpdateRecord();
+
+			++i;
+
+		} while (pTable->NextRecord());
+	}
+}
+
+
+/*******************************************************************************/
+string ControlsDatabase::get_file_from_db(string nameFile)
+{
+	String getName;
+	String tNameFile(nameFile.c_str());
+	string res = string();
+
+	nameFile = nameFile.c_str();
+
+	I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect("SELECT *FROM AllFiles");
+	I_Field_Ptr pField;
+	
+	if (pVdbCursor->FirstRecord())
+	{
+		do
+		{
+			pField = pVdbCursor->get_Field("fileName");
+			getName = pField->get_Value()->get_String();
+
+			if (tNameFile == getName && getName.length() != 0)
+			{
+				pField = pVdbCursor->get_Field("html/css/js");
+
+				I_FldBlob_Ptr pFBlob = fbl_dynamic_cast<I_FldBlob>(pField);
+
+				const int size = pFBlob->get_DataSize();
+				MemPtr<char> buff(size);
+				const int read = pFBlob->ReadData(buff, size);
+
+				res = string(buff, (size_t)read);
+				// End of cycle
+			}
+		} while (pVdbCursor->NextRecord());
+	}
+	
+	return res;
+}
+
+
+/*******************************************************************************/
+string ControlsDatabase::Path_folder()
+{
+	char szPath[MAX_PATH] = {};
+
+	GetModuleFileNameA(NULL, szPath, MAX_PATH);
+
+	// Pointer to the last occurrence of "\"
+	char *lstChr = strrchr(szPath, '\\');
+
+	// replaced by zero (truncate)
+	*lstChr = '\0';
+
+	return szPath;
+}
+
+
+/*******************************************************************************/
+string ControlsDatabase::get_file_from_drive(string path)
+{
+	ifstream fin(path, ios_base::binary);
+
+	if (!fin.is_open())
+	{
+		throw exception(("Missing " + path).c_str());
+	}
+	
+	string res((istreambuf_iterator<char>(fin)), istreambuf_iterator<char>());
+
+	fin.close();
+
+	return res;
+}
+
+
+/*******************************************************************************/
+bool ControlsDatabase::check_token(String inToken, string& outName)
+{
+	bool res = false;
+
+	String getToken;
+	String Name;
+	String Query = "SELECT *FROM UserAuthData WHERE token = '" + inToken + "';";
+
+	try
+	{
+		I_Cursor_Ptr pVdbCursor = pSqlVDB->SqlSelect(Query);
+		getToken = pVdbCursor->get_Field("token")->get_Value()->get_String();
+
+		if (getToken == inToken && getToken.length() != 0)
+		{
+			Name = pVdbCursor->get_Field("user_name")->get_Value()->get_String();
+
+			if (Name.length() != 0)
+			{
+				outName = string(Name.getBufferA(), Name.length());
+
+				res = true;
+			}
+		}
+	}
+	catch (xException&)
+	{
+		// not found
+	}
+
+	return res;
 }

@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Public_IIDs.h		                                                   				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 // DO NOT INCLUDE THIS FILE DIRECTLY !
@@ -73,6 +73,7 @@ const vuint32 IID_I_FldPicture				= 600 + 6;
 const vuint32 IID_I_FldString				= 600 + 7;
 const vuint32 IID_I_ForeignPlugin			= 600 + 8;
 const vuint32 IID_I_FldApproximate			= 600 + 9;
+const vuint32 IID_I_FldVariant 				= 600 + 10;
 
 // G = 700
 
@@ -83,11 +84,14 @@ const vuint32 IID_I_IndexStyle				= 900 + 1;
 const vuint32 IID_I_IStream 				= 900 + 2;
 const vuint32 IID_I_Stream 					= 900 + 3;
 
-// J = 1000
+// J = 1200
 
 // K = 1100
+const vuint32 IID_I_KeyValue   				= 1100 + 1;
+const vuint32 IID_I_KeyValue_ForTable   	= 1100 + 2;
+const vuint32 IID_I_KeyValue_ForLink   		= 1100 + 3;
 
-// L = 1200
+// L = 1000
 const vuint32 IID_I_Link					= 1000 + 1;
 const vuint32 IID_I_Link2					= 1000 + 2;
 const vuint32 IID_I_Location				= 1000 + 3;
@@ -96,6 +100,7 @@ const vuint32 IID_I_LogFile					= 1000 + 5;
 const vuint32 IID_I_LicenceManager			= 1000 + 6;
 const vuint32 IID_I_LicenceFile				= 1000 + 7;
 const vuint32 IID_I_LinkOnValues			= 1000 + 8;
+const vuint32 IID_I_Link2_WithOrder			= 1000 + 9;
 
 // M = 1300
 
@@ -128,6 +133,7 @@ const vuint32 IID_I_SqlConnection			= 1900 + 6;
 const vuint32 IID_I_SqliteDatabase			= 1900 + 7;
 const vuint32 IID_I_SqliteStatement			= 1900 + 8;
 const vuint32 IID_I_SqliteCursor			= 1900 + 9;
+const vuint32 IID_I_SqlStatement			= 1900 + 10;
 
 
 // T = 2000
@@ -152,6 +158,7 @@ const vuint32 IID_I_VReport					= 2200 + 7;
 const vuint32 IID_I_VProject				= 2200 + 8;
 const vuint32 IID_I_ValueFormater			= 2200 + 9;
 const vuint32 IID_I_ValueCompound			= 2200 + 10;
+const vuint32 IID_I_ValueVariant			= 2200 + 11;
 
 
 // W = 2300

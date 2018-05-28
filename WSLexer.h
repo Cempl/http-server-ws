@@ -5,6 +5,7 @@
 #include "Server.h"
 
 
+/*******************************************************************************/
 enum wsTokenTypes
 {
 	wsDefaultType = 0,
@@ -12,7 +13,7 @@ enum wsTokenTypes
 	wsSpaceType,
 	wsSymbolType, // : ; . , / \ 
 	wsNewLineSymbolType, // \n \r
-	wsBracketsSymbolType, // ()
+	wsBracketsSymbolType, // () []
 	wsQuotesSymbolType // ""
 };
 
@@ -60,6 +61,7 @@ class WSLexer
 	public:////////////////////////////////////////////////////////////////////
 
 							WSLexer();
+							WSLexer(const WSLexer& inOther) = delete;
 							~WSLexer();
 
 							// This method resets Lexer to a new string
@@ -68,7 +70,7 @@ class WSLexer
 							// This method GET next token
 							// For GET first token you must use this method
 							// This function can throw exceptions
-		bool				GetNextToken( Token* outToken );
+		bool				GetNextToken( Token* outToken, bool WithoutSpace = false );
 
 	protected://///////////////////////////////////////////////////////////////
 
@@ -76,12 +78,6 @@ class WSLexer
 		const char*			mpHttpStrEnd		= nullptr;
 
 		const char*			mpCurrChar			= nullptr;
-
-		int					mLine 				= 1; 		// the current line in command.
-
-		// Flags
-		bool				flagBracketsOpen	= false;
-		bool				flagQuotesOpen		= false;
 };
 
 #endif // _WSLexer_H

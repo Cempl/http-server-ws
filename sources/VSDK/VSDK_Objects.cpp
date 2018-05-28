@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* VSDK_Objects.cpp			                                                   				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -10,7 +10,6 @@
 // You can change this in your projects.
 // #include <stdafx.h>
 
-#include <Examples/Shared/stdafx.h>
 #include <VSDK/VSDK2.h>
 
 

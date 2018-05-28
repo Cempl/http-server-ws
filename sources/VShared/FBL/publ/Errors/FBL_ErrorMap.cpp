@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_ErrorMap.cpp                                                      					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 //
@@ -154,6 +154,13 @@ ErrorEntry gErrorMap[] =
 	ENTRY_ERROR(  ERR_PICTURE_ERROR                                           ),
 	ENTRY_ERROR(  ERR_PICTURE_UNKNOWN_TYPE                                    ),
 	ENTRY_ERROR(  ERR_PICTURE_UNKNOWN_ERROR                                   ),
+	ENTRY_ERROR(  ERR_KEYVALUE_ERROR                                          ),
+	ENTRY_ERROR(  ERR_KEYVALUE_BAD_NAME                                       ),
+	ENTRY_ERROR(  ERR_KEYVALUE_NOT_FOUND                                      ),
+	ENTRY_ERROR(  ERR_KEYVALUE_NAME_NOT_UNIQUE                                ),
+	ENTRY_ERROR(  ERR_KEYVALUE_BAD_KEY                                        ),
+	ENTRY_ERROR(  ERR_KEYVALUE_KEY_NOT_FOUND                                  ),
+	ENTRY_ERROR(  ERR_KEYVALUE_NOT_UNIQUE_KEY                                 ),
 	ENTRY_ERROR(  ERR_TABLE_ERROR                                             ),
 	ENTRY_ERROR(  ERR_TABLE_EMPTY                                             ),
 	ENTRY_ERROR(  ERR_TABLE_BAD_NAME                                          ),
@@ -225,6 +232,7 @@ ErrorEntry gErrorMap[] =
 	ENTRY_ERROR(  ERR_LINK_INCONSISTENT_FLAGS                                 ),
 	ENTRY_ERROR(  ERR_LINK_INCONSISTENT_STORAGE_KIND                          ),
 	ENTRY_ERROR(  ERR_LINK_MUST_BE_RECURSIVE                                  ),
+	ENTRY_ERROR(  ERR_LINK_WITH_ORDER_CANNOT_BE_11                            ),
 	ENTRY_ERROR(  ERR_CONNECTION_ERROR                                        ),
 	ENTRY_ERROR(  ERR_CONNECTION_LIMIT                                        ),
 	ENTRY_ERROR(  ERR_CONNECTION_PROTOCOL_VERSION_IS_TOO_NEW                  ),

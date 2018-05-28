@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_ValueBinary.h                                                     					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -27,7 +27,7 @@ SMART_INTERFACE(I_Value);
 
 
 /**********************************************************************************************/
-// this file declarations:
+// this file declrations:
 //
 SMART_INTERFACE(I_ValueBinary);
 
@@ -36,13 +36,13 @@ SMART_INTERFACE(I_ValueBinary);
 /**
 	Interface class that specify API of work with Binary value.
 
-	A binary value contains own internal buffer. We can get its size by I_Value::get_ByteSize().
+	A binary value contains own internal buffer. We can get its size by I_Value::get_ByteLength().
 
-	Binary value can have value less then buffer. So we must store actual length of each value.
-	To get actualy length we can use I_Value::get_Length().
+	Binary value can have value less then buffer. So we must store an actual length of each value.
+	To get the actual length we can use I_Value::get_Length().
 
 	NOTE: I_Value::put_Size() will work as change of column size. 
-	NOTE: There is sense to use I_Value::put_Length() to truncate current value. 
+	NOTE: There is sense to use I_Value::put_Length() to truncate the current value.
 			No sense try to grow it. 
 */
 interface FBL_SHARED_EXP_CLASS I_ValueBinary : public I_Unknown
@@ -53,18 +53,17 @@ virtual 					~I_ValueBinary( void );
 	// ---------------------
 	// Value Methods:
 	
-							/** Copy data from value internal buffer into outDataBuffer
-								that have size inBufferSize. 
-								If buffer is greater of value then copy the whole value 
-								and returns number of copied bytes.
-								If buffer is smaller of value, then copy inBufferSize bytes,
+							/** Copies data from the internal buffer into outDataBuffer
+								that have the size inBufferSize.
+								If buffer is greater of value then copies the whole value
+								and returns the number of copied bytes.
+								If buffer is smaller of value, then copies inBufferSize bytes,
 								returns inBuferSize. */
 virtual vuint32				get_Data( 
 								vuint8* 	outDatabuffer, 
 								vuint32 	inBufferSize ) const  = 0;
 
-							/** Copy data from the specified buffer into internal buffer
-								of Value object. */	
+							/** Copies data from the specified buffer into the internal buffer. */
 virtual void				put_Data( 
 								vuint8* 	inDataBuffer, 
 								vuint32 	inBufferSize )  = 0;

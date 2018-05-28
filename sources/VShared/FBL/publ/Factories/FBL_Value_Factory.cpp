@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Value_Factory.cpp																	  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -162,6 +162,8 @@ void RegisterStandardValues(void)
 	RegisterValue(	kTypeOID,			CreateValueULLong	);
 	
 	RegisterValue(	kTypeMoney,			CreateValueMoney		);
+	
+	RegisterValue(	kTypeVariant,		CreateValueVariant		);
 }
 
 

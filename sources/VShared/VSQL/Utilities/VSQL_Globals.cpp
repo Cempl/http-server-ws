@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* VSQL_Globals.cpp                                                     					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -37,6 +37,7 @@ I_SqlDatabase_Ptr CreateLocalSQLDatabase( EStorageType 	inStorage, bool	inUseOwn
 
 
 #pragma mark -
+
 
 /**********************************************************************************************/
 void SetOnValentinaShutDownFunction( OnValentinaShutDown_PTR inpFnc )

@@ -1,13 +1,16 @@
 /**********************************************************************************************/
 /* VKernel.h																	 			  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
 #ifndef _VKernel_h
 	#define _VKernel_h
 #pragma once
+
+// STD
+#include <string>
 
 // VSHARED
 #include <VShared/FBL/publ/Interfaces/FBL_I_Database.h>
@@ -17,13 +20,6 @@
 #include <VShared/VSQL/Headers/VSQL.h>
 #include <VShared/VSQL/Interfaces/VSQL_I_SqlConnection.h>
 #include <VShared/VSQL/Interfaces/VSQL_I_SqliteDatabase.h>
-
-
-/**********************************************************************************************/
-// STD
-// In this header should be AFTER FBL headers, because of new.
-// 
-#include <string>
 
 
 /**********************************************************************************************/
@@ -119,7 +115,7 @@ VSQL_Begin_Namespace
 
 SMART_INTERFACE(I_SqlDatabase);
 
-// Factory of FBL::I_Database. 
+// Factory of FBL::I_SqlDatabase.
 //
 FBL_EXP I_SqlDatabase_Ptr 	CreateSqlDatabase(	
 								EStorageType 	inStorage = kStorage_Disk,

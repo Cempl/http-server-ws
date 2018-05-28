@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_String.h	 		                                                   					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -213,13 +213,13 @@ virtual						~String( void );
 	// ---------------------
 	// Assigment of Numbers to String:
 
-		String&				setInt   	( vint32 		inValue );
+		String&				setInt   	( vint32 	inValue );
 		String&				setUInt  	( vuint32  	inValue );
 		String&				setLLong	( vint64 	inValue );
 		String&				setULLong 	( vuint64  	inValue );
 		String&				setDouble	( double 	inValue );
 
-		String&				setIntAsHex ( vint32 		inValue );
+		String&				setIntAsHex ( vint32 	inValue );
 		String&				setLLongAsHex(vint64 	inValue );
 
 

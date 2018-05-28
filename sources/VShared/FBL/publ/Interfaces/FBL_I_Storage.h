@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_Storage.h 		                                                     				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -50,51 +50,49 @@ virtual 					~I_Storage( void );
 							/** Return TRUE if this Storage already have files on device.
 								After Create() must be TRUE.
 								After ThrowOut() must be FALSE. */
-virtnew bool				get_Exists( void ) const  = 0;  
+virtual bool				get_Exists(void) const = 0;
 
 		// <IsOpen> [r/o]
 							/** Returns TRUE if storage is opened now. 
 								Must be TRUE after Open(), must be FALSE, after Close(). */
-virtnew	bool				get_IsOpen( void ) const = 0;
+virtual	bool				get_IsOpen(void) const = 0;
 		
 		// <IsReadOnly> [r/w]
 							/** TRUE if Storage is read-only (located on locked volume, 
 								its files marked as read-only or marked as RO by user. */
-virtnew	bool				get_IsReadOnly( void ) const = 0;
+virtual	bool				get_IsReadOnly(void) const = 0;
 
-virtnew	void				put_IsReadOnly( bool inValue ) = 0;
+virtual	void				put_IsReadOnly(bool inValue) = 0;
 
-virtnew flength				get_Size( void ) const  = 0;
+		// <Size> [r/o]
+							// Returns the size in bytes of this storage.
+virtual flength				get_Size(void) const = 0;
+
 
 	// ---------------------
-	// Storage methods:
+	// Storage Methods:
 
 							/** Creates files of this object on Device. 
 								File is opened after Create().
 								If such file already exists then Create() erase it 
-								and create a new empty file.
-							*/
-virtnew	void				Create( void ) = 0;
+								and create a new empty file. */
+virtual	void				Create(void) = 0;
 		
 							/** Opens files of this object on Device.
-								@error ERR_FILE_OPEN - in case file already is opened.
-							*/
-virtnew void 				Open( void ) = 0;
+								@error ERR_FILE_OPEN - in case file already is opened. */
+virtual void 				Open(void) = 0;
 
 							/** Closes files of this object.
-								@error ERR_FILE_NOT_OPEN - in case file already is closed.
-							*/
-virtnew void 				Close( void ) = 0;
+								@error ERR_FILE_NOT_OPEN - in case file already is closed. */
+virtual void 				Close(void) = 0;
 
-							/** Flushes files of object from Cache to Device if needed.
-							*/
-virtnew	void				Flush( void ) = 0;
+							/** Flushes files of object from Cache to Device if needed.	*/
+virtual	void				Flush(void) = 0;
 
 							/** Removes files of this object from Device.
 								@error xOSFileError{ ERR_FILE_OPEN } - file is opened.
-								@error xInternalError{ ERR_INTERNAL_EMBFILE_IS_OPENED }
-							*/
-virtnew void 				ThrowOut( void ) = 0;
+								@error xInternalError{ ERR_INTERNAL_EMBFILE_IS_OPENED }	*/
+virtual void 				ThrowOut(void) = 0;
 
 }; 
 

@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Value_Factories.h																	  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -141,6 +141,8 @@ FBL_SHARED_EXP	I_Value*	CreateValueObjectPtr	( bool inNullable, void* inParam1 =
 FBL_SHARED_EXP	I_Value*	CreateValueMoney		( bool inNullable, void* inParam1 = nullptr, void* inParam2 = nullptr );
 
 FBL_SHARED_EXP	I_Value*	CreateValueCompound		( ArrayOfValues_Ptr inValues );
+
+FBL_SHARED_EXP	I_Value*	CreateValueVariant		( bool inNullable, void* inParam1, void* inParam2 );
 
 
 /**********************************************************************************************/

@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Convert.cpp 	                                                      					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -62,6 +62,7 @@ extern void Convert_datetime_str( const I_Value* inValue, I_Value* outValue );
 /**********************************************************************************************/
 extern void Convert_str_str		( const I_Value* inValue, I_Value* outValue );
 extern void Convert_bin_str		( const I_Value* inValue, I_Value* outValue );
+extern void Convert_bin_bin		( const I_Value* inValue, I_Value* outValue );
 
 
 /**********************************************************************************************/
@@ -142,7 +143,7 @@ void Convert_T_enum( const I_Value* inValue, I_Value* outValue )
 //	- money
 //
 #define ARR_For(name, T)\
-CONVERT_FUNC_PTR Arr_##name[38] =												\
+CONVERT_FUNC_PTR Arr_##name[39] =												\
 {																				\
 	NULL, 										/*  kTypeEmpty		*/			\
 	Convert_T_enum<T>,							/*  kTypeEnum 		*/			\
@@ -189,7 +190,8 @@ CONVERT_FUNC_PTR Arr_##name[38] =												\
 	NULL,										/*	kTypeSerial32	*/			\
 	NULL,										/*	kTypeSerial64	*/			\
 																				\
-	Convert_int_money							/*	kTypeMoney		*/			\
+	Convert_int_money,							/*	kTypeMoney		*/			\
+	NULL										/*	kTypeVariant	*/			\
 }													
 
 
@@ -211,9 +213,9 @@ ARR_For(Enum16,vuint16);
 // this array convertion from float to  other specified type:
 // (Specific because of convertion to money type)
 //
-CONVERT_FUNC_PTR Arr_Float[38] =
+CONVERT_FUNC_PTR Arr_Float[39] =
 {																				\
-	nullptr, 										/*  kTypeEmpty		*/			\
+	nullptr, 									/*  kTypeEmpty		*/			\
 	Convert_T_enum<float>,						/*  kTypeEnum 		*/			\
 	Convert_T_T<float, bool>,					/*	kTypeBoolean	*/			\
 	Convert_T_T<float, vuint8>,					/*	kTypeByte		*/			\
@@ -228,7 +230,7 @@ CONVERT_FUNC_PTR Arr_Float[38] =
 																				\
 	Convert_T_T<float, float>,					/*	kTypeFloat		*/			\
 	Convert_T_T<float, double>,					/*	kTypeDouble		*/			\
-	nullptr,										/*	kTypeLDouble	*/			\
+	nullptr,									/*	kTypeLDouble	*/			\
 	Convert_T_T<float, double>,					/*	kTypeDecimal	*/			\
 																				\
 	Convert_T_T<float, vint32>,					/*	kTypeDate		*/			\
@@ -238,14 +240,14 @@ CONVERT_FUNC_PTR Arr_Float[38] =
 	Convert_T_str<float>,						/*	kTypeString		*/			\
 	Convert_T_str<float>,						/*	kTypeVarChar	*/			\
 																				\
-	nullptr,										/*	kTypeFixedBinary*/			\
-	nullptr,										/*	kTypeVarBinary	*/			\
+	nullptr,									/*	kTypeFixedBinary*/			\
+	nullptr,									/*	kTypeVarBinary	*/			\
 																				\
-	nullptr,										/*	kTypeBLOB		*/			\
+	nullptr,									/*	kTypeBLOB		*/			\
 	Convert_T_str<float>,						/*	kTypeText		*/			\
-	nullptr,										/*	kTypePicture	*/			\
-	nullptr,										/*	kTypeSound		*/			\
-	nullptr,										/*	kTypeMovie		*/			\
+	nullptr,									/*	kTypePicture	*/			\
+	nullptr,									/*	kTypeSound		*/			\
+	nullptr,									/*	kTypeMovie		*/			\
 																				\
 	Convert_T_T<float, vuint32>,				/*	kTypeRecID		*/			\
 	Convert_T_T<float, vuint64>,				/*	kTypeOID		*/			\
@@ -255,10 +257,11 @@ CONVERT_FUNC_PTR Arr_Float[38] =
 	Convert_T_enum<float>,						/*  kTypeEnum8 		*/			\
 	Convert_T_enum<float>,						/*  kTypeEnum16 	*/			\
 																				\
-	nullptr,										/*	kTypeSerial32	*/			\
-	nullptr,										/*	kTypeSerial64	*/			\
+	nullptr,									/*	kTypeSerial32	*/			\
+	nullptr,									/*	kTypeSerial64	*/			\
 																				\
-	Convert_float_money							/*	kTypeMoney		*/			\
+	Convert_float_money,						/*	kTypeMoney		*/			\
+	nullptr										/*	kTypeVariant	*/			\
 };
 										
 
@@ -266,9 +269,9 @@ CONVERT_FUNC_PTR Arr_Float[38] =
 // this array convertion from double to  other specified type:
 // (Specific because of convertion to money type)
 //
-CONVERT_FUNC_PTR Arr_Double[38] =
+CONVERT_FUNC_PTR Arr_Double[39] =
 {																				\
-	nullptr, 										/*  kTypeEmpty		*/			\
+	nullptr, 									/*  kTypeEmpty		*/			\
 	Convert_T_enum<double>,						/*  kTypeEnum 		*/			\
 	Convert_T_T<double, bool>,					/*	kTypeBoolean	*/			\
 	Convert_T_T<double, vuint8>,				/*	kTypeByte		*/			\
@@ -283,7 +286,7 @@ CONVERT_FUNC_PTR Arr_Double[38] =
 																				\
 	Convert_T_T<double, float>,					/*	kTypeFloat		*/			\
 	Convert_T_T<double, double>,				/*	kTypeDouble		*/			\
-	nullptr,										/*	kTypeLDouble	*/			\
+	nullptr,									/*	kTypeLDouble	*/			\
 	Convert_T_T<double, double>,				/*	kTypeDecimal	*/			\
 																				\
 	Convert_T_T<double, vint32>,				/*	kTypeDate		*/			\
@@ -293,14 +296,14 @@ CONVERT_FUNC_PTR Arr_Double[38] =
 	Convert_T_str<double>,						/*	kTypeString		*/			\
 	Convert_T_str<double>,						/*	kTypeVarChar	*/			\
 																				\
-	nullptr,										/*	kTypeFixedBinary*/			\
-	nullptr,										/*	kTypeVarBinary	*/			\
+	nullptr,									/*	kTypeFixedBinary*/			\
+	nullptr,									/*	kTypeVarBinary	*/			\
 																				\
-	nullptr,										/*	kTypeBLOB		*/			\
+	nullptr,									/*	kTypeBLOB		*/			\
 	Convert_T_str<double>,						/*	kTypeText		*/			\
-	nullptr,										/*	kTypePicture	*/			\
-	nullptr,										/*	kTypeSound		*/			\
-	nullptr,										/*	kTypeMovie		*/			\
+	nullptr,									/*	kTypePicture	*/			\
+	nullptr,									/*	kTypeSound		*/			\
+	nullptr,									/*	kTypeMovie		*/			\
 																				\
 	Convert_T_T<double, vuint32>,				/*	kTypeRecID		*/			\
 	Convert_T_T<double, vuint64>,				/*	kTypeOID		*/			\
@@ -310,19 +313,20 @@ CONVERT_FUNC_PTR Arr_Double[38] =
 	Convert_T_enum<double>,						/*  kTypeEnum8 		*/			\
 	Convert_T_enum<double>,						/*  kTypeEnum16 	*/			\
 																				\
-	nullptr,										/*	kTypeSerial32	*/			\
-	nullptr,										/*	kTypeSerial64	*/			\
+	nullptr,									/*	kTypeSerial32	*/			\
+	nullptr,									/*	kTypeSerial64	*/			\
 																				\
-	Convert_float_money							/*	kTypeMoney		*/			\
+	Convert_float_money,						/*	kTypeMoney		*/			\
+	nullptr										/*	kTypeVariant	*/			\
 };
 										
 
 /**********************************************************************************************/
 // this array convertion from date to  other specified type:
 //
-CONVERT_FUNC_PTR Arr_Date[38] =
+CONVERT_FUNC_PTR Arr_Date[39] =
 {																				\
-	nullptr, 										/*  kTypeEmpty		*/			\
+	nullptr, 									/*  kTypeEmpty		*/			\
 	Convert_T_enum<vint32>,						/*  kTypeEnum 		*/			\
 	Convert_T_T<vint32, bool>,					/*	kTypeBoolean	*/			\
 	Convert_T_T<vint32, vuint8>,				/*	kTypeByte		*/			\
@@ -337,7 +341,7 @@ CONVERT_FUNC_PTR Arr_Date[38] =
 																				\
 	Convert_T_T<vint32, float>,					/*	kTypeFloat		*/			\
 	Convert_T_T<vint32, double>,				/*	kTypeDouble		*/			\
-	nullptr,										/*	kTypeLDouble	*/			\
+	nullptr,									/*	kTypeLDouble	*/			\
 	Convert_T_T<vint32, double>,				/*	kTypeDecimal	*/			\
 																				\
 	Convert_T_T<vint32, vint32>,				/*	kTypeDate		*/			\
@@ -347,14 +351,14 @@ CONVERT_FUNC_PTR Arr_Date[38] =
 	Convert_date_str,							/*	kTypeString		*/			\
 	Convert_date_str,							/*	kTypeVarChar	*/			\
 																				\
-	nullptr,										/*	kTypeFixedBinary*/			\
-	nullptr,										/*	kTypeVarBinary	*/			\
+	nullptr,									/*	kTypeFixedBinary*/			\
+	nullptr,									/*	kTypeVarBinary	*/			\
 																				\
-	nullptr,										/*	kTypeBLOB		*/			\
+	nullptr,									/*	kTypeBLOB		*/			\
 	Convert_date_str,							/*	kTypeText		*/			\
-	nullptr,										/*	kTypePicture	*/			\
-	nullptr,										/*	kTypeSound		*/			\
-	nullptr,										/*	kTypeMovie		*/			\
+	nullptr,									/*	kTypePicture	*/			\
+	nullptr,									/*	kTypeSound		*/			\
+	nullptr,									/*	kTypeMovie		*/			\
 																				\
 	Convert_T_T<vint32, vuint32>,				/*	kTypeRecID		*/			\
 	Convert_T_T<vint32, vuint64>,				/*	kTypeOID		*/			\
@@ -364,19 +368,20 @@ CONVERT_FUNC_PTR Arr_Date[38] =
 	Convert_T_enum<vint32>,						/*  kTypeEnum8 		*/			\
 	Convert_T_enum<vint32>,						/*  kTypeEnum16 	*/			\
 																				\
-	nullptr,										/*	kTypeSerial32	*/			\
-	nullptr,										/*	kTypeSerial64	*/			\
+	nullptr,									/*	kTypeSerial32	*/			\
+	nullptr,									/*	kTypeSerial64	*/			\
 																				\
-	nullptr										/*	kTypeMoney		*/			\
+	nullptr,									/*	kTypeMoney		*/			\
+	nullptr										/*	kTypeVariant	*/			\
 };													
 										
 
 /**********************************************************************************************/
 // this array convertion from time to  other specified type:
 //
-CONVERT_FUNC_PTR Arr_Time[38] =
+CONVERT_FUNC_PTR Arr_Time[39] =
 {																				\
-	nullptr, 										/*  kTypeEmpty		*/			\
+	nullptr, 									/*  kTypeEmpty		*/			\
 	Convert_T_enum<vuint32>,					/*  kTypeEnum 		*/			\
 	Convert_T_T<vuint32, bool>,					/*	kTypeBoolean	*/			\
 	Convert_T_T<vuint32, vuint8>,				/*	kTypeByte		*/			\
@@ -391,7 +396,7 @@ CONVERT_FUNC_PTR Arr_Time[38] =
 																				\
 	Convert_T_T<vuint32, float>,				/*	kTypeFloat		*/			\
 	Convert_T_T<vuint32, double>,				/*	kTypeDouble		*/			\
-	nullptr,										/*	kTypeLDouble	*/			\
+	nullptr,									/*	kTypeLDouble	*/			\
 	Convert_T_T<vuint32, double>,				/*	kTypeDecimal	*/			\
 																				\
 	Convert_time_date,							/*	kTypeDate		*/			\
@@ -401,14 +406,14 @@ CONVERT_FUNC_PTR Arr_Time[38] =
 	Convert_time_str,							/*	kTypeString		*/			\
 	Convert_time_str,							/*	kTypeVarChar	*/			\
 																				\
-	nullptr,										/*	kTypeFixedBinary*/			\
-	nullptr,										/*	kTypeVarBinary	*/			\
+	nullptr,									/*	kTypeFixedBinary*/			\
+	nullptr,									/*	kTypeVarBinary	*/			\
 																				\
-	nullptr,										/*	kTypeBLOB		*/			\
+	nullptr,									/*	kTypeBLOB		*/			\
 	Convert_time_str,							/*	kTypeText		*/			\
-	nullptr,										/*	kTypePicture	*/			\
-	nullptr,										/*	kTypeSound		*/			\
-	nullptr,										/*	kTypeMovie		*/			\
+	nullptr,									/*	kTypePicture	*/			\
+	nullptr,									/*	kTypeSound		*/			\
+	nullptr,									/*	kTypeMovie		*/			\
 																				\
 	Convert_T_T<vuint32, vuint32>,				/*	kTypeRecID		*/			\
 	Convert_T_T<vuint32, vuint64>,				/*	kTypeOID		*/			\
@@ -418,19 +423,20 @@ CONVERT_FUNC_PTR Arr_Time[38] =
 	Convert_T_enum<vuint32>,					/*  kTypeEnum8 		*/			\
 	Convert_T_enum<vuint32>,					/*  kTypeEnum16 	*/			\
 																				\
-	nullptr,										/*	kTypeSerial32	*/			\
-	nullptr,										/*	kTypeSerial64	*/			\
+	nullptr,									/*	kTypeSerial32	*/			\
+	nullptr,									/*	kTypeSerial64	*/			\
 																				\
-	nullptr										/*	kTypeMoney		*/			\
+	nullptr,									/*	kTypeMoney		*/			\
+	nullptr										/*	kTypeVariant	*/			\
 };													
 										
 
 /**********************************************************************************************/
 // this array convertion from datetime to  other specified type:
 //
-CONVERT_FUNC_PTR Arr_DateTime[38] =
+CONVERT_FUNC_PTR Arr_DateTime[39] =
 {																				\
-	nullptr, 										/*  kTypeEmpty		*/			\
+	nullptr, 									/*  kTypeEmpty		*/			\
 	Convert_T_enum<vint64>,						/*  kTypeEnum 		*/			\
 	Convert_T_T<vint64, bool>,					/*	kTypeBoolean	*/			\
 	Convert_T_T<vint64, vuint8>,				/*	kTypeByte		*/			\
@@ -445,7 +451,7 @@ CONVERT_FUNC_PTR Arr_DateTime[38] =
 																				\
 	Convert_T_T<vint64, float>,					/*	kTypeFloat		*/			\
 	Convert_T_T<vint64, double>,				/*	kTypeDouble		*/			\
-	nullptr,										/*	kTypeLDouble	*/			\
+	nullptr,									/*	kTypeLDouble	*/			\
 	Convert_T_T<vint64, double>,				/*	kTypeDecimal	*/			\
 																				\
 	Convert_datetime_date,						/*	kTypeDate		*/			\
@@ -455,14 +461,14 @@ CONVERT_FUNC_PTR Arr_DateTime[38] =
 	Convert_datetime_str,						/*	kTypeString		*/			\
 	Convert_datetime_str,						/*	kTypeVarChar	*/			\
 																				\
-	nullptr,										/*	kTypeFixedBinary*/			\
-	nullptr,										/*	kTypeVarBinary	*/			\
+	nullptr,									/*	kTypeFixedBinary*/			\
+	nullptr,									/*	kTypeVarBinary	*/			\
 																				\
-	nullptr,										/*	kTypeBLOB		*/			\
+	nullptr,									/*	kTypeBLOB		*/			\
 	Convert_datetime_str,						/*	kTypeText		*/			\
-	nullptr,										/*	kTypePicture	*/			\
-	nullptr,										/*	kTypeSound		*/			\
-	nullptr,										/*	kTypeMovie		*/			\
+	nullptr,									/*	kTypePicture	*/			\
+	nullptr,									/*	kTypeSound		*/			\
+	nullptr,									/*	kTypeMovie		*/			\
 																				\
 	Convert_T_T<vint64, vuint32>,				/*	kTypeRecID		*/			\
 	Convert_T_T<vint64, vuint64>,				/*	kTypeOID		*/			\
@@ -472,19 +478,20 @@ CONVERT_FUNC_PTR Arr_DateTime[38] =
 	Convert_T_enum<vint64>,						/*  kTypeEnum8 		*/			\
 	Convert_T_enum<vint64>,						/*  kTypeEnum16 	*/			\
 																				\
-	nullptr,										/*	kTypeSerial32	*/			\
-	nullptr,										/*	kTypeSerial64	*/			\
+	nullptr,									/*	kTypeSerial32	*/			\
+	nullptr,									/*	kTypeSerial64	*/			\
 																				\
-	nullptr										/*	kTypeMoney		*/			\
+	nullptr,									/*	kTypeMoney		*/			\
+	nullptr										/*	kTypeVariant	*/			\
 };													
 										
 
 /**********************************************************************************************/
 // this array convertion from string to other specified type:
 //
-CONVERT_FUNC_PTR Arr_Str[38] =
+CONVERT_FUNC_PTR Arr_Str[39] =
 {																				\
-	nullptr, 										/*  kTypeEmpty		*/			\
+	nullptr, 									/*  kTypeEmpty		*/			\
 	Convert_str_enum,							/*  kTypeEnum 		*/			\
 	Convert_str_T<bool>,						/*	kTypeBoolean	*/			\
 	Convert_str_T<vuint8>,						/*	kTypeByte		*/			\
@@ -499,7 +506,7 @@ CONVERT_FUNC_PTR Arr_Str[38] =
 																				\
 	Convert_str_T<float>,						/*	kTypeFloat		*/			\
 	Convert_str_T<double>,						/*	kTypeDouble		*/			\
-	nullptr,										/*	kTypeLDouble	*/			\
+	nullptr,									/*	kTypeLDouble	*/			\
 	Convert_str_T<double>,						/*	kTypeDecimal	*/			\
 																				\
 	Convert_str_date,							/*	kTypeDate		*/			\
@@ -509,14 +516,14 @@ CONVERT_FUNC_PTR Arr_Str[38] =
 	Convert_str_str,							/*	kTypeString		*/			\
 	Convert_str_str,							/*	kTypeVarChar	*/			\
 																				\
-	nullptr,										/*	kTypeFixedBinary*/			\
-	nullptr,										/*	kTypeVarBinary	*/			\
+	nullptr,									/*	kTypeFixedBinary*/			\
+	nullptr,									/*	kTypeVarBinary	*/			\
 																				\
-	nullptr,										/*	kTypeBLOB		*/			\
+	nullptr,									/*	kTypeBLOB		*/			\
 	Convert_str_str,							/*	kTypeText		*/			\
-	nullptr,										/*	kTypePicture	*/			\
-	nullptr,										/*	kTypeSound		*/			\
-	nullptr,										/*	kTypeMovie		*/			\
+	nullptr,									/*	kTypePicture	*/			\
+	nullptr,									/*	kTypeSound		*/			\
+	nullptr,									/*	kTypeMovie		*/			\
 																				\
 	Convert_str_T<vuint32>,						/*	kTypeRecID		*/			\
 	Convert_str_T<vuint64>,						/*	kTypeOID		*/			\
@@ -526,19 +533,20 @@ CONVERT_FUNC_PTR Arr_Str[38] =
 	Convert_str_enum,							/*  kTypeEnum8 		*/			\
 	Convert_str_enum,							/*  kTypeEnum16 	*/			\
 																				\
-	nullptr,										/*	kTypeSerial32	*/			\
-	nullptr,										/*	kTypeSerial64	*/			\
+	nullptr,									/*	kTypeSerial32	*/			\
+	nullptr,									/*	kTypeSerial64	*/			\
 																				\
-	Convert_str_money							/*	kTypeMoney		*/			\
+	Convert_str_money,							/*	kTypeMoney		*/			\
+	nullptr										/*	kTypeVariant	*/			\
 };													
 										
 
 /**********************************************************************************************/
 // this array convertion from binary to other specified type:
 //
-CONVERT_FUNC_PTR Arr_Bin[38] =
+CONVERT_FUNC_PTR Arr_Bin[39] =
 {																				\
-	nullptr, 										/*  kTypeEmpty		*/			\
+	nullptr, 									/*  kTypeEmpty		*/			\
 	Convert_str_enum,							/*  kTypeEnum 		*/			\
 	Convert_bin_T<bool>,						/*	kTypeBoolean	*/			\
 	Convert_bin_T<vuint8>,						/*	kTypeByte		*/			\
@@ -553,7 +561,7 @@ CONVERT_FUNC_PTR Arr_Bin[38] =
 																				\
 	Convert_bin_T<float>,						/*	kTypeFloat		*/			\
 	Convert_bin_T<double>,						/*	kTypeDouble		*/			\
-	nullptr,										/*	kTypeLDouble	*/			\
+	nullptr,									/*	kTypeLDouble	*/			\
 	Convert_bin_T<double>,						/*	kTypeDecimal	*/			\
 																				\
 	Convert_bin_date,							/*	kTypeDate		*/			\
@@ -563,14 +571,14 @@ CONVERT_FUNC_PTR Arr_Bin[38] =
 	Convert_bin_str,							/*	kTypeString		*/			\
 	Convert_bin_str,							/*	kTypeVarChar	*/			\
 																				\
-	nullptr,										/*	kTypeFixedBinary*/			\
-	nullptr,										/*	kTypeVarBinary	*/			\
+	Convert_bin_bin,							/*	kTypeFixedBinary*/			\
+	Convert_bin_bin,							/*	kTypeVarBinary	*/			\
 																				\
-	nullptr,										/*	kTypeBLOB		*/			\
+	nullptr,									/*	kTypeBLOB		*/			\
 	Convert_bin_str,							/*	kTypeText		*/			\
-	nullptr,										/*	kTypePicture	*/			\
-	nullptr,										/*	kTypeSound		*/			\
-	nullptr,										/*	kTypeMovie		*/			\
+	nullptr,									/*	kTypePicture	*/			\
+	nullptr,									/*	kTypeSound		*/			\
+	nullptr,									/*	kTypeMovie		*/			\
 																				\
 	Convert_bin_T<vuint32>,						/*	kTypeRecID		*/			\
 	Convert_bin_T<vuint64>,						/*	kTypeOID		*/			\
@@ -580,19 +588,20 @@ CONVERT_FUNC_PTR Arr_Bin[38] =
 	Convert_str_enum,							/*  kTypeEnum8 		*/			\
 	Convert_str_enum,							/*  kTypeEnum16 	*/			\
 																				\
-	nullptr,										/*	kTypeSerial32	*/			\
-	nullptr,										/*	kTypeSerial64	*/			\
+	nullptr,									/*	kTypeSerial32	*/			\
+	nullptr,									/*	kTypeSerial64	*/			\
 																				\
-	nullptr										/*	kTypeMoney		*/			\
+	nullptr,									/*	kTypeMoney		*/			\
+	nullptr										/*	kTypeVariant	*/			\
 };													
 										
 
 /**********************************************************************************************/
 // this array convertion from money to other specified type:
 //
-CONVERT_FUNC_PTR Arr_Money[38] =
+CONVERT_FUNC_PTR Arr_Money[39] =
 {																				\
-	nullptr, 										/*  kTypeEmpty		*/			\
+	nullptr, 									/*  kTypeEmpty		*/			\
 	Convert_money_int,							/*  kTypeEnum 		*/			\
 	Convert_money_int,							/*	kTypeBoolean	*/			\
 	Convert_money_int,							/*	kTypeByte		*/			\
@@ -610,21 +619,21 @@ CONVERT_FUNC_PTR Arr_Money[38] =
 	Convert_money_float,						/*	kTypeLDouble	*/			\
 	Convert_money_float,						/*	kTypeDecimal	*/			\
 																				\
-	nullptr,										/*	kTypeDate		*/			\
-	nullptr,										/*	kTypeTime		*/			\
-	nullptr,										/*	kTypeDateTime	*/			\
+	nullptr,									/*	kTypeDate		*/			\
+	nullptr,									/*	kTypeTime		*/			\
+	nullptr,									/*	kTypeDateTime	*/			\
 																				\
 	Convert_money_str,							/*	kTypeString		*/			\
 	Convert_money_str,							/*	kTypeVarChar	*/			\
 																				\
-	nullptr,										/*	kTypeFixedBinary*/			\
-	nullptr,										/*	kTypeVarBinary	*/			\
+	nullptr,									/*	kTypeFixedBinary*/			\
+	nullptr,									/*	kTypeVarBinary	*/			\
 																				\
-	nullptr,										/*	kTypeBLOB		*/			\
+	nullptr,									/*	kTypeBLOB		*/			\
 	Convert_money_str,							/*	kTypeText		*/			\
-	nullptr,										/*	kTypePicture	*/			\
-	nullptr,										/*	kTypeSound		*/			\
-	nullptr,										/*	kTypeMovie		*/			\
+	nullptr,									/*	kTypePicture	*/			\
+	nullptr,									/*	kTypeSound		*/			\
+	nullptr,									/*	kTypeMovie		*/			\
 																				\
 	Convert_money_int,							/*	kTypeRecID		*/			\
 	Convert_money_int,							/*	kTypeOID		*/			\
@@ -634,19 +643,75 @@ CONVERT_FUNC_PTR Arr_Money[38] =
 	Convert_money_int,							/*  kTypeEnum8 		*/			\
 	Convert_money_int,							/*  kTypeEnum16 	*/			\
 																				\
-	nullptr,										/*	kTypeSerial32	*/			\
-	nullptr,										/*	kTypeSerial64	*/			\
+	nullptr,									/*	kTypeSerial32	*/			\
+	nullptr,									/*	kTypeSerial64	*/			\
 																				\
-	Convert_T_T<vint64, vint64>					/*	kTypeMoney		*/			\
+	Convert_T_T<vint64, vint64>,				/*	kTypeMoney		*/			\
+	nullptr										/*	kTypeVariant	*/			\
+};													
+										
+
+/**********************************************************************************************/
+// this array convertion from variant to other specified type:
+//
+CONVERT_FUNC_PTR Arr_Variant[39] =
+{																				\
+	nullptr, 									/*  kTypeEmpty		*/			\
+	Convert_str_enum,							/*  kTypeEnum 		*/			\
+	Convert_bin_T<bool>,						/*	kTypeBoolean	*/			\
+	Convert_bin_T<vuint8>,						/*	kTypeByte		*/			\
+	Convert_bin_T<vint16>,						/*	kTypeShort		*/			\
+	Convert_bin_T<vuint16>,						/*	kTypeUShort		*/			\
+	Convert_bin_T<vint32>,						/*	kTypeMedium		*/			\
+	Convert_bin_T<vuint32>,						/*	kTypeUMedium	*/			\
+	Convert_bin_T<vint32>,						/*	kTypeLong		*/			\
+	Convert_bin_T<vuint32>,						/*	kTypeULong		*/			\
+	Convert_bin_T<vint64>,						/*	kTypeLLong		*/			\
+	Convert_bin_T<vuint64>,						/*	kTypeULLong		*/			\
+																				\
+	Convert_bin_T<float>,						/*	kTypeFloat		*/			\
+	Convert_bin_T<double>,						/*	kTypeDouble		*/			\
+	nullptr,									/*	kTypeLDouble	*/			\
+	Convert_bin_T<double>,						/*	kTypeDecimal	*/			\
+																				\
+	Convert_bin_date,							/*	kTypeDate		*/			\
+	Convert_bin_time,							/*	kTypeTime		*/			\
+	Convert_bin_datetime,						/*	kTypeDateTime	*/			\
+																				\
+	Convert_bin_str,							/*	kTypeString		*/			\
+	Convert_bin_str,							/*	kTypeVarChar	*/			\
+																				\
+	nullptr,									/*	kTypeFixedBinary*/			\
+	nullptr,									/*	kTypeVarBinary	*/			\
+																				\
+	nullptr,									/*	kTypeBLOB		*/			\
+	Convert_bin_str,							/*	kTypeText		*/			\
+	nullptr,									/*	kTypePicture	*/			\
+	nullptr,									/*	kTypeSound		*/			\
+	nullptr,									/*	kTypeMovie		*/			\
+																				\
+	Convert_bin_T<vuint32>,						/*	kTypeRecID		*/			\
+	Convert_bin_T<vuint64>,						/*	kTypeOID		*/			\
+	Convert_bin_T<vuint32>,						/*	kTypeObjectPtr	*/			\
+	Convert_bin_T<vuint64>,						/*	kTypeObjectsPtr	*/			\
+	Convert_bin_T<vuint64>,						/*	kTypeTimeStamp	*/			\
+	Convert_str_enum,							/*  kTypeEnum8 		*/			\
+	Convert_str_enum,							/*  kTypeEnum16 	*/			\
+																				\
+	nullptr,									/*	kTypeSerial32	*/			\
+	nullptr,									/*	kTypeSerial64	*/			\
+																				\
+	nullptr,									/*	kTypeMoney		*/			\
+	nullptr										/*	kTypeVariant	*/			\
 };													
 										
 
 /**********************************************************************************************/
 // this is Matrix of convertion from all type to all type:
 //
-CONVERT_FUNC_PTR* Arr_T_T[38] =
+CONVERT_FUNC_PTR* Arr_T_T[39] =
 {																				
-	nullptr, 										/*  kTypeEmpty		*/			
+	nullptr, 									/*  kTypeEmpty		*/
 	Arr_Enum,									/*  kTypeEnum 		*/					
 	Arr_Bool,									/*	kTypeBoolean	*/			
 	Arr_Byte,									/*	kTypeByte		*/			
@@ -661,7 +726,7 @@ CONVERT_FUNC_PTR* Arr_T_T[38] =
 																				
 	Arr_Float,									/*	kTypeFloat		*/			
 	Arr_Double,									/*	kTypeDouble		*/			
-	nullptr,										/*	kTypeLDouble	*/			
+	nullptr,									/*	kTypeLDouble	*/
 	Arr_Double,									/*	kTypeDecimal	*/			
 																				
 	Arr_Date,									/*	kTypeDate		*/			
@@ -674,11 +739,11 @@ CONVERT_FUNC_PTR* Arr_T_T[38] =
 	Arr_Bin,									/*	kTypeFixedBinary*/			
 	Arr_Bin,									/*	kTypeVarBinary	*/			
 																				
-	nullptr,										/*	kTypeBLOB		*/			
+	nullptr,									/*	kTypeBLOB		*/
 	Arr_Str,									/*	kTypeText		*/			
-	nullptr,										/*	kTypePicture	*/			
-	nullptr,										/*	kTypeSound		*/			
-	nullptr,										/*	kTypeMovie		*/			
+	nullptr,									/*	kTypePicture	*/
+	nullptr,									/*	kTypeSound		*/
+	nullptr,									/*	kTypeMovie		*/
 																				
 	Arr_ULong,									/*	kTypeRecID		*/			
 	Arr_ULLong,									/*	kTypeOID		*/			
@@ -689,10 +754,11 @@ CONVERT_FUNC_PTR* Arr_T_T[38] =
 	Arr_Enum8,									/*  kTypeEnum8 		*/	
 	Arr_Enum16,									/*  kTypeEnum16		*/
 
-	nullptr,										/*	kTypeSerial32	*/
-	nullptr,										/*	kTypeSerial64	*/
+	nullptr,									/*	kTypeSerial32	*/
+	nullptr,									/*	kTypeSerial64	*/
 	
-	Arr_Money									/*	kTypeMoney		*/
+	Arr_Money,									/*	kTypeMoney		*/
+	Arr_Variant									/*	kTypeVariant	*/
 };													
 										
 

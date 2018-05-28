@@ -21,41 +21,45 @@ void WSLexer::Put_HttpRequest(const char* inHttpStr, const char* inHttpStrEnd)
 	mpHttpStrEnd	= inHttpStrEnd  ? inHttpStrEnd 
 									: inHttpStr + strlen(inHttpStr);
 	mpCurrChar		= mpHttpStr;
-
-	mLine			= 1;
 }
 
 
 /*******************************************************************************/
-bool WSLexer::GetNextToken(Token* outToken)
+bool WSLexer::GetNextToken(Token* outToken, bool WithoutSpace)
 {
 	outToken->Clear();
 
-	if( mpCurrChar == mpHttpStrEnd )
-	{
-		if(flagBracketsOpen || flagQuotesOpen)
-		{
-			throw exception("Error WSLexer: Don't closed brackets or quotes");
-		}
-		return false; // end of string
-	}
-
+	bool res = false;
 	bool flagLongWord = false;
+	bool flagThisTokenIsSpace = false;
+
+	if( mpCurrChar == mpHttpStrEnd )	
+		return res; // end of string
 
 	outToken->ps = mpCurrChar;
 
 	do
 	{
+		flagThisTokenIsSpace = false;
+
 		switch(*mpCurrChar)
 		{
 			case 32: // " "
 			{
-				if( !flagLongWord)
+				if( !flagLongWord )
 				{
-					mpCurrChar = mpCurrChar + 1; // I only work with UTF-8 char, it has a length of 1.
-
-					outToken->mType = wsSpaceType;
-					outToken->pe = mpCurrChar;
+					if(WithoutSpace)
+					{
+						flagThisTokenIsSpace = true;
+						mpCurrChar = mpCurrChar + 1;
+						outToken->ps = mpCurrChar;
+					}
+					else
+					{
+						mpCurrChar = mpCurrChar + 1; // I only work with ASCII char, it has a length of 1.
+						outToken->mType = wsSpaceType;
+						outToken->pe = mpCurrChar;
+					}
 				}
 				else
 				{
@@ -93,8 +97,6 @@ bool WSLexer::GetNextToken(Token* outToken)
 
 					outToken->mType = wsQuotesSymbolType;
 					outToken->pe = mpCurrChar;
-
-					flagQuotesOpen = flagQuotesOpen ? false : true;
 				}
 				else
 				{
@@ -102,6 +104,8 @@ bool WSLexer::GetNextToken(Token* outToken)
 				}
 			}break;
 
+			case 91: // "["
+			case 93: // "]"
 			case 28: // "("
 			case 29: // ")"
 			{
@@ -111,8 +115,6 @@ bool WSLexer::GetNextToken(Token* outToken)
 
 					outToken->mType = wsBracketsSymbolType;
 					outToken->pe = mpCurrChar;
-
-					flagBracketsOpen = flagBracketsOpen ? false : true;
 				}
 				else
 				{
@@ -151,13 +153,25 @@ bool WSLexer::GetNextToken(Token* outToken)
 				outToken->pe = mpCurrChar;
 
 				flagLongWord = true;
+
 			}break;
 		}
+
+		if (mpCurrChar == mpHttpStrEnd)
+		{
+
+			flagLongWord = false;
+			res = false; // end of string
+		}
+		else
+		{
+			res = true;
+		}
 	}
-	while(flagLongWord);
+	while(flagLongWord || flagThisTokenIsSpace);
 
 	outToken->mLen = (outToken->pe - outToken->ps);
-	outToken->mPosition = (outToken->pe - mpHttpStr);
+	outToken->mPosition = (outToken->ps - mpHttpStr);
 
-	return true;
+	return res;
 }

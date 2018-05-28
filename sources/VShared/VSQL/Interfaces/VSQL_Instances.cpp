@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* VSQL_Instances.h																			  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -20,6 +20,7 @@
 #include <VShared/VSQL/Interfaces/VSQL_I_Server.h>
 #include <VShared/VSQL/Interfaces/VSQL_I_SqlConnection.h>
 #include <VShared/VSQL/Interfaces/VSQL_I_SqlDatabase.h>
+#include <VShared/VSQL/Interfaces/VSQL_I_SqlStatement.h>
 
 #include <VShared/VSQL/Interfaces/VSQL_I_SqliteDatabase.h>
 #include <VShared/VSQL/Interfaces/VSQL_I_SqliteStatement.h>
@@ -44,6 +45,7 @@ I_VReport::~I_VReport( void )								{}
 I_Server::~I_Server( void )									{}
 I_SqlConnection::~I_SqlConnection( void )					{}
 I_SqlDatabase::~I_SqlDatabase( void )						{}
+I_SqlStatement::~I_SqlStatement( void )						{}
 
 I_SqliteDatabase::~I_SqliteDatabase( void )					{}
 I_SqliteStatement::~I_SqliteStatement( void )				{}

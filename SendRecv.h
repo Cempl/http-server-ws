@@ -12,7 +12,7 @@
 
 
 /*******************************************************************************/
-class SendRecv : protected Cover
+class SendRecv : protected MyCover
 {
 	public://////////////////////////////////////////////////////////////////////
 
@@ -20,17 +20,17 @@ class SendRecv : protected Cover
 				SendRecv(const SendRecv& InOther) = delete;
 				~SendRecv() {};
 
-		void	websocket_handshake(SOCKET client_socket, string key);
-		void	send_data(SOCKET& client_socket);
+		void	websocket_handshake(SSL* inSSL, string& key);
+		void	send_data(SSL* inSSL);
 
 
 	protected:///////////////////////////////////////////////////////////////////
 
-		void	generate(string& key);
-		int		websocket_get_content(string& data, int data_length);
+		void	generate_key(string& key);
 		void	websocket_set_content(string& data, int64_t data_length, int data_type);
-		int		recv_data(string& data);
-		int		Thread_recv(SOCKET client_socket);
+		int		websocket_get_content(string& data, int data_length);
+		int		recv_data(string& data, SSL* inSSL);
+		int		Thread_recv(SSL* inSSL);
 };
 
 #endif // _SendRecv_H

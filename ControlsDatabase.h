@@ -22,16 +22,27 @@ class ControlsDatabase
 {
 	public://////////////////////////////////////////////////////////////////////
 
-		void InitValentina(int inCacheSize = 8 * 1024 * 1024);
-		void ShutdownValentina(void);
-		void OpenDB();
-		void Flag_online();
+							ControlsDatabase() {};
+							ControlsDatabase(const ControlsDatabase& inOther) = delete;
+							~ControlsDatabase() {};
 
-		bool FindAuthData(String inEmail, String inPass);
-		bool AddNewUser(String inName, String inEmail, String inPass);
+		void				AddAllFiles();
+		void				Flag_online();
+		void				InitValentina(int inCacheSize = 10 * 1024 * 1024);
+		void				OpenDB();
+		void				ShutdownValentina(void);
+
+		bool				AddNewUser(String inName, String inEmail, String inPass);
+		bool				check_token(String inToken, string& outName);
+		bool				AcceptAuthData(String inEmail, String inPass, String inToken);
+
+		string				get_file_from_db(string nameFile);
+		string				get_file_from_drive(string path);
+		string				Path_folder();
 
 	protected:///////////////////////////////////////////////////////////////////
 
+		I_Database_Ptr pVDB;
 		I_SqlDatabase_Ptr pSqlVDB;
 
 		bool gClient = true;

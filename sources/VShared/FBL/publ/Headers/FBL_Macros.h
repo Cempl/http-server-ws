@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Macros.h 	                                                      					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -489,9 +489,13 @@ virtwrp - WRAPs parent alg before and after. Parent alg MUST BE CALLED in the mi
 
 
 /**********************************************************************************************/
-// vint16 Macro for std::auto_ptr
+// Macro for std::unique_ptr
 //
-#define aptr std::auto_ptr
+#if __cplusplus > 199711L
+	#define aptr std::unique_ptr
+#else
+	#define aptr std::auto_ptr
+#endif // __cplusplus > 199711L
 
 
 /**********************************************************************************************/
@@ -566,6 +570,14 @@ virtwrp - WRAPs parent alg before and after. Parent alg MUST BE CALLED in the mi
 //
 #define	LOG_FOLDER_NAME "vlogs"
 
+/**********************************************************************************************/
+// Turn ON/OFF clang's "Thread Safety Analysis".
+// Please note that it OFFs STD_THREADING_SAFE (since we can not add attributes to std...)
+// Probably we need something better or just compile FBL_THREAD_SAFETY_ANALYSIS builds periodically
+// just to make sure there are no new warnings.
+//
+#define FBL_THREAD_SAFETY_ANALYSIS 0
+
 
 /**********************************************************************************************/
 // - fatal error C1189: #error :  <atomic> is not supported when compiling with /clr or /clr:pure.
@@ -575,7 +587,7 @@ virtwrp - WRAPs parent alg before and after. Parent alg MUST BE CALLED in the mi
 // - Mac's VODBC
 // - Mac's VPHP
 //
-#define STD_THREADING_SAFE (!FBL_WIN && !FBL_V4MD && !FBL_V4RB && !FBL_VODBC && !VPHP_DLL)
+#define STD_THREADING_SAFE (!FBL_THREAD_SAFETY_ANALYSIS && !FBL_WIN && !FBL_V4MD && !FBL_V4RB && !FBL_VODBC && !VPHP_DLL)
 
 /**********************************************************************************************/
 #if STD_THREADING_SAFE

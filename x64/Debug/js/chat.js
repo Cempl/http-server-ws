@@ -1,14 +1,12 @@
-var beta_socket = new WebSocket ("ws://127.0.0.1:27015/ws");
+var beta_socket = new WebSocket ("wss://127.0.0.1/wss");
 var user_name = sessionStorage.getItem("u_name");
 
 document.getElementById('name_in_chat').innerHTML = "Your name in chat: " + user_name;
 
-// send masg from form
 document.forms.message_test.onsubmit = function ()
 {
         var outgoingMessage = this.message.value;
 
-        // check empty form or all space and not send form if there is
         var flag = 0;
 
         for (var i = 0; i < outgoingMessage.length; i++)
@@ -63,7 +61,6 @@ beta_socket.onerror = function(error)
   document.getElementById('errors_ws').innerHTML = "Error: " + error.message;
 };
 
-// hotkeys
 $('textarea').bind('keypress', function(e) {
   if (e.keyCode == 13 && !e.shiftKey) {
     $(this).parents('form').submit();

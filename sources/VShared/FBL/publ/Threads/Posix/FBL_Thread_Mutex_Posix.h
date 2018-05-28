@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Thread_Mutex_Posix.h	                                                   				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 /**
@@ -24,6 +24,7 @@
 
 // FBL:
 #include <VShared/FBL/publ/Threads/Posix/FBL_Condition_Posix.h>
+#include <VShared/FBL/publ/Threads/thread_safety.h>
 
 // FINAL:
 #include <VShared/FBL/publ/Headers/FBL_pre_header.h>
@@ -40,7 +41,7 @@ FBL_Begin_Namespace
 /**********************************************************************************************/
 /// Non-recursive thread-level mutex implementation for POSIX threads.
 //
-class FBL_SHARED_EXP_CLASS Thread_Mutex_Posix
+class FBL_SHARED_EXP_CLASS CAPABILITY( "mutex" ) Thread_Mutex_Posix
 {
 	public://///////////////////////////////////////////////////////////////////////////////////
 
@@ -49,7 +50,7 @@ class FBL_SHARED_EXP_CLASS Thread_Mutex_Posix
 
  							/**	Block the thread until the lock is acquired.  
 								Throws an exception on failure. */
-		void				lock( void );
+		void				lock( void ) ACQUIRE();
 
 							/**	Conditionally acquire the lock (i.e., won't block).  
 								Returns 0 if someone else already had the lock,
@@ -57,7 +58,7 @@ class FBL_SHARED_EXP_CLASS Thread_Mutex_Posix
 		bool 				try_lock( void );
 
 							///	Release the lock.  
-		void				unlock( void );
+		void				unlock( void ) RELEASE_();
 
 //							/**	Block until the thread acquires a read lock.  
 //								If the locking mechanism doesn't support 
@@ -107,7 +108,7 @@ Thread_Mutex_Posix::~Thread_Mutex_Posix( void )
 
 /**********************************************************************************************/
 inline 
-void Thread_Mutex_Posix::lock( void )
+void Thread_Mutex_Posix::lock( void ) ACQUIRE()
 {
 	int res = ::pthread_mutex_lock(&mMutex);
 	argused1( res );
@@ -126,7 +127,7 @@ bool Thread_Mutex_Posix::try_lock( void )
 
 /**********************************************************************************************/
 inline 
-void Thread_Mutex_Posix::unlock( void )
+void Thread_Mutex_Posix::unlock( void ) RELEASE_()
 {
 	int res = ::pthread_mutex_unlock(&mMutex);
 	argused1( res );
@@ -175,7 +176,7 @@ void Thread_Mutex_Posix::unlock( void )
 /// Recursive thread-level mutex implementation for POSIX threads.
 /// Since there is no built-in supprot for this in PTHREAD API we need to emulate it.
 /// 
-class FBL_SHARED_EXP_CLASS Thread_Mutex_Recursive_Posix
+class FBL_SHARED_EXP_CLASS CAPABILITY( "mutex" ) Thread_Mutex_Recursive_Posix
 {
 	public://///////////////////////////////////////////////////////////////////////////////////
 
@@ -189,7 +190,7 @@ class FBL_SHARED_EXP_CLASS Thread_Mutex_Recursive_Posix
 
 							/**	Block the thread until the lock is acquired.  
 								Throws an exception on failure. */
-		void				lock( void );
+		void				lock( void ) ACQUIRE();
 
 
 							/**	Conditionally acquire the lock (i.e., won't block).  
@@ -199,7 +200,7 @@ class FBL_SHARED_EXP_CLASS Thread_Mutex_Recursive_Posix
 
 
 							///	Release the lock.  
-		void				unlock( void );
+		void				unlock( void ) RELEASE_();
 
 
 //							/**	Block until the thread acquires a read lock.  

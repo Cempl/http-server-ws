@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_I_Field.h 		                                                      				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -330,6 +330,16 @@ virtual BitSet_Ptr			FindLike(
 								ESearch				inSearchPref = kPreferIndexed ) const = 0;
 
 							/** Returns a result of search for a given inValue using
+								ILIKE syntax. If inValue is NULL then result will be NULL. 
+                                ILIKE respects collator of this field. 
+                                It can work x2-x3 times slower of FindLike(). */
+virtual BitSet_Ptr			FindILike(
+								Const_I_Value_Ptr 	inValue,
+								UChar				inEscape = (UChar)'\\',
+								Const_BitSet_Ptr  	inSelection = nullptr, 
+								ESearch				inSearchPref = kPreferIndexed ) const = 0;
+
+							/** Returns a result of search for a given inValue using
 								REGEX syntax. If inValue is NULL then result will be NULL. */
 virtual BitSet_Ptr			FindRegEx( 
 								Const_I_Value_Ptr inValue,
@@ -371,7 +381,7 @@ virtual	ArraySet_Ptr		FindValueAsArraySet(
 								Const_I_Value_Ptr 	inValue = nullptr,
 								Const_BitSet_Ptr 	inSelection = nullptr,
 								vuint32				ioLimitCount = vuint32_max, 
-								ESearch				inSearchPref = kPreferIndexed  )  const = 0;
+								ESearch				inSearchPref = kPreferIndexed  ) const = 0;
 
 							/** This function is comfortable for case when you know that result 
 								of search will be just one record. also this will work for few

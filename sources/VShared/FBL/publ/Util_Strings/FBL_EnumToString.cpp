@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_EnumToString.cpp                                                          			  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -262,6 +262,10 @@ const char* LinkKind2String( ELinkKind inValue )
 			return "BinaryLink";
 		case kRdbRelation:
 			return "RdbLink";
+		case kPredicateRelation:
+			return "PredicateLink";
+		case kBinaryWithOrderRelation:
+			return "BinaryWithOrderLink";
 		default:
 			return nullptr;
 	}

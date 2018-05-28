@@ -109,7 +109,7 @@ class interruptible_thread
 										{
 											(class_ptr->*func)(arg); 
 										}
-										catch(interruptException& e)
+										catch(interruptException&)
 										{
 											// We need only catch exception, and nothing else
 										}

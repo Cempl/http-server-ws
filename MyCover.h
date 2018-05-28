@@ -8,19 +8,17 @@
 
 
 /*******************************************************************************/
-class Cover 
+class MyCover 
 {
 	public: ////////////////////////////////////////////////////////////////////
 
-				Cover() {};
-				Cover(const Cover& InOther) = delete;
-				~Cover() {};
+					MyCover() {};
+					MyCover(const MyCover& InOther) = delete;
+					~MyCover() {};
 
-
-	protected:///////////////////////////////////////////////////////////////////
-
-		void		my_send(SOCKET& client_socket, string& message);
-		void		my_recv(SOCKET& client_socket, string& message);
+		void		my_Cleanup_OpenSSL(SSL* inSSL);
+		void		my_send(SSL* inSSL, string& message,  bool CleanUp);
+		void		my_recv(SSL* inSSL, string& message);
 };
 
-#endif // _LogFile_H
+#endif // _MyCover_H

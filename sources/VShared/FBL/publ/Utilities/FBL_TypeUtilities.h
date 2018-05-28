@@ -22,6 +22,11 @@ FBL_Begin_Namespace
 
 
 /**********************************************************************************************/
+FBL_SHARED_EXP String		Type2String( FIELD_TYPE inType );
+FBL_SHARED_EXP FIELD_TYPE	String2Type( const String& inStr );
+
+
+/**********************************************************************************************/
 FBL_SHARED_EXP const String& GetEnumValueAsString( 
 	const String&			inValue,
 	I_Type_Enumerated_Ptr	inpEnumType );

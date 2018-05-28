@@ -93,7 +93,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vshared_release_x64.lib;vkernel_release_x64.lib;vclient_release_x64.lib;ssleay32.lib;libeay32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vshared_mt_release_x64.lib;vreport_mt_release_x64.lib;vkernel_mt_release_x64.lib;vclient_mt_release_x64.lib;libssl.lib;libcrypto.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>./openSSL/lib;./vdblib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -124,7 +124,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>vshared_release_x64.lib;vkernel_release_x64.lib;vclient_release_x64.lib;ssleay32.lib;libeay32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vshared_mt_release_x64.lib;vreport_mt_release_x64.lib;vkernel_mt_release_x64.lib;vclient_mt_release_x64.lib;libssl.lib;libcrypto.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>./openSSL/lib;./vdblib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -133,10 +133,10 @@
     <ClCompile Include="Encryption.cpp" />
     <ClCompile Include="LogFile.cpp" />
     <ClCompile Include="MyCover.cpp" />
-    <ClCompile Include="Request.cpp" />
+    <ClCompile Include="OtherException.cpp" />
+    <ClCompile Include="Response.cpp" />
     <ClCompile Include="Interrupt.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Response.cpp" />
     <ClCompile Include="SendRecv.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Base64.cpp" />
@@ -150,7 +150,7 @@
     <ClInclude Include="LogFile.h" />
     <ClInclude Include="MyCover.h" />
     <ClInclude Include="OtherExceptions.h" />
-    <ClInclude Include="ResponseRequest.h" />
+    <ClInclude Include="Response.h" />
     <ClInclude Include="SendRecv.h" />
     <ClInclude Include="Var_for_threads.h" />
     <ClInclude Include="Server.h" />

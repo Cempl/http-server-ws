@@ -1,6 +1,8 @@
 /*******************************************************************************/
 #include "SendRecv.h"
 #include "LogFile.h"
+#include "Response.h"
+#include "ControlsDatabase.h"
 
 
 /*******************************************************************************/
@@ -12,21 +14,21 @@ bool queueClear = false;
 
 
 /*******************************************************************************/
-void SendRecv::websocket_handshake(SOCKET client_socket, string key)
+void SendRecv::websocket_handshake(SSL* inSSL, string& key)
 {
 	string response;
 
-	generate(key);
+	generate_key(key);
 
 	response += "HTTP/1.1 101 Switching Protocols\r\n";
 	response += "Upgrade: websocket\r\n";
 	response += "Connection: Upgrade\r\n";
 	response += ("Sec-WebSocket-Accept: " + key + "\r\n");
 	response += "Sec-WebSocket-Version: 13\r\n\r\n";
-
+	
 	try
 	{
-		my_send(client_socket, response);
+		my_send(inSSL, response, false);
 	}
 	catch(exception& e)
 	{
@@ -34,12 +36,12 @@ void SendRecv::websocket_handshake(SOCKET client_socket, string key)
 		log.write(e.what());
 	}
 
-	Thread_recv(client_socket);
+	Thread_recv(inSSL);
 }
 
 
 /*******************************************************************************/
-void SendRecv::generate(string& key)
+void SendRecv::generate_key(string& key)
 {
 	unsigned char hash[SHA_DIGEST_LENGTH];
 
@@ -50,15 +52,9 @@ void SendRecv::generate(string& key)
 	key = (const char*)hash;
 
 	if (key.size() > 20)
-	{
 		key = key.erase(20, key.length());
 
-		key = base64_encode(reinterpret_cast<const unsigned char*>(key.c_str()), static_cast<unsigned int>(key.length()));
-	}
-	else
-	{
-		key = base64_encode(reinterpret_cast<const unsigned char*>(key.c_str()), static_cast<unsigned int>(key.length()));
-	}
+	key = base64_encode(reinterpret_cast<const unsigned char*>(key.c_str()), static_cast<unsigned int>(key.length()));
 }
 
 
@@ -72,14 +68,17 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 	auto j = 0;
 	auto length_code = 0;
 
-	u_char check_value;
+	const u_char* u_data = reinterpret_cast<const unsigned char*>(data.c_str());
+	u_char temp_value;
 	string temp_str = string();
 
 	auto index_first_mask = 0;
 	auto index_first_data_byte = 0;
 	auto index_first_trash = 0;
 
-	if((u_char)data[0] == 136)
+	int a = u_data[0];
+
+	if(u_data[0] == 136)
 	{
 		delete[] mask;
 
@@ -87,7 +86,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 		return 1;
 	}
 
-	if ((u_char)data[0] == 130)
+	if (u_data[0] == 130)
 	{
 		delete[] mask;
 
@@ -95,7 +94,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 		return 2;
 	}
 
-	length_code = (u_char) data[1] & 127;
+	length_code = u_data[1] & 127;
 
 	if(length_code <= 125)
 	{
@@ -103,7 +102,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 
 		for(int i =0; i < 4; ++i)
 		{
-			mask[i] = data[i+index_first_mask];
+			mask[i] = u_data[i+index_first_mask];
 		}
 	}
 	else
@@ -113,7 +112,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 
 			for(int i =0; i < 4; ++i)
 			{
-				mask[i] = data[i+index_first_mask];
+				mask[i] = u_data[i+index_first_mask];
 			}
 		}
 		else
@@ -123,7 +122,7 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 
 				for(int i =0; i < 4; ++i)
 				{
-					mask[i] = data[i+index_first_mask];
+					mask[i] = u_data[i+index_first_mask];
 				}
 			}
 			else
@@ -137,11 +136,9 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 
 	for(i = index_first_data_byte; i < data_length; ++i)
 	{
-		check_value = (u_char)data[i] ^ mask[j % 4];
-		if(data[j] != check_value)
-		{
-			temp_str.push_back(check_value);
-		}
+		temp_value = u_data[i] ^ mask[j % 4];
+		temp_str.push_back(reinterpret_cast<char&>(temp_value));
+
 		++j;
 	}
 
@@ -157,16 +154,16 @@ int SendRecv::websocket_get_content(string& data, int data_length)
 /*******************************************************************************/
 void SendRecv::websocket_set_content(string& data, int64_t data_length, int data_type)
 {
-	string message;
+	string message = string();
 
 	if (data_type == 2)
 	{
 		// binary data
-		message.push_back(130);
+		message = (char)130;
 	}
 	else
 	{
-		message.push_back(129);
+		message = (char)129;
 	}
 
 	if(data_length <= 125)
@@ -203,7 +200,7 @@ void SendRecv::websocket_set_content(string& data, int64_t data_length, int data
 
 
 /*******************************************************************************/
-void SendRecv::send_data(SOCKET& client_socket)
+void SendRecv::send_data(SSL* inSSL)
 {		
 	int index = 0;
 	int max_length = 100;
@@ -222,7 +219,7 @@ void SendRecv::send_data(SOCKET& client_socket)
 			}
 
 			interruptible_wait(gdata_cond, u_mutex, [&index]{return (index < my_gList.size());});
-			my_send(client_socket, my_gList[index]);
+			my_send(inSSL, my_gList[index], false);
 			++index;
 
 			// Max length of the queue
@@ -247,8 +244,10 @@ void SendRecv::send_data(SOCKET& client_socket)
 
 
 /*******************************************************************************/
-int SendRecv::recv_data(string& data)
+int SendRecv::recv_data(string& data, SSL* inSSL)
 {
+	int res_code = int();
+
 	// Decode data
 	auto result = websocket_get_content(data, static_cast<int>(data.size()));
 
@@ -256,26 +255,82 @@ int SendRecv::recv_data(string& data)
 	{
 		return 1;
 	}
+	
+	{
+		Response mResponse;
+		res_code = mResponse.ParseDataFromWebSocket(data);
+	}
 
-	// recoded data
-	websocket_set_content(data, data.size(), result);
+	switch (res_code)
+	{
+		case 1:
+		{
+			// recoded data
+			websocket_set_content(data, data.size(), result);
 
-	lock_guard<mutex> guard(glist_mutex); 
+			lock_guard<mutex> guard(glist_mutex);
 
-	// Added data in queue
-	my_gList.push_back(data);
+			// Added data in queue
+			my_gList.push_back(data);
 
-	// Wake up streams to send a data
-	gdata_cond.notify_all();
+			// Wake up streams to send a data
+			gdata_cond.notify_all();
+
+			break;
+		}
+
+		case 0:
+		case 2:
+		{
+			// recoded data
+			websocket_set_content(data, data.size(), result);
+
+			// send data
+			my_send(inSSL, data, false);
+
+			break;
+		}
+
+		case 3:
+		{
+			break;
+		}
+
+		case 4:
+		{
+			break;
+		}
+
+		case 5:
+		{
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+	}
+
+	//// recoded data
+	//websocket_set_content(data, data.size(), result);
+
+	//lock_guard<mutex> guard(glist_mutex); 
+
+	//// Added data in queue
+	//my_gList.push_back(data);
+
+	//// Wake up streams to send a data
+	//gdata_cond.notify_all();
 	
 	return 0;
 }
 
 
 /*******************************************************************************/
-int SendRecv::Thread_recv(SOCKET client_socket)
+int SendRecv::Thread_recv(SSL* inSSL)
 {
-	interruptible_thread thr(this, &SendRecv::send_data,  client_socket);
+	interruptible_thread thr(this, &SendRecv::send_data, inSSL);
 
 	string message;
 
@@ -284,9 +339,9 @@ int SendRecv::Thread_recv(SOCKET client_socket)
 		try
 		{
 			// Accept data from client
-			my_recv(client_socket, message);
+			my_recv(inSSL, message);
 
-			int result = recv_data(message);
+			int result = recv_data(message, inSSL);
 
 			if(result == 1)
 			{		
@@ -294,8 +349,7 @@ int SendRecv::Thread_recv(SOCKET client_socket)
 				thr.join();
 				message.clear();
 
-				// Normal exit
-				return 0;
+				break;
 			}
 
 			message.clear();
@@ -306,9 +360,14 @@ int SendRecv::Thread_recv(SOCKET client_socket)
 
 			LogFile log;
 			log.write(e.what());
+
+			thr.interrupt();
+			thr.join();
+			message.clear();
+
+			break;
 		}
 	}  
 
-	// Not normal exit
-	return 1;
+	return 0;
 }

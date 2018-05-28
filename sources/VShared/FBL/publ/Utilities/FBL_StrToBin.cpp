@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_StrToBin.cpp                                                          				  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -284,7 +284,9 @@ vuint8* DataFromBinString(
 	
 	vuint32 BinLength	= ioLen / BITS_PER_BYTE;
     vuint8* Buffer		= new vuint8[ BinLength ];
+
 	DataFromBinString( inStr, Buffer, ioLen );
+
 	return Buffer;
 }
 

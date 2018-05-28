@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Value_String.h 	                                                   					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -87,12 +87,13 @@ class FBL_SHARED_EXP_CLASS Value_string :
 
 							Value_string( void );
 
-							/**	This ctor allow create empty Value_string with buffer for 
+							/**	This ctor allows to create empty Value_string with buffer for 
 								the specified number of characters. 
 								@param inChars	- count of character for allocating buffer.*/
 							Value_string( 
 								tslen 				inChars,
-								I_Localizable_Ptr 	inLocalizable = nullptr );
+								I_Localizable_Ptr 	inLocalizable = nullptr,
+								COMPARE_TYPE		inCompareType = kNatureCompare );
 
 							/**	This is a copy-ctor. 
 								@param inOther - other Value_string.*/
@@ -138,6 +139,9 @@ virtual VALUE_TYPE			get_Type( void ) const override;
 
 virtual String				get_TypeString( const char inLocale[] = "en_US" ) const override 
 								{ return TypeCode2String(kTypeString, inLocale); }
+
+virtual COMPARE_TYPE		get_CompareType( void ) const override;
+virtual void				put_CompareType( COMPARE_TYPE inValue ) override;
 
 	// ---------------------
 	// Value access:
@@ -237,6 +241,14 @@ virtual void				SwapBytes( void* inValue ) const override 			 { argused1(inValue
 virtual void				SwapBytes( const void* inSrc, void* inDest ) override { argused2(inSrc, inDest); }
 
 
+	// ---------------------
+	// Serialization to/from char buffer (for ValueVariant):
+
+virtual vuint32 			get_BinaryRepresentationByteLength( void ) const override;
+virtual void				FromBinaryRepresentation( const char* inpBuffer ) override;
+virtual void				ToBinaryRepresentation( char* outpBuffer ) const override;
+
+
 	public://///////////////////////////////////////////////////////////////////////////////////
  
 // interface I_Serializable:
@@ -318,6 +330,20 @@ virtual void				put_String(
 		void				SetupConversionFlag( void ) const;
 
 
+		int					BinaryCompareToIndexValue_(
+								const UChar*	inpBegin1,
+								vuint8			inLen1InBytes,
+								const UChar*	inpBegin2,
+								vuint8			inLen2InBytes,
+								vuint32			inParam ) const;
+
+		int					NaturalCompareToIndexValue_(
+								const UChar*	inpBegin1,
+								tslen			inLen1InChars,
+								const UChar*	inpBegin2,
+								tslen			inLen2InChars,
+								vuint32			inParam ) const;
+
 							// Receiving value from server.
 		void				From_OnClientSide( I_PacketRcv* inPacket );
 
@@ -355,6 +381,8 @@ virtual void				put_String(
 mutable	bool				mNeedConvertedIsInited;			// guard for LAZY init of the following flag:
 mutable bool				mNeedConvertToStorageEncoding;	// 
 
+		COMPARE_TYPE		mCompareType;
+		
 
 	public://///////////////////////////////////////////////////////////////////////////////////
 
@@ -364,7 +392,7 @@ mutable bool				mNeedConvertToStorageEncoding;	//
 #if FBL_TEST_CODE
 
 							/**	This ctors allows init to Value by some string.
-								Actually this form will be used only in tests. 
+								This form will be used only in tests. 
 								@param inStart	- begin of initialization string.
 								@param inEnd	- end of initialization string. */
 							Value_string( 
@@ -418,7 +446,8 @@ class FBL_SHARED_EXP_CLASS Value_string_null : public Value_string
 								@param inChars	- count of character for allocating buffer.*/
 							Value_string_null( 
 								tslen inChars,
-								I_Localizable_Ptr inLocalizable = nullptr );
+								I_Localizable_Ptr	inLocalizable = nullptr,
+								COMPARE_TYPE		inCompareType = kNatureCompare );
 
 							/**	This is are copy-ctor. 
 								@param inOther - other Value_string.*/

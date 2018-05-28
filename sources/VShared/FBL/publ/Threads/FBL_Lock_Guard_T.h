@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Lock_Guard_T.h	                                                   					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 /**
@@ -21,7 +21,7 @@
 
 // FBL:
 #include <VShared/FBL/publ/Headers/FBL_Macros.h>
-
+#include <VShared/FBL/publ/Threads/thread_safety.h>
 
 // FINAL:
 #include <VShared/FBL/publ/Headers/FBL_pre_header.h>
@@ -52,7 +52,7 @@ enum StLockPolicy
 	the very least the <Acquire>, <TryAcquire>, <Release>, and <Remove> methods. 
  */
 template <class LOCK>
-class StLockGuard_T
+class SCOPED_CAPABILITY StLockGuard_T
 {
 	public://///////////////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +70,7 @@ class StLockGuard_T
 	// -------------------
 
 							/// Explicitly acquire the lock.
-		void				Acquire( void );
+		void				Acquire( void ) ACQUIRE();
 
 							/// Explicitly acquires the write lock.
 		void				AcquireWrite( void );
@@ -90,7 +90,7 @@ class StLockGuard_T
 
 
 							/// Explicitly release the lock, but only if it is held!
-		void				Release( void );
+		void				Release( void ) RELEASE_();
 
 		LOCK*				get_Lock( void );
 	
@@ -165,7 +165,7 @@ StLockGuard_T<LOCK>::~StLockGuard_T( void )
 
 /**********************************************************************************************/
 template <class LOCK> inline
-void StLockGuard_T<LOCK>::Acquire( void )
+void StLockGuard_T<LOCK>::Acquire( void ) ACQUIRE()
 {
 	if( mIsLocked == false )
 	{
@@ -231,7 +231,7 @@ bool StLockGuard_T<LOCK>::TryAcquireRead( void )
 
 /**********************************************************************************************/
 template <class LOCK> inline
-void StLockGuard_T<LOCK>::Release( void )
+void StLockGuard_T<LOCK>::Release( void ) RELEASE_()
 {
 	if( mIsLocked )
 	{

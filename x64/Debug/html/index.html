@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <title>Home</title>
-<link href="index.css" rel="stylesheet" type="text/css">
-<link href="authorization.css" rel="stylesheet" type="text/css">
+<link href="index.css" rel="stylesheet">
+<link href="chat.css" rel="stylesheet">
+<link href="authorization.css" rel="stylesheet">
 </head>	
 
     <script type="text/javascript" src="jquery_min.js"></script>
-    <script type="text/javascript" src="activeTab.js"></script>
+    <script type="text/javascript" src="loadContent.js"></script>
     <script type="text/javascript" src="sha512min.js"></script>
-    <script type="text/javascript" src="encryption.js"></script>
-
+    
 <body>
 
 <noscript>
@@ -20,17 +20,18 @@
     </div>
 </noscript>
 
-	<div class="font-wrapper">
+	<div id="chatBody" class="font-wrapper">
 <div class="wrapper">
 	<div class="top_menu">
         <ul class="ul_top_menu">
-            <li><a class="li_top_menu" href="#login_form" id="login_pop">CHAT</a></li>
+            <li><a style="cursor: pointer" onclick="showContent('home.html')" class="li_top_menu">HOME</a></li>
+            <li><a style="cursor: pointer" onclick="showContent('authorization.html')" class="li_top_menu">SIGN IN</a></li>
             <li><a class="li_top_menu" href="https://github.com/Cempl/http-server-ws" target="_blank">CODE</a></li>
         </ul>
     </div>
 </div>
 
-    <div class="centr">
+    <div id="homeBody" class="centr">
 		<div class="circle-position">
 		<div class="circle-left">
             <div class="text-col-left">Features</div>
@@ -46,11 +47,11 @@
 		<div class="circle-cen">
             <div class="text-col-cen">FAQ</div>
             <p class="text-config">
-                • How to start?<br>
-                • How to compile?<br>  
-                • What is a secret chat?<br>  
+                • How to start<br>
+                • How to compile<br>  
+                • What is a secret chat<br>  
                 • Starting a secret chat<br>            
-                • Why should I trust you?<br>             
+                • Why should I trust you<br>             
                 • Creating a group
             </p>
             </div>
@@ -64,56 +65,23 @@
 		</div>
     </div>
     <div class="footer-size">
-        <div class="footer-text">Copyright 2016 Beta Project</div>
+        <div class="footer-text">Copyright 2017 Beta Project</div>
     </div>
 </div>
 
- <a href="#x" class="overlay" id="login_form"></a>
-                    
-        <div id="close-popup" class="popup">
+    <div id="hellopreloader"><div id="hellopreloader_preload"></div></div>
 
-             <div class="tabs">
+    <script type="text/javascript" src="index.js"></script>
 
-                <ul class="tab-autho">
-
-                    <li><a class="nameAuthHeaders" href="#authorization">Authorization</a></li>
-                    <li><a class="nameAuthHeaders" href="#registration">Registration</a></li>
-
-                </ul>
-
-                <div id="authorization">
-
-                    <form class="form-login" method="post" onsubmit="encryptAuthData();" enctype="text/plain" id="t_data">
-
-                        <input type="text" id="user_name" class="login" required="" autofocus="" placeholder="Login or Email" name="AuthLogin">
-                        <input type="password" id="user_pass" required class="password" placeholder="Password" name="AuthPass">
-                        <input type="submit" class="to-send" value="sign in" id="send_login_data" form="t_data">
-                        <input type="submit" class="to-send" value="forgot password" id="send_forgot_data" form="">
-
-                    </form>
-
-                </div>
-                
-                    <div id="registration">
-
-                    <form class="form-reg" method="post" onsubmit="encryptRegData();" enctype="text/plain" id="reg_data">
-
-                        <input required="" type="text" id="reg_user_name" class="login" required="" autofocus="" placeholder="Name" name="RegName">
-                        <input required="" type="email" id="reg_user_login" class="login" required="" autofocus="" placeholder="Login" name="RegLogin">
-                        <input required="" type="password" id="reg_user_pass" class="login" required="" autofocus="" placeholder="Password" name="RegPass">
-                        <input type="submit" class="to-send" value="just do it!" id="send_reg_data" form="reg_data">
-
-                    </form>
-
-                    </div>
-
-             </div>
-
-            <a class="close" href="#close"></a>
-
-        </div>
-
-        <script type="text/javascript" src="index.js"></script>
-
+    <script>
+        var hellopreloader = document.getElementById("hellopreloader_preload");
+        function fadeOutnojquery(el) { el.style.opacity = 1;
+        var interhellopreloader = setInterval(function() {
+        el.style.opacity = el.style.opacity - 0.05;if (el.style.opacity <=0.05) {
+        clearInterval(interhellopreloader);
+        hellopreloader.style.display = "none";}},16);}
+        window.onload = function() {
+        setTimeout(function(){fadeOutnojquery(hellopreloader);},1000);};
+    </script>
 </body>
 </html>

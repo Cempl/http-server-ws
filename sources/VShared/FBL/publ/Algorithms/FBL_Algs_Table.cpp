@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Algs_Table.cpp																		  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015                                        					  */
+/* Copyright Paradigma, 1998-2017                                        					  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -128,6 +128,28 @@ I_Field_Ptr CreateVarCharField(
 
 	// ---------------
 	I_Field_Ptr pField = inTable->CreateField( inName, kTypeVarChar, inFlags, props );
+		
+	return pField;
+}
+
+
+/**********************************************************************************************/
+I_Field_Ptr CreateVarBinaryField(
+	I_Table_Ptr 	inTable, 
+	const String& 	inName,
+	vuint32			inMaxLength,
+	vuint16			inFlags,
+	const String& 	inMethod )	
+{
+	I_PropertyContainer_Ptr props = new PropertyContainer();	
+
+	props->Add( new Prop_MaxLen(inMaxLength) );
+
+	if( inMethod.isEmpty() == false )
+		props->Add( new Prop_MethodSql( inMethod ) );
+
+	// ---------------
+	I_Field_Ptr pField = inTable->CreateField( inName, kTypeVarBinary, inFlags, props );
 		
 	return pField;
 }
@@ -266,6 +288,17 @@ I_Field_Ptr CreateMoneyField(
 
 	I_Field_Ptr pField = inTable->CreateField( inName, kTypeMoney, inFlags, props );
 
+	return pField;
+}
+
+
+/**********************************************************************************************/
+I_Field_Ptr CreateVariantField(
+	I_Table_Ptr 	inTable, 
+	const String& 	inName,
+	vuint16			inFlags )
+{
+	I_Field_Ptr pField = inTable->CreateField( inName, kTypeVariant, inFlags );
 	return pField;
 }
 

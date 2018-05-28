@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Types.h 		                                                      					  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 
@@ -79,6 +79,7 @@ typedef vint64	OID;			// "Object ID" = (Table_ID << 32) | REC_ID
 /**********************************************************************************************/
 typedef vuint16	Field_ID;			// ID of a Field. 
 typedef vuint32	IndStyle_ID;		// ID of a Index style. 
+typedef vint32	KeyValue_ID;		// ID of a KeyValue.
 typedef vint32	Link_ID;			// ID of a Link. Tmp Link have negative ID.
 typedef vint32	Index_ID;			// ID of an Index.
 typedef vint32	Sequence_ID;		// ID of a Sequence.

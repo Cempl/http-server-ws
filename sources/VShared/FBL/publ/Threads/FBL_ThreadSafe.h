@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_ThreadSafe.h	                                               							  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved                                                   					  */
 /**********************************************************************************************/
 /**
@@ -40,7 +40,12 @@ FBL_Begin_Namespace
 //typedef Old_CriticalSection						CriticalSection;
 //typedef Old_StCriticalSectionLocker				StCriticalSectionLocker;
 typedef True_Thread_Mutex_Recursive				CriticalSection;
+#if FBL_THREAD_SAFETY_ANALYSIS
+class SCOPED_CAPABILITY CriticalSectionGuard;
+typedef CriticalSectionGuard					StCriticalSectionLocker;
+#else
 typedef StLockGuard<CriticalSection>			StCriticalSectionLocker;
+#endif // FBL_THREAD_SAFETY_ANALYSIS
 
 
 /**********************************************************************************************/
@@ -88,13 +93,55 @@ FBL_SHARED_EXP extern bool gKernelInServerMode;
 FBL_SHARED_EXP extern bool gGlobalThreadSafe;
 
 /**********************************************************************************************/
+class SCOPED_CAPABILITY CriticalSectionGuard
+{
+    public://////////////////////////////////////////////////////////////////////////
+
+							CriticalSectionGuard( CriticalSection& lock ) ACQUIRE( lock )
+                            :
+                                lock_( lock )
+                            {
+                                lock.lock();
+                            }
+
+                            ~CriticalSectionGuard( void ) RELEASE_()
+                            {
+                                lock_.unlock();
+                            }
+
+
+    private://////////////////////////////////////////////////////////////////////////
+
+							CriticalSectionGuard(const CriticalSectionGuard& inGuard) // deleted
+							:
+								lock_(inGuard.lock_)
+							{
+								argused1(inGuard);
+							}
+
+							CriticalSectionGuard&   operator=(const CriticalSectionGuard& inGuard) // deleted
+							{
+								argused1(inGuard);
+								return *this;
+							}
+
+
+    private://////////////////////////////////////////////////////////////////////////
+
+// references
+
+        CriticalSection&     lock_;
+};
+
+
+/**********************************************************************************************/
 /**	This class should be used as stack variable.  
 	It performs automatic aquisition and release globalEngineLock if needed.
 	Sure, we can use StLocalGuard<>(mutex&, condition) for this purpose, but this special class
 	seems to be a little more efficient, because if dynamically threadsafe is OFF - the only 
 	pitfall is - this stack object + two "if" (no need for getting actual mutex).
  */
-class StGlobalLockGuard
+class SCOPED_CAPABILITY StGlobalLockGuard
 {
 	public://///////////////////////////////////////////////////////////////////////////////////
 
@@ -118,14 +165,14 @@ class StGlobalLockGuard
 	public://///////////////////////////////////////////////////////////////////////////////////
 
 							///	Acquire the lock.
-		void				Acquire( void )
+		void				Acquire( void ) ACQUIRE()
 							{
 								if( mpGlobalEngineMutex )
 									mpGlobalEngineMutex->lock();
 							}
 
 							///	Release the lock.  
-		void				Release( void )
+		void				Release( void ) RELEASE_()
 							{
 								if( mpGlobalEngineMutex )
 									mpGlobalEngineMutex->unlock();
@@ -178,7 +225,7 @@ class StGlobalUnlockGuard
 							///	Release the lock completelly.
 							/// Tricky method for unlock the mutex (temporary).
 							/// You should call AcquireAll() to lock the mutex again!!!
-		void				ReleaseAll( void )
+		void				ReleaseAll( void ) NO_THREAD_SAFETY_ANALYSIS
 							{
 								if( mpGlobalEngineMutex )
 								{
@@ -193,7 +240,7 @@ class StGlobalUnlockGuard
 	
 							///	Acquire the lock to the level on ReleaseAll() call moment.
 							/// Must be called after ReleaseAll() only!
-		void				AcquireAll( void )
+		void				AcquireAll( void ) NO_THREAD_SAFETY_ANALYSIS
 							{
 								if( mpGlobalEngineMutex )
 								{

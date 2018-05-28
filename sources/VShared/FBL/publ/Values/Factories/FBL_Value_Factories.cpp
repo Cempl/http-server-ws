@@ -1,7 +1,7 @@
 /**********************************************************************************************/
 /* FBL_Value_Factories.cpp																	  */
 /*                                                                       					  */
-/* Copyright Paradigma, 1998-2015															  */
+/* Copyright Paradigma, 1998-2017															  */
 /* All Rights Reserved.                                                 					  */
 /**********************************************************************************************/
 
@@ -23,6 +23,7 @@
 #include <VShared/FBL/publ/Values/FBL_Value_Text.h>
 #include <VShared/FBL/publ/Values/FBL_Value_Time.h>
 #include <VShared/FBL/publ/Values/FBL_Value_Money.h>
+#include <VShared/FBL/publ/Values/FBL_Value_Variant.h>
 
 
 /**********************************************************************************************/
@@ -589,6 +590,20 @@ I_Value* CreateValueMoney( bool inNullable, void* inParam1, void* inParam2 )
 		return new Value_money_null();
 	else
 		return new Value_money();
+}
+
+
+/**********************************************************************************************/
+I_Value* CreateValueVariant( bool inNullable, void* inParam1, void* inParam2 )
+{
+	argused1( inParam2 );
+
+	I_Database* p = reinterpret_cast<I_Database*>(inParam1);
+
+	if( inNullable )
+		return new Value_Variant_null(p);
+	else
+		return new Value_Variant(p);
 }
 
 
