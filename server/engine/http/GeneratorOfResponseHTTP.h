@@ -7,7 +7,6 @@
 #include <QObject>
 #include <QString>
 
-#include "../core/Transport.h"
 
 using namespace std;
 
@@ -79,7 +78,7 @@ class GeneratorOfResponseHTTP : public QObject
 
 	public://////////////////////////////////////////////////////////////////////
 
-        explicit            GeneratorOfResponseHTTP(const Transport* inTrs );
+                            GeneratorOfResponseHTTP();
                             GeneratorOfResponseHTTP(const GeneratorOfResponseHTTP& inOther) = delete;
                             ~GeneratorOfResponseHTTP();
 
@@ -107,5 +106,7 @@ class GeneratorOfResponseHTTP : public QObject
                                                 const QString& inInform,
                                                 cfgOfResponse& cfgResponse);
 };
+
+Q_DECLARE_METATYPE(GeneratorOfResponseHTTP::cfgOfResponse)
 
 #endif // _Response_H

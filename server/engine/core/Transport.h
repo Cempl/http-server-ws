@@ -4,9 +4,11 @@
 // TODO: Ivan: This is temporary class.I think this class should be remake. Think about it!
 /*******************************************************************************/
 #include "SslServer.h"
+#include "../http/GeneratorOfResponseHTTP.h"
 
 // Types
 #include "../types/ServerTypes.h"
+
 
 
 /*******************************************************************************/
@@ -34,6 +36,7 @@ explicit    Transport(ServerConfig config);
     private://///////////////////////////////////////////////////////////////////
 
     SslServer obj;
+    GeneratorOfResponseHTTP parseObj;
 };
 
 

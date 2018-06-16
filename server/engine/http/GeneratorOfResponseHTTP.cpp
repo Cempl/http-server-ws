@@ -6,10 +6,9 @@
 
 
 /*******************************************************************************/
-GeneratorOfResponseHTTP::GeneratorOfResponseHTTP(const Transport* inTrs )
+GeneratorOfResponseHTTP::GeneratorOfResponseHTTP()
 {
-    connect(inTrs, SIGNAL(incomingRequest(const QString)), this, SLOT(ParseHttpHEAD(const QString)));
-    connect(this, SIGNAL(HEADIsParsed(cfgOfResponse)), this, SLOT(GenerateResponse(cfgOfResponse)));
+    connect(this, SIGNAL(HEADIsParsed(const cfgOfResponse)), this, SLOT(GenerateResponse(const cfgOfResponse)));
 }
 
 

@@ -1,6 +1,5 @@
 /*******************************************************************************/
 #include "Transport.h"
-#include "../http/GeneratorOfResponseHTTP.h"
 
 
 /*******************************************************************************/
@@ -9,6 +8,7 @@ Transport::Transport(ServerConfig config)
       obj(config)
 {
     connect(&obj, SIGNAL(Ready(QTcpSocket*)), this, SLOT(recieveRequest(QTcpSocket*)));
+    connect(this, SIGNAL(incomingRequest(const QString)), &parseObj, SLOT(ParseHttpHEAD(const QString)));
 }
 
 
@@ -22,7 +22,6 @@ Transport::~Transport()
 /*******************************************************************************/
 void Transport::recieveRequest(QTcpSocket* socket)
 {
-    GeneratorOfResponseHTTP parseObj(this);
     connect(&parseObj, &GeneratorOfResponseHTTP::RespIsGenerated, this, [&](const QString inResponse) { sendResponse(inResponse, socket);});
 
     emit(incomingRequest(QString(socket->readAll())));
