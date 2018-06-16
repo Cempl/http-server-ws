@@ -12,7 +12,7 @@ WSLexer::WSLexer() :
 
 
 /*******************************************************************************/
-WSLexer::WSLexer(const string& inString) :
+WSLexer::WSLexer(const QString& inString) :
     mpHttpStr(nullptr),
     mpHttpStrEnd(nullptr),
     mpCurrChar(nullptr)
@@ -28,10 +28,10 @@ WSLexer::~WSLexer()
 
 
 /*******************************************************************************/
-void WSLexer::Put_HttpRequest(const string& inString)
+void WSLexer::Put_HttpRequest(const QString& inString)
 {
 
-	mpHttpStr		= inString.c_str();
+    mpHttpStr		= inString.data();
 	mpHttpStrEnd	= mpHttpStr + inString.size();
 	mpCurrChar		= mpHttpStr;
 }
@@ -47,9 +47,7 @@ const shared_ptr<WSLexer::Token>& WSLexer::getToken() const
 /*******************************************************************************/
 bool WSLexer::NextToken(bool WithoutSpace)
 {
-	//spToken->Clear();
-
-    if( spToken )
+    if( spToken.get() )
     {
         spToken = make_shared<Token>(spToken);
     }
@@ -71,7 +69,7 @@ bool WSLexer::NextToken(bool WithoutSpace)
 	{
 		flagThisTokenIsSpace = false;
 
-		switch(*mpCurrChar)
+        switch((*mpCurrChar).digitValue())
 		{
 			case 32: // " "
 			{
@@ -105,7 +103,7 @@ bool WSLexer::NextToken(bool WithoutSpace)
 			case 61: // "="
 			case 92: // "\"
 			{
-				if( !flagLongWord)
+                if( !flagLongWord )
 				{
 					mpCurrChar = mpCurrChar + 1;
 
@@ -188,7 +186,6 @@ bool WSLexer::NextToken(bool WithoutSpace)
 
 		if (mpCurrChar == mpHttpStrEnd)
 		{
-
 			flagLongWord = false;
 			res = false; // end of string
 		}

@@ -2,6 +2,7 @@
 
 //
 #include "engine/core/SslServer.h"
+#include "engine/core/Transport.h"
 
 
 int main(int argc, char *argv[])
@@ -16,19 +17,7 @@ int main(int argc, char *argv[])
     config.address = "127.0.0.1";
     config.algorithm = QSsl::Rsa;
 
-    SslServer server(config);
-
-    auto func = [](QTcpSocket* socket){
-
-            qDebug() << socket->readAll();
-
-            socket->write("HTTP/1.1 200 OK\nContent-Type: text/html;\r\n\r\n<!DOCTYPE html> <html><body>  <h1>Server says Hello!</h1> </body></html>");
-
-            socket->close();
-
-    };
-
-    QObject::connect(&server, &SslServer::Ready, func);
+    Transport trs(config);
 
     return a.exec();
 }

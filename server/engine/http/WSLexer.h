@@ -2,7 +2,12 @@
 	#define _WSLexer_H
 #pragma once
 
-#include "Server.h"
+
+/*******************************************************************************/
+#include <QString>
+#include <memory>
+
+using namespace std;
 
 
 /*******************************************************************************/
@@ -11,7 +16,7 @@ enum wsTokenTypes
 	wsDefaultType = 0,
 
 	wsSpaceType,
-	wsSymbolType, // : ; . , / \ 
+    wsSymbolType, // : ; . , / '\'
 	wsNewLineSymbolType, // \n \r
 	wsBracketsSymbolType, // () []
 	wsQuotesSymbolType // ""
@@ -37,7 +42,7 @@ class WSLexer
 							{
 							}
 
-                            Token(shared_ptr<Token*> inToken) :
+                            Token(shared_ptr<Token> inToken) :
                                 mType(wsDefaultType),
                                 mLen(0),
                                 mPosition(0),
@@ -53,19 +58,19 @@ class WSLexer
 
 		// Setter
         void                setType(const wsTokenTypes& inType) { mType = inType; };
-        void                setLen(const __int64& inLen) { mLen = inLen; };
-        void                setPosition(const __int64& inPosition) { mPosition = inPosition; };
-        void                setLine(const int& inLine) { mLine = inLine; };
-        void                setStart(const char* inStart) { ps = inStart; };
-        void                setEnd(const char* inEnd) { pe = inEnd; };
+        void                setLen(const uint32_t inLen) { mLen = inLen; };
+        void                setPosition(const uint32_t inPosition) { mPosition = inPosition; };
+        void                setLine(const uint32_t inLine) { mLine = inLine; };
+        void                setStart(const QChar* inStart) { ps = inStart; };
+        void                setEnd(const QChar* inEnd) { pe = inEnd; };
 
         // Getter
         wsTokenTypes        getType() const { return mType; };
-        __int64             getLen() const { return mLen; };
-        __int64             getPosition() const { return mPosition; };
+        int64_t             getLen() const { return mLen; };
+        int64_t             getPosition() const { return mPosition; };
         int                 getLine() const { return mLine; };
-        const char*         getStart() const { return ps; };
-        const char*         getEnd() const { return pe; };
+        const QChar*         getStart() const { return ps; };
+        const QChar*         getEnd() const { return pe; };
 
         const shared_ptr<Token>& getPrevToken() const { return prevToken; };
 
@@ -73,13 +78,13 @@ class WSLexer
 
 		wsTokenTypes		mType				= wsDefaultType; // Type of the Token
 
-		__int64				mLen				= 0; // Length in chars of this token
-		__int64				mPosition			= 0; // position of token (in chars) from the beginning of string.
+        uint32_t				mLen				= 0; // Length in chars of this token
+        uint32_t				mPosition			= 0; // position of token (in chars) from the beginning of string.
 
-		int					mLine				= 1; // Number of current line
+        uint32_t					mLine				= 1; // Number of current line
 
-		const char*			ps					= nullptr; // start
-		const char*			pe					= nullptr; // after the end char
+        const QChar*			ps					= nullptr; // start
+        const QChar*			pe					= nullptr; // after the end char
 
         shared_ptr<Token>  prevToken;
 
@@ -88,13 +93,13 @@ class WSLexer
 	public:////////////////////////////////////////////////////////////////////
 
 							WSLexer();
-                            WSLexer(const string& inString);
+                            WSLexer(const QString& inString);
 							WSLexer(const WSLexer& inOther) = delete;
                             WSLexer(WSLexer&& inOther) = delete;
 							~WSLexer();
 
 							// This method resets Lexer to a new string
-		void				Put_HttpRequest(const string& inString);
+        void				Put_HttpRequest(const QString& inString);
 
 							// This method GET next token
 							// For GET first token you must use this method
@@ -105,10 +110,10 @@ class WSLexer
 
 	protected://///////////////////////////////////////////////////////////////
 
-		const char*			mpHttpStr;
-		const char*			mpHttpStrEnd;
+        const QChar*			mpHttpStr;
+        const QChar*			mpHttpStrEnd;
 
-		const char*			mpCurrChar;
+        const QChar*			mpCurrChar;
 
         shared_ptr<Token>  spToken;
 };
