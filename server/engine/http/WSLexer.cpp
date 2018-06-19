@@ -31,45 +31,58 @@ WSLexer::~WSLexer()
 void WSLexer::Put_HttpRequest(const QString& inString)
 {
 
-    mpHttpStr		= inString.data();
+    mpHttpStr		= inString.toLatin1().data();
 	mpHttpStrEnd	= mpHttpStr + inString.size();
 	mpCurrChar		= mpHttpStr;
 }
 
 
 /*******************************************************************************/
-const shared_ptr<WSLexer::Token>& WSLexer::getToken() const
+const shared_ptr<WSLexer::Token> WSLexer::getCurrToken() const
 {
-    return spToken;
+    return listOfTokens.front();
+}
+
+
+/*******************************************************************************/
+const shared_ptr<WSLexer::Token> WSLexer::getPrevToken(const uint32_t inIndex) const
+{
+    shared_ptr<Token> res(nullptr);
+
+    if(inIndex < listOfTokens.size())
+    {
+        list<shared_ptr<Token>>::const_iterator it = listOfTokens.begin();
+        advance(it, inIndex);
+
+        res = *(it);
+    }
+
+    return res;
 }
 
 
 /*******************************************************************************/
 bool WSLexer::NextToken(bool WithoutSpace)
 {
-    if( spToken.get() )
-    {
-        spToken = make_shared<Token>(spToken);
-    }
-    else
-    {
-        spToken = make_shared<Token>();
-    }
+    listOfTokens.push_front(make_shared<Token>());
 
-	bool res = false;
-	bool flagLongWord = false;
-	bool flagThisTokenIsSpace = false;
+    bool res = false;
+    if( mpCurrChar == mpHttpStrEnd )
+        return res; // end of string
 
-	if( mpCurrChar == mpHttpStrEnd )	
-		return res; // end of string
+    shared_ptr<Token> spToken = getCurrToken();
 
-	spToken->setStart(mpCurrChar);
+    spToken->setStart(mpCurrChar);
+
+    bool flagLongWord = false;
+    bool flagThisTokenIsSpace = false;
 
 	do
 	{
 		flagThisTokenIsSpace = false;
 
-        switch((*mpCurrChar).digitValue())
+        int test = *mpCurrChar;
+        switch(*mpCurrChar)
 		{
 			case 32: // " "
 			{

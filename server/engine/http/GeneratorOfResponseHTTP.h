@@ -91,7 +91,7 @@ class GeneratorOfResponseHTTP : public QObject
 
     private slots:///////////////////////////////////////////////////////////////
 
-        cfgOfResponse ParseHttpHEAD( const QString inHEAD );
+        void ParseHttpHEAD( const QString inHEAD );
         void GenerateResponse( const cfgOfResponse inCfg );
 
 

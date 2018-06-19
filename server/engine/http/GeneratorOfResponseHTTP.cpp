@@ -8,6 +8,7 @@
 /*******************************************************************************/
 GeneratorOfResponseHTTP::GeneratorOfResponseHTTP()
 {
+    qRegisterMetaType<cfgOfResponse>();
     connect(this, SIGNAL(HEADIsParsed(const cfgOfResponse)), this, SLOT(GenerateResponse(const cfgOfResponse)));
 }
 
@@ -19,7 +20,7 @@ GeneratorOfResponseHTTP::~GeneratorOfResponseHTTP()
 }
 
 /*******************************************************************************/
-GeneratorOfResponseHTTP::cfgOfResponse GeneratorOfResponseHTTP::ParseHttpHEAD(const QString inHEAD)
+void GeneratorOfResponseHTTP::ParseHttpHEAD(const QString inHEAD)
 {
     try
     {
@@ -28,7 +29,8 @@ GeneratorOfResponseHTTP::cfgOfResponse GeneratorOfResponseHTTP::ParseHttpHEAD(co
         WSLexer mLexer(inHEAD);
         while( mLexer.NextToken(true) )
         {
-            QString strCurrToken(mLexer.getToken()->getStart(), mLexer.getToken()->getLen());
+            QByteArray convert(mLexer.getCurrToken()->getStart(), mLexer.getCurrToken()->getLen());
+            QString strCurrToken(convert);
 
             if( cfgResponse.requestMethod == RequestMethodsList::RErrorType )
             {
@@ -38,27 +40,30 @@ GeneratorOfResponseHTTP::cfgOfResponse GeneratorOfResponseHTTP::ParseHttpHEAD(co
                 }
             }
 
-            if(     cfgResponse.fileType == FileTypeList::fDefault
-                &&  mLexer.getToken()->getPrevToken()->getType() == wsTokenTypes::wsSymbolType
-                &&  *(mLexer.getToken()->getPrevToken()->getStart()) == '.'
-                )
+            if(mLexer.getPrevToken(1).get())
             {
-                if( cfgResponse.fileType = getFileType(strCurrToken) )
+                if(     cfgResponse.fileType == FileTypeList::fDefault
+                    &&  mLexer.getPrevToken(1)->getType() == wsTokenTypes::wsSymbolType
+                    &&  *(mLexer.getPrevToken(1)->getStart()) == '.'
+                    )
                 {
-                    cfgResponse.fileName = QString(mLexer.getToken()->getPrevToken()->getPrevToken()->getStart(),
-                        mLexer.getToken()->getPrevToken()->getPrevToken()->getLen());
-                    cfgResponse.fileName += "." + strCurrToken;
-                    continue;
+                    if( cfgResponse.fileType = getFileType(strCurrToken) )
+                    {
+                        cfgResponse.fileName = QString(mLexer.getPrevToken(2)->getStart());
+                        cfgResponse.fileName += "." + strCurrToken;
+                        continue;
+                    }
                 }
             }
 
-            if( cfgResponse.requestMethod == RequestMethodsList::RErrorType )
+            //TODO: Ivan: I will fix it later.
+            /*if( cfgResponse.requestMethod == RequestMethodsList::RErrorType )
             {
                 if( cfgResponse.requestMethod = getRequestMethod(strCurrToken) )
                 {
                     continue;
                 }
-            }
+            }*/
 
             if(     false == cfgResponse.isWebSocket
                 ||  false == cfgResponse.isCorretVersion
@@ -69,15 +74,15 @@ GeneratorOfResponseHTTP::cfgOfResponse GeneratorOfResponseHTTP::ParseHttpHEAD(co
                 if( fieldType = getWebSockFieldType(strCurrToken) )
                 {
                     mLexer.NextToken(true);
-                    if(     *(mLexer.getToken()->getStart()) == ':' 
-                        &&  mLexer.getToken()->getType() == wsTokenTypes::wsSymbolType)
+                    if(     *(mLexer.getCurrToken()->getStart()) == ':'
+                        &&  mLexer.getCurrToken()->getType() == wsTokenTypes::wsSymbolType)
                     {
                         mLexer.NextToken(true);
 
                         QString strInform;
-                        while(mLexer.getToken()->getType() != wsTokenTypes::wsNewLineSymbolType);
+                        while(mLexer.getCurrToken()->getType() != wsTokenTypes::wsNewLineSymbolType);
                         {
-                            strInform += QString(mLexer.getToken()->getStart(), mLexer.getToken()->getLen());
+                            strInform += QString(mLexer.getCurrToken()->getStart());
                             mLexer.NextToken(true);
                         }
 
@@ -105,7 +110,7 @@ void GeneratorOfResponseHTTP::GenerateResponse( const cfgOfResponse cfgResponse 
         QString HTTPResponse;
 
         if(     cfgResponse.requestMethod == RequestMethodsList::GET
-                &&  cfgResponse.HTTTPVersion == HTTPVersionsList::HTTP11)
+                /*&&  cfgResponse.HTTTPVersion == HTTPVersionsList::HTTP11*/)
         {
             HTTPResponse = "HTTP/1.1 200 OK\n";
         }
@@ -143,13 +148,6 @@ void GeneratorOfResponseHTTP::GenerateResponse( const cfgOfResponse cfgResponse 
         }
 
         // TODO: Ivan: temporary solution! Fix me somebody! Please!!!!
-        /*QFile file(cfgResponse.fileName);
-        file.open(QIODevice::ReadOnly, QIODevice::Text);
-        QTextStream str(&file);
-        while(!str.atEnd())
-        {
-            HTTPResponse += str.readAll();
-        }*/
         HTTPResponse += "<!DOCTYPE html> <html><body>  <h1>Server says Hello!</h1> </body></html>";
         emit(RespIsGenerated(HTTPResponse));
     }

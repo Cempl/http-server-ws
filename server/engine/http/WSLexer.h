@@ -6,6 +6,7 @@
 /*******************************************************************************/
 #include <QString>
 #include <memory>
+#include <list>
 
 using namespace std;
 
@@ -32,62 +33,34 @@ class WSLexer
 	{
         public:////////////////////////////////////////////////////////////////////
 
-							Token() :
-                                mType(wsDefaultType),
-                                mLen(0),
-                                mPosition(0),
-                                mLine(1),
-                                ps(nullptr),
-                                pe(nullptr)
-							{
-							}
-
-                            Token(shared_ptr<Token> inToken) :
-                                mType(wsDefaultType),
-                                mLen(0),
-                                mPosition(0),
-                                mLine(1),
-                                ps(nullptr),
-                                pe(nullptr)
-                            {
-                            }
-
-							~Token()
-							{
-							}
 
 		// Setter
         void                setType(const wsTokenTypes& inType) { mType = inType; };
         void                setLen(const uint32_t inLen) { mLen = inLen; };
         void                setPosition(const uint32_t inPosition) { mPosition = inPosition; };
         void                setLine(const uint32_t inLine) { mLine = inLine; };
-        void                setStart(const QChar* inStart) { ps = inStart; };
-        void                setEnd(const QChar* inEnd) { pe = inEnd; };
+        void                setStart(const char* inStart) { ps = inStart; };
+        void                setEnd(const char* inEnd) { pe = inEnd; };
 
         // Getter
         wsTokenTypes        getType() const { return mType; };
         int64_t             getLen() const { return mLen; };
         int64_t             getPosition() const { return mPosition; };
         int                 getLine() const { return mLine; };
-        const QChar*         getStart() const { return ps; };
-        const QChar*         getEnd() const { return pe; };
-
-        const shared_ptr<Token>& getPrevToken() const { return prevToken; };
+        const char*         getStart() const { return ps; };
+        const char*         getEnd() const { return pe; };
 
         private:////////////////////////////////////////////////////////////////////
 
 		wsTokenTypes		mType				= wsDefaultType; // Type of the Token
 
-        uint32_t				mLen				= 0; // Length in chars of this token
-        uint32_t				mPosition			= 0; // position of token (in chars) from the beginning of string.
+        uint32_t			mLen				= 0; // Length in chars of this token
+        uint32_t			mPosition			= 0; // position of token (in chars) from the beginning of string.
 
-        uint32_t					mLine				= 1; // Number of current line
+        uint32_t			mLine				= 1; // Number of current line
 
-        const QChar*			ps					= nullptr; // start
-        const QChar*			pe					= nullptr; // after the end char
-
-        shared_ptr<Token>  prevToken;
-
+        const char*			ps					= nullptr; // start
+        const char*			pe					= nullptr; // after the end char
 	};
 
 	public:////////////////////////////////////////////////////////////////////
@@ -106,16 +79,20 @@ class WSLexer
 							// This function can throw exceptions
 		bool				NextToken( bool WithoutSpace = false );
 
-        const shared_ptr<Token>& getToken() const;
+        const shared_ptr<Token> getCurrToken() const;
+
+        // inIndex == 0 - mean this function return current token
+        // inIndex > 0 - mean this function return previous token whose index on "inIndex" less than current
+        const shared_ptr<Token> getPrevToken(const uint32_t inIndex) const;
 
 	protected://///////////////////////////////////////////////////////////////
 
-        const QChar*			mpHttpStr;
-        const QChar*			mpHttpStrEnd;
+        const char*			mpHttpStr;
+        const char*			mpHttpStrEnd;
 
-        const QChar*			mpCurrChar;
+        const char*			mpCurrChar;
 
-        shared_ptr<Token>  spToken;
+        list<shared_ptr<Token>>  listOfTokens;
 };
 
 #endif // _WSLexer_H
