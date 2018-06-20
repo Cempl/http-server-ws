@@ -8,7 +8,6 @@
 /*******************************************************************************/
 GeneratorOfResponseHTTP::GeneratorOfResponseHTTP()
 {
-    qRegisterMetaType<cfgOfResponse>();
     connect(this, SIGNAL(HEADIsParsed(const cfgOfResponse)), this, SLOT(GenerateResponse(const cfgOfResponse)));
 }
 

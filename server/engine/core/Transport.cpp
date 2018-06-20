@@ -24,6 +24,7 @@ void Transport::recieveRequest(QTcpSocket* socket)
 {
     connect(&parseObj, &GeneratorOfResponseHTTP::RespIsGenerated, this, [&](const QString inResponse) { sendResponse(inResponse, socket);});
 
+    qDebug() << "recieveRequest(request): " << socket->readAll();
     emit(incomingRequest(QString(socket->readAll())));
 }
 
@@ -31,8 +32,7 @@ void Transport::recieveRequest(QTcpSocket* socket)
 /*******************************************************************************/
 void Transport::sendResponse(const QString inResponse, QTcpSocket* socket)
 {
-    qDebug() << socket->readAll() << "\n\n\n\n";
-    qDebug() << inResponse << "\n\n\n\n";
+    qDebug() << "sendResponse(response): " << inResponse;
 
     socket->write(inResponse.toLatin1().data());
 
