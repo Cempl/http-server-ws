@@ -1,6 +1,8 @@
 /*******************************************************************************/
 #include "WSLexer.h"
 
+#include <QTextCodec>
+
 
 /*******************************************************************************/
 WSLexer::WSLexer() :
@@ -30,8 +32,7 @@ WSLexer::~WSLexer()
 /*******************************************************************************/
 void WSLexer::Put_HttpRequest(const QString& inString)
 {
-
-    mpHttpStr		= inString.toLatin1().data();
+    mpHttpStr		= inString.data(); //inString.toUtf8().data();
 	mpHttpStrEnd	= mpHttpStr + inString.size();
 	mpCurrChar		= mpHttpStr;
 }
@@ -81,8 +82,7 @@ bool WSLexer::NextToken(bool WithoutSpace)
 	{
 		flagThisTokenIsSpace = false;
 
-        int test = *mpCurrChar;
-        switch(*mpCurrChar)
+        switch((*mpCurrChar).unicode())
 		{
 			case 32: // " "
 			{

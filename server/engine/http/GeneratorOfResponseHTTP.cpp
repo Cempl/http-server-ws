@@ -28,8 +28,7 @@ void GeneratorOfResponseHTTP::ParseHttpHEAD(const QString inHEAD)
         WSLexer mLexer(inHEAD);
         while( mLexer.NextToken(true) )
         {
-            QByteArray convert(mLexer.getCurrToken()->getStart(), mLexer.getCurrToken()->getLen());
-            QString strCurrToken(convert);
+            QString strCurrToken(mLexer.getCurrToken()->getStart(), mLexer.getCurrToken()->getLen());
 
             if( cfgResponse.requestMethod == RequestMethodsList::RErrorType )
             {

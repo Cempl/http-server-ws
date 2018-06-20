@@ -39,16 +39,16 @@ class WSLexer
         void                setLen(const uint32_t inLen) { mLen = inLen; };
         void                setPosition(const uint32_t inPosition) { mPosition = inPosition; };
         void                setLine(const uint32_t inLine) { mLine = inLine; };
-        void                setStart(const char* inStart) { ps = inStart; };
-        void                setEnd(const char* inEnd) { pe = inEnd; };
+        void                setStart(const QChar* inStart) { ps = inStart; };
+        void                setEnd(const QChar* inEnd) { pe = inEnd; };
 
         // Getter
         wsTokenTypes        getType() const { return mType; };
         int64_t             getLen() const { return mLen; };
         int64_t             getPosition() const { return mPosition; };
         int                 getLine() const { return mLine; };
-        const char*         getStart() const { return ps; };
-        const char*         getEnd() const { return pe; };
+        const QChar*         getStart() const { return ps; };
+        const QChar*         getEnd() const { return pe; };
 
         private:////////////////////////////////////////////////////////////////////
 
@@ -59,8 +59,8 @@ class WSLexer
 
         uint32_t			mLine				= 1; // Number of current line
 
-        const char*			ps					= nullptr; // start
-        const char*			pe					= nullptr; // after the end char
+        const QChar*			ps					= nullptr; // start
+        const QChar*			pe					= nullptr; // after the end QChar
 	};
 
 	public:////////////////////////////////////////////////////////////////////
@@ -87,10 +87,10 @@ class WSLexer
 
 	protected://///////////////////////////////////////////////////////////////
 
-        const char*			mpHttpStr;
-        const char*			mpHttpStrEnd;
+        const QChar*			mpHttpStr;
+        const QChar*			mpHttpStrEnd;
 
-        const char*			mpCurrChar;
+        const QChar*			mpCurrChar;
 
         list<shared_ptr<Token>>  listOfTokens;
 };

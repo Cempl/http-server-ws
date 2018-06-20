@@ -24,7 +24,6 @@ void Transport::recieveRequest(QTcpSocket* socket)
 {
     connect(&parseObj, &GeneratorOfResponseHTTP::RespIsGenerated, this, [&](const QString inResponse) { sendResponse(inResponse, socket);});
 
-    qDebug() << "recieveRequest(request): " << socket->readAll();
     emit(incomingRequest(QString(socket->readAll())));
 }
 
