@@ -1,6 +1,8 @@
 #ifndef _SSL_SERVER_
 #define _SSL_SERVER_
 
+//
+#include <QPointer>
 
 // Network
 #include <QtNetwork/QTcpServer>

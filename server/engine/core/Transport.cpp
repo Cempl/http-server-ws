@@ -4,36 +4,40 @@
 
 /*******************************************************************************/
 Transport::Transport(ServerConfig config)
-    :
-      obj(config)
+:
+    obj(config),
+    mpSocket(nullptr)
 {
     connect(&obj, SIGNAL(Ready(QTcpSocket*)), this, SLOT(recieveRequest(QTcpSocket*)));
-    connect(this, SIGNAL(incomingRequest(const QString)), &parseObj, SLOT(ParseHttpHEAD(const QString)));
+    connect(&parseObj, SIGNAL(RespIsGenerated(QString)), this, SLOT(sendResponse(QString)));
 }
 
 
 /*******************************************************************************/
 Transport::~Transport()
 {
-    // do nothing
+    deleteLater();
 }
 
 
 /*******************************************************************************/
 void Transport::recieveRequest(QTcpSocket* socket)
 {
-    connect(&parseObj, &GeneratorOfResponseHTTP::RespIsGenerated, this, [&](const QString inResponse) { sendResponse(inResponse, socket);});
+    mpSocket = socket;
 
-    emit(incomingRequest(QString(socket->readAll())));
+    if(mpSocket && mpSocket->isReadable())
+       parseObj.ParseHttpHEAD(QString(mpSocket->readAll()));
 }
 
 
 /*******************************************************************************/
-void Transport::sendResponse(const QString inResponse, QTcpSocket* socket)
+void Transport::sendResponse(const QString inResponse)
 {
     qDebug() << "sendResponse(response): " << inResponse;
 
-    socket->write(inResponse.toLatin1().data());
-
-    socket->close();
+    if(mpSocket && mpSocket->isWritable())
+    {
+       mpSocket->write(inResponse.toLatin1().data());
+       mpSocket->close();
+    }
 }

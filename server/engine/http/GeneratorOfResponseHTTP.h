@@ -82,6 +82,10 @@ class GeneratorOfResponseHTTP : public QObject
                             GeneratorOfResponseHTTP(const GeneratorOfResponseHTTP& inOther) = delete;
                             ~GeneratorOfResponseHTTP();
 
+    public://////////////////////////////////////////////////////////////////////
+
+        void ParseHttpHEAD( const QString inHEAD );
+
 
     signals://///////////////////////////////////////////////////////////////////
 
@@ -91,7 +95,6 @@ class GeneratorOfResponseHTTP : public QObject
 
     private slots:///////////////////////////////////////////////////////////////
 
-        void ParseHttpHEAD( const QString inHEAD );
         void GenerateResponse( const cfgOfResponse inCfg );
 
 

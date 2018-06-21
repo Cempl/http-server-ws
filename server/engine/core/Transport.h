@@ -23,20 +23,17 @@ explicit    Transport(ServerConfig config);
             ~Transport();
 
 
-    signals://///////////////////////////////////////////////////////////////////
-
-    void incomingRequest(const QString inHEAD);
-
-
     private slots:///////////////////////////////////////////////////////////////
 
     void recieveRequest(QTcpSocket* socket);
-    void sendResponse(const QString inResponse, QTcpSocket* socket);
+    void sendResponse(const QString inResponse);
 
     private://///////////////////////////////////////////////////////////////////
 
     SslServer obj;
     GeneratorOfResponseHTTP parseObj;
+
+    QPointer<QTcpSocket> mpSocket;
 };
 
 
